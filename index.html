@@ -47,8 +47,8 @@
         placeholder="Enter your work email"
         class="px-4 py-3 rounded-lg text-black w-full"
     />
-    <button class="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg font-medium">
-        Get Access
+    <button id="submitBtn" class="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg font-medium">
+    Get Access
     </button>
     </form>
 
@@ -213,25 +213,35 @@ async function handleSubmit(e) {
   e.preventDefault();
 
   const emailInput = document.getElementById("email");
+  const submitBtn = document.getElementById("submitBtn");
+  const successMsg = document.getElementById("successMsg");
+
   const email = emailInput.value;
+
+  // UX improvement
+  submitBtn.innerText = "Submitting...";
+  submitBtn.disabled = true;
 
   try {
     await fetch(SCRIPT_URL, {
       method: "POST",
-      mode: "no-cors",   // 🔥 THIS FIXES IT
+      mode: "no-cors",
       body: JSON.stringify({ email }),
       headers: {
         "Content-Type": "application/json"
       }
     });
 
-    document.getElementById("successMsg").classList.remove("hidden");
+    successMsg.classList.remove("hidden");
     emailInput.value = "";
 
   } catch (err) {
     console.error(err);
     alert("Something went wrong.");
   }
+
+  submitBtn.innerText = "Get Access";
+  submitBtn.disabled = false;
 }
 </script>
 
