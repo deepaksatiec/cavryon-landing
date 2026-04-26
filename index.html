@@ -9,241 +9,133 @@
 
 <body class="bg-[#0B0F1A] text-white">
 
-  <!-- NAVBAR -->
-  <nav class="flex items-center justify-between px-8 py-5 border-b border-gray-800">
-    <div class="text-2xl font-bold tracking-tight">Cavryon</div>
+<!-- NAVBAR -->
+<nav class="flex items-center justify-between px-8 py-5 border-b border-gray-800">
+  <div class="text-2xl font-bold">Cavryon</div>
+  <div class="hidden md:flex gap-8 text-gray-300 text-sm">
+    <a href="#problem">Problem</a>
+    <a href="#product">Product</a>
+  </div>
+  <a href="#waitlist" class="bg-blue-600 px-5 py-2 rounded-lg text-sm">Request Access</a>
+</nav>
 
-    <div class="hidden md:flex gap-8 text-gray-300 text-sm">
-      <a href="#problem" class="hover:text-white">Problem</a>
-      <a href="#product" class="hover:text-white">Product</a>
-      <a href="#demo" class="hover:text-white">Demo</a>
+<!-- HERO -->
+<section class="grid md:grid-cols-2 gap-12 px-8 py-24 items-center max-w-7xl mx-auto">
+
+  <!-- LEFT -->
+  <div>
+    <div class="mb-5 px-4 py-2 inline-block rounded-full bg-blue-600/10 text-blue-400 text-sm border border-blue-500/20">
+      AI-powered close risk intelligence
     </div>
 
-    <a href="#waitlist" class="bg-blue-600 hover:bg-blue-700 px-5 py-2 rounded-lg text-sm font-medium">
-      Request Access
-    </a>
-  </nav>
+    <h1 class="text-5xl font-bold mb-6">
+      Know What Will Break — Before the Close Starts.
+    </h1>
 
-  <!-- HERO -->
-  <section class="grid md:grid-cols-2 gap-12 px-8 py-24 items-center max-w-7xl mx-auto">
-    <div>
-      <div class="inline-block mb-5 px-4 py-2 rounded-full bg-blue-600/10 text-blue-400 text-sm border border-blue-500/20">
-        AI-powered close risk intelligence
-      </div>
+    <p class="text-gray-300 mb-8">
+      Cavryon predicts financial close risk before it happens, so controllers act early instead of reacting late.
+    </p>
 
-      <h1 class="text-5xl md:text-6xl font-bold leading-tight mb-6">
-        Know What Will Break — Before the Close Starts.
-      </h1>
+    <!-- FORM -->
+    <form id="waitlist" onsubmit="handleSubmit(event)" class="flex gap-2 max-w-md">
+      <input type="email" id="email" required placeholder="Enter your work email"
+        class="px-4 py-3 rounded-lg text-black w-full" />
+      <button class="bg-blue-600 px-6 py-3 rounded-lg">
+        Get Access
+      </button>
+    </form>
 
-      <p class="text-gray-300 text-lg mb-8 max-w-xl">
-        Cavryon predicts financial close risk before it happens, so controllers can act early instead of reacting late.
-      </p>
+    <p id="successMsg" class="text-green-400 text-sm mt-3 hidden">
+      Thanks — you’re on the early access list.
+    </p>
 
-      <form id="waitlist" action="/waitlist" method="POST" class="flex flex-col sm:flex-row gap-3 max-w-md">
-        <input
-          type="email"
-          name="email"
-          required
-          placeholder="Enter your work email"
-          class="px-4 py-3 rounded-lg text-black w-full"
-        />
-        <button class="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg font-medium">
-          Get Access
-        </button>
-      </form>
+    <p class="text-gray-500 text-sm mt-3">
+      Limited early access for finance teams
+    </p>
+  </div>
 
-  <p class="text-green-400 text-sm mt-3">
-    Thanks — you’re on the early access list.
-  </p>
+  <!-- RIGHT (DASHBOARD) -->
+  <div class="bg-[#111827] p-6 rounded-2xl border border-gray-700 shadow-xl">
 
-  <p class="text-gray-500 text-sm mt-3">
-    Limited early access for controllers and finance leaders.
-  </p>
-    </div>
-
-    <!-- DASHBOARD MOCK -->
-    <div class="bg-[#111827] p-6 rounded-2xl border border-gray-700 shadow-xl text-sm">
-
-    <div class="flex justify-between mb-4 text-gray-400">
-        <span>March Close Cycle</span>
-        <span>US ▼</span>
+    <div class="flex justify-between mb-4 text-gray-400 text-sm">
+      <span>March Close Cycle</span>
+      <span>US ▼</span>
     </div>
 
     <div class="grid grid-cols-3 gap-4 mb-6 text-center">
-        <div>
-        <p class="text-gray-400">Risk</p>
-        <p class="text-red-400 font-bold text-lg">HIGH</p>
-        </div>
-        <div>
-        <p class="text-gray-400">Accounts</p>
+      <div>
+        <p class="text-gray-400 text-xs">Risk</p>
+        <p class="text-red-400 font-bold">HIGH</p>
+      </div>
+      <div>
+        <p class="text-gray-400 text-xs">Accounts</p>
         <p class="font-bold">12</p>
-        </div>
-        <div>
-        <p class="text-gray-400">Impact</p>
+      </div>
+      <div>
+        <p class="text-gray-400 text-xs">Impact</p>
         <p class="font-bold">$18.2M</p>
-        </div>
+      </div>
     </div>
 
-    <div class="mb-4">
-        <p class="text-gray-400 mb-2">High Risk Accounts</p>
-        <div class="space-y-2">
-        <div class="flex justify-between">
-            <span>Prepaid Insurance</span>
-            <span class="text-red-400">Day 1</span>
-        </div>
-        <div class="flex justify-between">
-            <span>Accrued Expenses</span>
-            <span class="text-red-400">Day 1</span>
-        </div>
-        <div class="flex justify-between">
-            <span>Revenue Deferrals</span>
-            <span class="text-yellow-400">Day 3</span>
-        </div>
-        </div>
+    <div class="space-y-2 text-sm mb-4">
+      <div class="flex justify-between">
+        <span>Prepaid Insurance</span>
+        <span class="text-red-400">Day 1</span>
+      </div>
+      <div class="flex justify-between">
+        <span>Accrued Expenses</span>
+        <span class="text-red-400">Day 1</span>
+      </div>
+      <div class="flex justify-between">
+        <span>Revenue Deferrals</span>
+        <span class="text-yellow-400">Day 3</span>
+      </div>
     </div>
 
-    <div class="text-gray-400">
-        <p class="mb-2">AI Insight</p>
-        <ul class="list-disc ml-4 text-xs">
+    <div class="text-xs text-gray-400">
+      <p class="mb-2 text-blue-400">AI Insight</p>
+      <ul class="list-disc ml-4">
         <li>Balance spike vs last month</li>
         <li>Delayed entries detected</li>
         <li>Reconciliation lag history</li>
-        </ul>
+      </ul>
     </div>
 
-    </div>    
-    <!-- <div class="bg-[#111827] border border-gray-700 rounded-2xl p-6 shadow-2xl">
-      <div class="flex justify-between items-center mb-6">
-        <div>
-          <p class="text-gray-400 text-sm">March Close Cycle</p>
-          <h3 class="text-xl font-semibold">Pre-Close Risk Dashboard</h3>
-        </div>
-        <span class="bg-red-500/10 text-red-400 px-3 py-1 rounded-full text-sm">High Risk</span>
-      </div>
+  </div>
 
-      <div class="grid grid-cols-3 gap-4 mb-6">
-        <div class="bg-[#0B0F1A] p-4 rounded-xl border border-gray-800">
-          <p class="text-gray-400 text-sm">Risk Score</p>
-          <p class="text-2xl font-bold text-red-400">82</p>
-        </div>
-        <div class="bg-[#0B0F1A] p-4 rounded-xl border border-gray-800">
-          <p class="text-gray-400 text-sm">Flagged</p>
-          <p class="text-2xl font-bold">12</p>
-        </div>
-        <div class="bg-[#0B0F1A] p-4 rounded-xl border border-gray-800">
-          <p class="text-gray-400 text-sm">At Risk</p>
-          <p class="text-2xl font-bold">$18.2M</p>
-        </div>
-      </div>
+</section>
 
-      <div class="space-y-3">
-        <div class="flex justify-between bg-[#0B0F1A] p-4 rounded-xl border border-gray-800">
-          <div>
-            <p class="font-medium">Prepaid Insurance</p>
-            <p class="text-gray-500 text-sm">Aging + delayed amortization</p>
-          </div>
-          <span class="text-red-400">Day 1</span>
-        </div>
+<!-- PROBLEM -->
+<section id="problem" class="px-8 py-20 text-center max-w-7xl mx-auto">
+  <h2 class="text-4xl font-bold mb-6">Every Month-End Turns Into a Fire Drill</h2>
+  <div class="grid md:grid-cols-4 gap-6">
+    <div class="bg-[#111827] p-6 rounded-xl">Issues surface too late</div>
+    <div class="bg-[#111827] p-6 rounded-xl">Variances investigated late</div>
+    <div class="bg-[#111827] p-6 rounded-xl">Manual follow-ups</div>
+    <div class="bg-[#111827] p-6 rounded-xl">Unpredictable timelines</div>
+  </div>
+</section>
 
-        <div class="flex justify-between bg-[#0B0F1A] p-4 rounded-xl border border-gray-800">
-          <div>
-            <p class="font-medium">Accrued Expenses</p>
-            <p class="text-gray-500 text-sm">Variance spike vs prior month</p>
-          </div>
-          <span class="text-red-400">Day 1</span>
-        </div>
+<!-- CTA -->
+<section class="text-center py-20">
+  <h2 class="text-4xl font-bold mb-6">
+    Stop Reacting to the Close. Start Predicting It.
+  </h2>
+  <a href="#waitlist" class="bg-blue-600 px-6 py-3 rounded-lg">
+    Request Early Access
+  </a>
+</section>
 
-        <div class="flex justify-between bg-[#0B0F1A] p-4 rounded-xl border border-gray-800">
-          <div>
-            <p class="font-medium">Revenue Deferrals</p>
-            <p class="text-gray-500 text-sm">Timing mismatch detected</p>
-          </div>
-          <span class="text-yellow-400">Day 3</span>
-        </div>
-      </div>
-    </div>
-  </section> -->
+<footer class="text-center py-6 border-t border-gray-800 text-gray-400">
+  Cavryon © 2026
+</footer>
 
-  <!-- PROBLEM -->
-  <section id="problem" class="px-8 py-20 max-w-7xl mx-auto text-center">
-    <h2 class="text-4xl font-bold mb-4">Every Month-End Turns Into a Fire Drill</h2>
-    <p class="text-gray-400 mb-12">
-      Finance teams do not lack effort. They lack early visibility.
-    </p>
-
-    <div class="grid md:grid-cols-4 gap-6">
-      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">Issues surface too late</div>
-      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">Variances are investigated late</div>
-      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">Manual follow-ups slow teams down</div>
-      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">Close timelines become unpredictable</div>
-    </div>
-  </section>
-
-  <!-- CATEGORY -->
-  <section id="product" class="grid md:grid-cols-2 gap-12 px-8 py-20 max-w-7xl mx-auto items-center">
-    <div>
-      <h2 class="text-4xl font-bold mb-5">Introducing Pre-Close Risk Intelligence</h2>
-      <p class="text-gray-300 text-lg">
-        Cavryon sits before your close process — predicting risk, prioritizing actions, and enabling a more controlled close.
-      </p>
-    </div>
-
-    <div class="bg-[#111827] border border-gray-800 rounded-2xl p-8 space-y-6">
-      <div>
-        <p class="text-gray-500 text-sm mb-2">Today</p>
-        <p>Transactions → Close → Issues → Firefighting</p>
-      </div>
-      <div>
-        <p class="text-blue-400 text-sm mb-2">With Cavryon</p>
-        <p>Transactions → Risk Prediction → Action Plan → Controlled Close</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- FEATURES -->
-  <section class="px-8 py-20 max-w-7xl mx-auto">
-    <h2 class="text-4xl font-bold text-center mb-12">What Cavryon Helps You Do</h2>
-
-    <div class="grid md:grid-cols-2 gap-6">
-      <div class="bg-[#111827] border border-gray-800 rounded-xl p-8">
-        <h3 class="text-xl font-semibold mb-2">Predict Risk Before Close</h3>
-        <p class="text-gray-400">Identify accounts likely to break before Day 1.</p>
-      </div>
-
-      <div class="bg-[#111827] border border-gray-800 rounded-xl p-8">
-        <h3 class="text-xl font-semibold mb-2">Prioritize What Matters</h3>
-        <p class="text-gray-400">Focus teams on the highest-risk areas first.</p>
-      </div>
-
-      <div class="bg-[#111827] border border-gray-800 rounded-xl p-8">
-        <h3 class="text-xl font-semibold mb-2">Explain the Why</h3>
-        <p class="text-gray-400">AI surfaces root causes behind close risk.</p>
-      </div>
-
-      <div class="bg-[#111827] border border-gray-800 rounded-xl p-8">
-        <h3 class="text-xl font-semibold mb-2">Drive Action</h3>
-        <p class="text-gray-400">Turn insights into clear action plans for owners.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- CTA -->
-  <section class="px-8 py-24 text-center">
-    <h2 class="text-4xl font-bold mb-5">
-      Stop Reacting to the Close. Start Predicting It.
-    </h2>
-    <p class="text-gray-400 mb-8">
-      Join the early access list for Cavryon.
-    </p>
-    <a href="#waitlist" class="bg-blue-600 hover:bg-blue-700 px-8 py-4 rounded-lg font-medium">
-      Request Early Access
-    </a>
-  </section>
-
-  <!-- FOOTER -->
-  <footer class="border-t border-gray-800 px-8 py-8 text-center text-gray-500">
-    Cavryon © 2026
-  </footer>
+<script>
+function handleSubmit(e) {
+  e.preventDefault();
+  document.getElementById("successMsg").classList.remove("hidden");
+}
+</script>
 
 </body>
 </html>
