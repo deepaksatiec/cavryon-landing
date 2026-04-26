@@ -39,26 +39,26 @@
         Cavryon predicts financial close risk before it happens, so controllers can act early instead of reacting late.
       </p>
 
-      <form id="waitlist" action="/waitlist" method="POST" class="flex flex-col sm:flex-row gap-3 max-w-md">
-        <input
-          type="email"
-          name="email"
-          required
-          placeholder="Enter your work email"
-          class="px-4 py-3 rounded-lg text-black w-full"
-        />
-        <button class="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg font-medium">
-          Get Access
-        </button>
-      </form>
+    <form id="waitlist" onsubmit="handleSubmit(event)" class="flex flex-col sm:flex-row gap-3 max-w-md">
+    <input
+        type="email"
+        id="email"
+        required
+        placeholder="Enter your work email"
+        class="px-4 py-3 rounded-lg text-black w-full"
+    />
+    <button class="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg font-medium">
+        Get Access
+    </button>
+    </form>
 
-  <p class="text-green-400 text-sm mt-3">
+    <p id="successMsg" class="text-green-400 text-sm mt-3 hidden">
     Thanks — you’re on the early access list.
-  </p>
+    </p>
 
-  <p class="text-gray-500 text-sm mt-3">
+    <p class="text-gray-500 text-sm mt-3">
     Limited early access for controllers and finance leaders.
-  </p>
+    </p>
 </div>
 
     <!-- DASHBOARD MOCK -->
@@ -194,6 +194,13 @@
   <footer class="border-t border-gray-800 px-8 py-8 text-center text-gray-500">
     Cavryon © 2026
   </footer>
+  
+<script>
+function handleSubmit(e) {
+  e.preventDefault();
+  document.getElementById("successMsg").classList.remove("hidden");
+}
+</script>  
 
 </body>
 </html>
