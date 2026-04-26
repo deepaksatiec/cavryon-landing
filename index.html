@@ -194,13 +194,27 @@
   <footer class="border-t border-gray-800 px-8 py-8 text-center text-gray-500">
     Cavryon © 2026
   </footer>
-  
+
 <script>
-function handleSubmit(e) {
+const SCRIPT_URL = "PASTE_YOUR_GOOGLE_SCRIPT_URL_HERE";
+
+async function handleSubmit(e) {
   e.preventDefault();
+
+  const email = document.getElementById("email").value;
+
+  await fetch(SCRIPT_URL, {
+    method: "POST",
+    body: JSON.stringify({ email }),
+    headers: {
+      "Content-Type": "application/json"
+    }
+  });
+
   document.getElementById("successMsg").classList.remove("hidden");
+  document.getElementById("email").value = "";
 }
-</script>  
+</script> 
 
 </body>
 </html>
