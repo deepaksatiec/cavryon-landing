@@ -3,251 +3,361 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cavryon | Pre-Close Risk Intelligence</title>
+  <title>Cavryon | Pre-Close Risk Visibility</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="bg-[#0B0F1A] text-white">
+<body class="bg-[#0B1020] text-white">
 
   <!-- NAVBAR -->
   <nav class="flex items-center justify-between px-8 py-5 border-b border-gray-800">
-    <div class="text-2xl font-bold tracking-tight">Cavryon</div>
+
+    <div class="text-2xl font-bold tracking-tight">
+      Cavryon
+    </div>
 
     <div class="hidden md:flex gap-8 text-gray-300 text-sm">
       <a href="#problem" class="hover:text-white">Problem</a>
-      <a href="#product" class="hover:text-white">Product</a>
-      <a href="#demo" class="hover:text-white">Demo</a>
+      <a href="#workflow" class="hover:text-white">Workflow</a>
+      <a href="#features" class="hover:text-white">Capabilities</a>
     </div>
 
     <a href="#waitlist" class="bg-blue-600 hover:bg-blue-700 px-5 py-2 rounded-lg text-sm font-medium">
-      Request Access
+      Request Early Access
     </a>
+
   </nav>
 
   <!-- HERO -->
-   <p class="text-gray-500 text-sm text-center mt-10">
-  Built for Controllers, Accounting Leads, and Finance Teams
-</p>
-  <section class="px-8 py-20 max-w-7xl mx-auto text-center">
-
-  <h2 class="text-4xl font-bold mb-12">
-    How Cavryon Works
-  </h2>
-
-  <div class="grid md:grid-cols-3 gap-8">
-
-    <!-- Step 1 -->
-    <div class="bg-[#111827] border border-gray-800 rounded-xl p-8">
-      <div class="text-blue-400 text-sm mb-2">Step 1</div>
-      <h3 class="text-xl font-semibold mb-2">Upload Your Close Data</h3>
-      <p class="text-gray-400 text-sm">
-        Import trial balance, reconciliations, or close data from your systems.
-      </p>
-    </div>
-
-    <!-- Step 2 -->
-    <div class="bg-[#111827] border border-gray-800 rounded-xl p-8">
-      <div class="text-blue-400 text-sm mb-2">Step 2</div>
-      <h3 class="text-xl font-semibold mb-2">AI Analyzes Risk</h3>
-      <p class="text-gray-400 text-sm">
-        Cavryon detects anomalies, trends, and signals across accounts.
-      </p>
-    </div>
-
-    <!-- Step 3 -->
-    <div class="bg-[#111827] border border-gray-800 rounded-xl p-8">
-      <div class="text-blue-400 text-sm mb-2">Step 3</div>
-      <h3 class="text-xl font-semibold mb-2">Act Before Day 1</h3>
-      <p class="text-gray-400 text-sm">
-        Get prioritized actions so teams start the close with clarity.
-      </p>
-    </div>
-
-  </div>
-
-</section>
   <section class="grid md:grid-cols-2 gap-12 px-8 py-24 items-center max-w-7xl mx-auto">
+
+    <!-- LEFT -->
     <div>
+
       <div class="inline-block mb-5 px-4 py-2 rounded-full bg-blue-600/10 text-blue-400 text-sm border border-blue-500/20">
-        AI-powered close risk intelligence
+        Operational Visibility for Month-End Close
       </div>
 
       <h1 class="text-5xl md:text-6xl font-bold leading-tight mb-6">
-        Know What Will Break — Before the Close Starts.
+        Know Where Your Close Is At Risk — Before Day 1
       </h1>
 
-      <p class="text-gray-300 text-lg mb-8 max-w-xl">
-        Cavryon predicts financial close risk before it happens, so controllers can act early instead of reacting late.
+      <p class="text-gray-300 text-lg leading-relaxed mb-8 max-w-xl">
+        Cavryon helps accounting teams identify high-risk reconciliations,
+        operational bottlenecks, and close delays before they impact the
+        month-end close.
       </p>
 
-    <form id="waitlist" onsubmit="handleSubmit(event)" class="flex flex-col sm:flex-row gap-3 max-w-md">
-    <input
-        type="email"
-        id="email"
-        required
-        placeholder="Enter your email"
-        class="px-4 py-3 rounded-lg text-black w-full"
-    />
-    <button id="submitBtn" class="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg font-medium">
-    Get Access
-    </button>
-    </form>
-    <button class="text-blue-400 text-sm mt-3 underline">
-    Try with sample data
-    </button>    
+      <!-- WAITLIST -->
+      <form
+        id="waitlist"
+        onsubmit="handleSubmit(event)"
+        class="flex flex-col sm:flex-row gap-3 max-w-md"
+      >
 
+        <input
+          type="email"
+          id="email"
+          required
+          placeholder="Enter your work email"
+          class="px-4 py-3 rounded-lg text-black w-full"
+        />
 
-    <p id="successMsg" class="text-green-400 text-sm mt-3 hidden">
-    Thanks — you’re on the early access list.
-    </p>
+        <button
+          id="submitBtn"
+          class="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg font-medium"
+        >
+          Request Early Access
+        </button>
 
-    <p class="text-gray-500 text-sm mt-3">
-    Limited early access for controllers and finance leaders.
-    </p>
-</div>
+      </form>
 
-    <!-- DASHBOARD MOCK -->
-    <div class="bg-[#111827] border border-gray-700 rounded-2xl p-6 shadow-2xl">
-    <p class="text-gray-500 text-xs mt-4">
-    Based on historical close patterns and anomaly signals
-    </p>
-        
-    <p class="text-gray-400 text-sm mb-3">
-    Live preview of Cavryon risk intelligence
-    </p>            
-      <div class="flex justify-between items-center mb-6">
-        <div>
-          <p class="text-gray-400 text-sm">March Close Cycle</p>
-          <h3 class="text-xl font-semibold">Pre-Close Risk Dashboard</h3>
-        </div>
-        <span class="bg-red-500/10 text-red-400 px-3 py-1 rounded-full text-sm">High Risk</span>
-      </div>
+      <p id="successMsg" class="text-green-400 text-sm mt-3 hidden">
+        Thanks — you’re on the early access list.
+      </p>
 
-      <div class="grid grid-cols-3 gap-4 mb-6">
-        <div class="bg-[#0B0F1A] p-4 rounded-xl border border-gray-800">
-          <p class="text-gray-400 text-sm">Risk Score</p>
-          <p class="text-2xl font-bold text-red-400">82</p>
-        </div>
-        <div class="bg-[#0B0F1A] p-4 rounded-xl border border-gray-800">
-          <p class="text-gray-400 text-sm">Flagged</p>
-          <p class="text-2xl font-bold">12</p>
-        </div>
-        <div class="bg-[#0B0F1A] p-4 rounded-xl border border-gray-800">
-          <p class="text-gray-400 text-sm">At Risk</p>
-          <p class="text-2xl font-bold">$18.2M</p>
-        </div>
-      </div>
+      <p class="text-gray-500 text-sm mt-4">
+        Built for controllers, accounting operations, and finance transformation teams.
+      </p>
 
-      <div class="space-y-3">
-        <div class="flex justify-between bg-[#0B0F1A] p-4 rounded-xl border border-gray-800">
-          <div>
-            <p class="font-medium">Prepaid Insurance</p>
-            <p class="text-gray-500 text-sm">Aging + delayed amortization</p>
-          </div>
-          <span class="text-red-400">Day 1</span>
-        </div>
-
-        <div class="flex justify-between bg-[#0B0F1A] p-4 rounded-xl border border-gray-800">
-          <div>
-            <p class="font-medium">Accrued Expenses</p>
-            <p class="text-gray-500 text-sm">Variance spike vs prior month</p>
-          </div>
-          <span class="text-red-400">Day 1</span>
-        </div>
-
-        <div class="flex justify-between bg-[#0B0F1A] p-4 rounded-xl border border-gray-800">
-          <div>
-            <p class="font-medium">Revenue Deferrals</p>
-            <p class="text-gray-500 text-sm">Timing mismatch detected</p>
-          </div>
-          <span class="text-yellow-400">Day 3</span>
-        </div>
-        <div class="bg-blue-500/5 border border-blue-500/20 rounded-lg p-4 mt-4">
-        <p class="text-blue-400 text-xs mb-2 font-medium">AI Insight</p>
-        <ul class="list-disc ml-4 text-gray-300 text-xs space-y-1">
-            <li>Prepaid balance increased 42% vs last month</li>
-            <li>Delayed amortization entries detected</li>
-            <li>Historical reconciliation lag (3+ days)</li>
-        </ul>
-        </div>        
-      </div>
     </div>
+
+    <!-- RIGHT DASHBOARD -->
+    <div class="bg-[#111827] border border-gray-700 rounded-2xl p-6 shadow-2xl">
+
+      <div class="flex justify-between items-center mb-6">
+
+        <div>
+          <p class="text-gray-400 text-sm">
+            March Close Cycle
+          </p>
+
+          <h3 class="text-xl font-semibold">
+            Operational Risk Dashboard
+          </h3>
+        </div>
+
+        <span class="bg-red-500/10 text-red-400 px-3 py-1 rounded-full text-sm">
+          High Risk
+        </span>
+
+      </div>
+
+      <!-- TABLE -->
+      <table class="w-full text-left text-sm">
+
+        <thead class="text-gray-500 border-b border-gray-800">
+          <tr>
+            <th class="py-3">Account</th>
+            <th>Risk</th>
+            <th>Exceptions</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+
+        <tbody class="divide-y divide-gray-800">
+
+          <tr>
+            <td class="py-4">Revenue Accrual</td>
+            <td class="text-red-400 font-medium">97</td>
+            <td>14</td>
+            <td class="text-red-400">At Risk</td>
+          </tr>
+
+          <tr>
+            <td class="py-4">Intercompany</td>
+            <td class="text-yellow-400 font-medium">82</td>
+            <td>7</td>
+            <td class="text-yellow-400">Delayed</td>
+          </tr>
+
+          <tr>
+            <td class="py-4">Reserve Adjustment</td>
+            <td class="text-red-400 font-medium">91</td>
+            <td>11</td>
+            <td class="text-red-400">Escalated</td>
+          </tr>
+
+          <tr>
+            <td class="py-4">Deferred Revenue</td>
+            <td class="text-yellow-400 font-medium">74</td>
+            <td>5</td>
+            <td class="text-yellow-400">Review Needed</td>
+          </tr>
+
+        </tbody>
+
+      </table>
+
+      <!-- RISK SIGNALS -->
+      <div class="bg-blue-500/5 border border-blue-500/20 rounded-lg p-4 mt-6">
+
+        <p class="text-blue-400 text-xs mb-2 font-medium">
+          Risk Signals
+        </p>
+
+        <ul class="list-disc ml-4 text-gray-300 text-xs space-y-1">
+          <li>Prepaid balance increased 42% vs prior cycle</li>
+          <li>Historical reconciliation lag detected</li>
+          <li>Delayed upstream dependency impacting readiness</li>
+          <li>Recurring exception pattern across accrual accounts</li>
+        </ul>
+
+      </div>
+
+    </div>
+
   </section>
 
   <!-- PROBLEM -->
   <section id="problem" class="px-8 py-20 max-w-7xl mx-auto text-center">
-    <h2 class="text-4xl font-bold mb-4">Every Month-End Turns Into a Fire Drill</h2>
-    <p class="text-gray-400 mb-12">
-      Finance teams do not lack effort. They lack early visibility.
+
+    <h2 class="text-4xl font-bold mb-5">
+      The Close Doesn’t Fail on Day 1
+    </h2>
+
+    <p class="text-gray-400 max-w-3xl mx-auto text-lg leading-relaxed mb-12">
+      Most close delays begin weeks earlier through unresolved reconciliations,
+      hidden dependencies, exception spikes, and delayed upstream data.
+      Finance teams usually discover the impact too late.
     </p>
 
     <div class="grid md:grid-cols-4 gap-6">
-      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">Issues surface too late</div>
-      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">Variances are investigated late</div>
-      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">Manual follow-ups slow teams down</div>
-      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">Close timelines become unpredictable</div>
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
+        Reconciliations remain unresolved too long
+      </div>
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
+        Exception spikes are discovered late
+      </div>
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
+        Hidden dependencies delay close readiness
+      </div>
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
+        Teams spend Day 1 firefighting instead of closing
+      </div>
+
     </div>
+
   </section>
 
-  <!-- CATEGORY -->
-  <section id="product" class="grid md:grid-cols-2 gap-12 px-8 py-20 max-w-7xl mx-auto items-center">
-    <div>
-      <h2 class="text-4xl font-bold mb-5">Introducing Pre-Close Risk Intelligence</h2>
-      <p class="text-gray-300 text-lg">
-        Cavryon sits before your close process — predicting risk, prioritizing actions, and enabling a more controlled close.
-      </p>
+  <!-- HOW IT WORKS -->
+  <section id="workflow" class="px-8 py-20 max-w-7xl mx-auto text-center">
+
+    <h2 class="text-4xl font-bold mb-12">
+      How Cavryon Works
+    </h2>
+
+    <div class="grid md:grid-cols-3 gap-8">
+
+      <!-- STEP 1 -->
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-8">
+
+        <div class="text-blue-400 text-sm mb-2">
+          Step 1
+        </div>
+
+        <h3 class="text-xl font-semibold mb-3">
+          Detect Operational Risk
+        </h3>
+
+        <p class="text-gray-400 text-sm leading-relaxed">
+          Surface abnormal reconciliation patterns, delayed dependencies,
+          and recurring exception trends.
+        </p>
+
+      </div>
+
+      <!-- STEP 2 -->
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-8">
+
+        <div class="text-blue-400 text-sm mb-2">
+          Step 2
+        </div>
+
+        <h3 class="text-xl font-semibold mb-3">
+          Prioritize What Matters
+        </h3>
+
+        <p class="text-gray-400 text-sm leading-relaxed">
+          Identify accounts most likely to impact close timelines
+          and operational readiness.
+        </p>
+
+      </div>
+
+      <!-- STEP 3 -->
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-8">
+
+        <div class="text-blue-400 text-sm mb-2">
+          Step 3
+        </div>
+
+        <h3 class="text-xl font-semibold mb-3">
+          Accelerate Resolution
+        </h3>
+
+        <p class="text-gray-400 text-sm leading-relaxed">
+          Reduce firefighting and improve operational visibility
+          across the close process.
+        </p>
+
+      </div>
+
     </div>
 
-    <div class="bg-[#111827] border border-gray-800 rounded-2xl p-8 space-y-6">
-      <div>
-        <p class="text-gray-500 text-sm mb-2">Today</p>
-        <p>Transactions → Close → Issues → Firefighting</p>
-      </div>
-      <div>
-        <p class="text-blue-400 text-sm mb-2">With Cavryon</p>
-        <p>Transactions → Risk Prediction → Action Plan → Controlled Close</p>
-      </div>
-    </div>
   </section>
 
   <!-- FEATURES -->
-  <section class="px-8 py-20 max-w-7xl mx-auto">
-    <h2 class="text-4xl font-bold text-center mb-12">What Cavryon Helps You Do</h2>
+  <section id="features" class="px-8 py-20 max-w-7xl mx-auto">
+
+    <h2 class="text-4xl font-bold text-center mb-12">
+      What Cavryon Helps You Do
+    </h2>
 
     <div class="grid md:grid-cols-2 gap-6">
+
       <div class="bg-[#111827] border border-gray-800 rounded-xl p-8">
-        <h3 class="text-xl font-semibold mb-2">Predict Risk Before Close</h3>
-        <p class="text-gray-400">Identify accounts likely to break before Day 1.</p>
+        <h3 class="text-xl font-semibold mb-2">
+          Detect High-Risk Accounts Earlier
+        </h3>
+
+        <p class="text-gray-400">
+          Identify accounts likely to impact close readiness before Day 1.
+        </p>
       </div>
 
       <div class="bg-[#111827] border border-gray-800 rounded-xl p-8">
-        <h3 class="text-xl font-semibold mb-2">Prioritize What Matters</h3>
-        <p class="text-gray-400">Focus teams on the highest-risk areas first.</p>
+        <h3 class="text-xl font-semibold mb-2">
+          Prioritize Investigation Effort
+        </h3>
+
+        <p class="text-gray-400">
+          Focus accounting teams on the highest operational risks first.
+        </p>
       </div>
 
       <div class="bg-[#111827] border border-gray-800 rounded-xl p-8">
-        <h3 class="text-xl font-semibold mb-2">Explain the Why</h3>
-        <p class="text-gray-400">AI surfaces root causes behind close risk.</p>
+        <h3 class="text-xl font-semibold mb-2">
+          Improve Close Visibility
+        </h3>
+
+        <p class="text-gray-400">
+          Surface operational bottlenecks before they become close blockers.
+        </p>
       </div>
 
       <div class="bg-[#111827] border border-gray-800 rounded-xl p-8">
-        <h3 class="text-xl font-semibold mb-2">Drive Action</h3>
-        <p class="text-gray-400">Turn insights into clear action plans for owners.</p>
+        <h3 class="text-xl font-semibold mb-2">
+          Reduce Month-End Firefighting
+        </h3>
+
+        <p class="text-gray-400">
+          Enable earlier action and more predictable close execution.
+        </p>
       </div>
+
     </div>
+
+  </section>
+
+  <!-- CREDIBILITY -->
+  <section class="px-8 py-20 text-center max-w-5xl mx-auto">
+
+    <h2 class="text-3xl font-bold mb-6">
+      Built for Enterprise Finance Operations
+    </h2>
+
+    <p class="text-gray-400 text-lg leading-relaxed">
+      Cavryon is designed by leaders who have operated large-scale
+      financial data, reconciliation, and accounting workflows supporting
+      enterprise finance organizations.
+    </p>
+
   </section>
 
   <!-- CTA -->
   <section class="px-8 py-24 text-center">
+
     <h2 class="text-4xl font-bold mb-5">
-      Stop Reacting to the Close. Start Predicting It.
+      Stop Reacting to the Close.
+      Start Seeing Risk Earlier.
     </h2>
-    <p class="text-gray-400 mb-8">
-      Join the early access list for Cavryon.
+
+    <p class="text-gray-400 text-lg mb-8">
+      Join the early access group for finance leaders and accounting teams.
     </p>
-    <a href="#waitlist" class="bg-blue-600 hover:bg-blue-700 px-8 py-4 rounded-lg font-medium">
-      Request Early Access
+
+    <a
+      href="#waitlist"
+      class="bg-blue-600 hover:bg-blue-700 px-8 py-4 rounded-lg font-medium"
+    >
+      Join Early Access
     </a>
+
   </section>
 
   <!-- FOOTER -->
@@ -255,44 +365,52 @@
     Cavryon © 2026
   </footer>
 
-<script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx91eNuAbjR4nqAQfubA7fMk5jmFxFmeHyy8KZSvk_4wWY66CsfWlAzAfDbcqtvN4AOSQ/exec";
+  <!-- SCRIPT -->
+  <script>
 
-async function handleSubmit(e) {
-  e.preventDefault();
+    const SCRIPT_URL =
+      "https://script.google.com/macros/s/AKfycbx91eNuAbjR4nqAQfubA7fMk5jmFxFmeHyy8KZSvk_4wWY66CsfWlAzAfDbcqtvN4AOSQ/exec";
 
-  const emailInput = document.getElementById("email");
-  const submitBtn = document.getElementById("submitBtn");
-  const successMsg = document.getElementById("successMsg");
+    async function handleSubmit(e) {
 
-  const email = emailInput.value;
+      e.preventDefault();
 
-  // UX improvement
-  submitBtn.innerText = "Submitting...";
-  submitBtn.disabled = true;
+      const emailInput = document.getElementById("email");
+      const submitBtn = document.getElementById("submitBtn");
+      const successMsg = document.getElementById("successMsg");
 
-  try {
-    await fetch(SCRIPT_URL, {
-      method: "POST",
-      mode: "no-cors",
-      body: JSON.stringify({ email }),
-      headers: {
-        "Content-Type": "application/json"
+      const email = emailInput.value;
+
+      submitBtn.innerText = "Submitting...";
+      submitBtn.disabled = true;
+
+      try {
+
+        await fetch(SCRIPT_URL, {
+          method: "POST",
+          mode: "no-cors",
+          body: JSON.stringify({ email }),
+          headers: {
+            "Content-Type": "application/json"
+          }
+        });
+
+        successMsg.classList.remove("hidden");
+        emailInput.value = "";
+
+      } catch (err) {
+
+        console.error(err);
+        alert("Something went wrong.");
+
       }
-    });
 
-    successMsg.classList.remove("hidden");
-    emailInput.value = "";
+      submitBtn.innerText = "Request Early Access";
+      submitBtn.disabled = false;
 
-  } catch (err) {
-    console.error(err);
-    alert("Something went wrong.");
-  }
+    }
 
-  submitBtn.innerText = "Get Access";
-  submitBtn.disabled = false;
-}
-</script>
+  </script>
 
 </body>
 </html>
