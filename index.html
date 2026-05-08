@@ -3,14 +3,21 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <title>Cavryon | Pre-Close Risk Visibility</title>
+
+  <meta
+    name="description"
+    content="Cavryon helps accounting teams identify high-risk reconciliations, operational bottlenecks, and close delays before they impact month-end close."
+  />
+
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
 <body class="bg-[#0B1020] text-white">
 
   <!-- NAVBAR -->
-  <nav class="flex items-center justify-between px-8 py-5 border-b border-gray-800">
+  <nav class="flex items-center justify-between px-8 py-5 border-b border-gray-800 sticky top-0 z-50 bg-[#0B1020]/90 backdrop-blur">
 
     <div class="text-2xl font-bold tracking-tight">
       Cavryon
@@ -19,7 +26,8 @@
     <div class="hidden md:flex gap-8 text-gray-300 text-sm">
       <a href="#problem" class="hover:text-white">Problem</a>
       <a href="#workflow" class="hover:text-white">Workflow</a>
-      <a href="#features" class="hover:text-white">Capabilities</a>
+      <a href="#signals" class="hover:text-white">Risk Signals</a>
+      <a href="#audience" class="hover:text-white">Who It’s For</a>
     </div>
 
     <a href="#waitlist" class="bg-blue-600 hover:bg-blue-700 px-5 py-2 rounded-lg text-sm font-medium">
@@ -31,7 +39,6 @@
   <!-- HERO -->
   <section class="grid md:grid-cols-2 gap-12 px-8 py-24 items-center max-w-7xl mx-auto">
 
-    <!-- LEFT -->
     <div>
 
       <div class="inline-block mb-5 px-4 py-2 rounded-full bg-blue-600/10 text-blue-400 text-sm border border-blue-500/20">
@@ -48,11 +55,11 @@
         month-end close.
       </p>
 
-      <!-- WAITLIST -->
+      <!-- WAITLIST FORM -->
       <form
         id="waitlist"
         onsubmit="handleSubmit(event)"
-        class="flex flex-col sm:flex-row gap-3 max-w-md"
+        class="flex flex-col sm:flex-row gap-3 max-w-2xl"
       >
 
         <input
@@ -63,11 +70,26 @@
           class="px-4 py-3 rounded-lg text-black w-full"
         />
 
+        <select
+          id="role"
+          required
+          class="px-4 py-3 rounded-lg text-black w-full sm:w-56"
+        >
+          <option value="">Select role</option>
+          <option>Controller</option>
+          <option>Accounting</option>
+          <option>Finance Operations</option>
+          <option>Finance Transformation</option>
+          <option>FP&A</option>
+          <option>Founder / Operator</option>
+          <option>Other</option>
+        </select>
+
         <button
           id="submitBtn"
-          class="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg font-medium"
+          class="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg font-medium whitespace-nowrap"
         >
-          Request Early Access
+          Request Access
         </button>
 
       </form>
@@ -82,7 +104,7 @@
 
     </div>
 
-    <!-- RIGHT DASHBOARD -->
+    <!-- DASHBOARD MOCK -->
     <div class="bg-[#111827] border border-gray-700 rounded-2xl p-6 shadow-2xl">
 
       <div class="flex justify-between items-center mb-6">
@@ -103,7 +125,6 @@
 
       </div>
 
-      <!-- TABLE -->
       <table class="w-full text-left text-sm">
 
         <thead class="text-gray-500 border-b border-gray-800">
@@ -149,7 +170,6 @@
 
       </table>
 
-      <!-- RISK SIGNALS -->
       <div class="bg-blue-500/5 border border-blue-500/20 rounded-lg p-4 mt-6">
 
         <p class="text-blue-400 text-xs mb-2 font-medium">
@@ -210,53 +230,10 @@
     <h2 class="text-4xl font-bold mb-12">
       How Cavryon Works
     </h2>
-    <!-- WHO IT'S FOR -->
-
-<section class="px-8 py-20 max-w-7xl mx-auto">
-
-  <h2 class="text-4xl font-bold text-center mb-12">
-    Built for Finance Teams Operating Under Close Pressure
-  </h2>
-
-  <div class="grid md:grid-cols-4 gap-6">
-
-    <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
-      <h3 class="font-semibold mb-3">Controllers</h3>
-      <p class="text-gray-400 text-sm">
-        Reduce surprises during month-end close.
-      </p>
-    </div>
-
-    <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
-      <h3 class="font-semibold mb-3">Accounting Operations</h3>
-      <p class="text-gray-400 text-sm">
-        Prioritize operational bottlenecks earlier.
-      </p>
-    </div>
-
-    <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
-      <h3 class="font-semibold mb-3">Finance Transformation</h3>
-      <p class="text-gray-400 text-sm">
-        Improve visibility across close workflows.
-      </p>
-    </div>
-
-    <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
-      <h3 class="font-semibold mb-3">Reconciliation Teams</h3>
-      <p class="text-gray-400 text-sm">
-        Detect recurring risk patterns earlier.
-      </p>
-    </div>
-
-  </div>
-
-</section>
 
     <div class="grid md:grid-cols-3 gap-8">
 
-      <!-- STEP 1 -->
       <div class="bg-[#111827] border border-gray-800 rounded-xl p-8">
-
         <div class="text-blue-400 text-sm mb-2">
           Step 1
         </div>
@@ -269,12 +246,9 @@
           Surface abnormal reconciliation patterns, delayed dependencies,
           and recurring exception trends.
         </p>
-
       </div>
 
-      <!-- STEP 2 -->
       <div class="bg-[#111827] border border-gray-800 rounded-xl p-8">
-
         <div class="text-blue-400 text-sm mb-2">
           Step 2
         </div>
@@ -287,12 +261,9 @@
           Identify accounts most likely to impact close timelines
           and operational readiness.
         </p>
-
       </div>
 
-      <!-- STEP 3 -->
       <div class="bg-[#111827] border border-gray-800 rounded-xl p-8">
-
         <div class="text-blue-400 text-sm mb-2">
           Step 3
         </div>
@@ -305,14 +276,104 @@
           Reduce firefighting and improve operational visibility
           across the close process.
         </p>
-
       </div>
 
     </div>
 
   </section>
 
-  <!-- FEATURES -->
+  <!-- WHO IT'S FOR -->
+  <section id="audience" class="px-8 py-20 max-w-7xl mx-auto">
+
+    <h2 class="text-4xl font-bold text-center mb-12">
+      Built for Finance Teams Operating Under Close Pressure
+    </h2>
+
+    <div class="grid md:grid-cols-4 gap-6">
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
+        <h3 class="font-semibold mb-3">
+          Controllers
+        </h3>
+        <p class="text-gray-400 text-sm">
+          Reduce surprises during month-end close.
+        </p>
+      </div>
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
+        <h3 class="font-semibold mb-3">
+          Accounting Operations
+        </h3>
+        <p class="text-gray-400 text-sm">
+          Prioritize operational bottlenecks earlier.
+        </p>
+      </div>
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
+        <h3 class="font-semibold mb-3">
+          Finance Transformation
+        </h3>
+        <p class="text-gray-400 text-sm">
+          Improve visibility across close workflows.
+        </p>
+      </div>
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
+        <h3 class="font-semibold mb-3">
+          Reconciliation Teams
+        </h3>
+        <p class="text-gray-400 text-sm">
+          Detect recurring risk patterns earlier.
+        </p>
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- RISK SIGNALS -->
+  <section id="signals" class="px-8 py-20 max-w-7xl mx-auto">
+
+    <h2 class="text-4xl font-bold text-center mb-5">
+      Example Operational Risk Signals
+    </h2>
+
+    <p class="text-gray-400 max-w-3xl mx-auto text-center text-lg leading-relaxed mb-12">
+      Cavryon is designed around the operational patterns that usually
+      create close pressure before teams officially enter the close window.
+    </p>
+
+    <div class="grid md:grid-cols-2 gap-6">
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
+        Reconciliation unresolved for 5+ days
+      </div>
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
+        Exception count increased 42% vs prior cycle
+      </div>
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
+        Historical Day 1 delay pattern detected
+      </div>
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
+        Upstream dependency blocking close readiness
+      </div>
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
+        Journal aging variance spike identified
+      </div>
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
+        Repeated reviewer escalation patterns detected
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- CAPABILITIES -->
   <section id="features" class="px-8 py-20 max-w-7xl mx-auto">
 
     <h2 class="text-4xl font-bold text-center mb-12">
@@ -365,22 +426,58 @@
 
   </section>
 
+  <!-- CLOSE STORIES -->
+  <section class="px-8 py-20 max-w-5xl mx-auto">
+
+    <h2 class="text-4xl font-bold text-center mb-12">
+      Close Stories We’re Exploring
+    </h2>
+
+    <div class="space-y-6">
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
+        <h3 class="font-semibold mb-2">
+          Why Day 1 Firefighting Happens
+        </h3>
+
+        <p class="text-gray-400">
+          Most close failures begin weeks earlier through unresolved
+          dependencies, recurring reconciliation bottlenecks, and delayed
+          operational signals.
+        </p>
+      </div>
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
+        <h3 class="font-semibold mb-2">
+          The Riskiest Accounts Are Rarely the Loudest
+        </h3>
+
+        <p class="text-gray-400">
+          Finance teams often optimize for visible issues, while the
+          highest operational impact may be hidden in recurring patterns.
+        </p>
+      </div>
+
+    </div>
+
+  </section>
+
   <!-- CREDIBILITY -->
   <section class="px-8 py-20 text-center max-w-5xl mx-auto">
 
     <h2 class="text-3xl font-bold mb-6">
-      Built for Enterprise Finance Operations
+      Built by Operators Who Understand Financial Close Complexity
     </h2>
 
     <p class="text-gray-400 text-lg leading-relaxed">
-      Cavryon is designed by leaders who have operated large-scale
-      financial data, reconciliation, and accounting workflows supporting
-      enterprise finance organizations.
+      Cavryon is being built by leaders with deep experience operating
+      enterprise-scale financial data, reconciliation, and accounting systems
+      supporting complex finance organizations.
     </p>
 
   </section>
 
-  <!-- CTA -->
+  <!-- FINAL CTA -->
   <section class="px-8 py-24 text-center">
 
     <h2 class="text-4xl font-bold mb-5">
@@ -408,29 +505,32 @@
 
   <!-- SCRIPT -->
   <script>
-
     const SCRIPT_URL =
       "https://script.google.com/macros/s/AKfycbx91eNuAbjR4nqAQfubA7fMk5jmFxFmeHyy8KZSvk_4wWY66CsfWlAzAfDbcqtvN4AOSQ/exec";
 
     async function handleSubmit(e) {
-
       e.preventDefault();
 
       const emailInput = document.getElementById("email");
+      const roleInput = document.getElementById("role");
       const submitBtn = document.getElementById("submitBtn");
       const successMsg = document.getElementById("successMsg");
 
-      const email = emailInput.value;
+      const payload = {
+        email: emailInput.value,
+        role: roleInput.value,
+        source: "cavryon_landing_page",
+        submittedAt: new Date().toISOString()
+      };
 
       submitBtn.innerText = "Submitting...";
       submitBtn.disabled = true;
 
       try {
-
         await fetch(SCRIPT_URL, {
           method: "POST",
           mode: "no-cors",
-          body: JSON.stringify({ email }),
+          body: JSON.stringify(payload),
           headers: {
             "Content-Type": "application/json"
           }
@@ -438,19 +538,16 @@
 
         successMsg.classList.remove("hidden");
         emailInput.value = "";
+        roleInput.value = "";
 
       } catch (err) {
-
         console.error(err);
-        alert("Something went wrong.");
-
+        alert("Something went wrong. Please try again.");
       }
 
-      submitBtn.innerText = "Request Early Access";
+      submitBtn.innerText = "Request Access";
       submitBtn.disabled = false;
-
     }
-
   </script>
 
 </body>
