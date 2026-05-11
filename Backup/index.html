@@ -4,11 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>Cavryon | AI Assistance for Month-End Accounting Work</title>
+  <title>Cavryon | Pre-Close Risk Visibility</title>
 
   <meta
     name="description"
-    content="Cavryon helps accounting teams detect unusual GL activity, investigate reconciliation differences, and reduce repetitive month-end close work without heavy implementation."
+    content="Cavryon helps accounting teams identify high-risk reconciliations, operational bottlenecks, and close delays before they impact month-end close."
   />
 
   <script src="https://cdn.tailwindcss.com"></script>
@@ -25,8 +25,8 @@
 
     <div class="hidden md:flex gap-8 text-gray-300 text-sm">
       <a href="#problem" class="hover:text-white">Problem</a>
-      <a href="#workflow" class="hover:text-white">How It Works</a>
-      <a href="#signals" class="hover:text-white">Use Cases</a>
+      <a href="#workflow" class="hover:text-white">Workflow</a>
+      <a href="#signals" class="hover:text-white">Risk Signals</a>
       <a href="#audience" class="hover:text-white">Who It’s For</a>
     </div>
 
@@ -42,17 +42,17 @@
     <div>
 
       <div class="inline-block mb-5 px-4 py-2 rounded-full bg-blue-600/10 text-blue-400 text-sm border border-blue-500/20">
-        AI Assistance for Month-End Accounting Work
+        Operational Visibility for Month-End Close
       </div>
 
       <h1 class="text-5xl md:text-6xl font-bold leading-tight mb-6">
-        Reduce the Manual Accounting Investigation Work Behind Every Close
+        Know Where Your Close Is At Risk — Before Day 1
       </h1>
 
       <p class="text-gray-300 text-lg leading-relaxed mb-8 max-w-xl">
-        Cavryon helps finance teams detect unusual GL activity, investigate
-        reconciliation differences, identify potential miscoded transactions,
-        and reduce repetitive month-end accounting work — without heavy implementation.
+        Cavryon helps accounting teams identify high-risk reconciliations,
+        operational bottlenecks, and close delays before they impact the
+        month-end close.
       </p>
 
       <!-- WAITLIST FORM -->
@@ -79,7 +79,7 @@
           <option>Controller</option>
           <option>Accounting</option>
           <option>Finance Operations</option>
-          <option>SMB & Mid-Market Finance Teams</option>
+          <option>Finance Transformation</option>
           <option>FP&A</option>
           <option>Founder / Operator</option>
           <option>Other</option>
@@ -99,7 +99,7 @@
       </p>
 
       <p class="text-gray-500 text-sm mt-4">
-        Works with Excel exports, trial balances, QuickBooks, NetSuite, and GL activity downloads.
+        Built for controllers, accounting operations, and finance transformation teams.
       </p>
 
     </div>
@@ -111,16 +111,16 @@
 
         <div>
           <p class="text-gray-400 text-sm">
-            Month-End Review
+            March Close Cycle
           </p>
 
           <h3 class="text-xl font-semibold">
-            Accounting Investigation Queue
+            Operational Risk Dashboard
           </h3>
         </div>
 
         <span class="bg-red-500/10 text-red-400 px-3 py-1 rounded-full text-sm">
-          Review Needed
+          High Risk
         </span>
 
       </div>
@@ -130,40 +130,40 @@
         <thead class="text-gray-500 border-b border-gray-800">
           <tr>
             <th class="py-3">Account</th>
-            <th>Issue Detected</th>
-            <th>Variance</th>
-            <th>Review</th>
+            <th>Risk</th>
+            <th>Exceptions</th>
+            <th>Status</th>
           </tr>
         </thead>
 
         <tbody class="divide-y divide-gray-800">
 
           <tr>
-            <td class="py-4">Sales Tax Liability</td>
-            <td class="text-red-400 font-medium">Payment mismatch</td>
-            <td>$8,421</td>
-            <td class="text-red-400">Investigate</td>
+            <td class="py-4">Revenue Accrual</td>
+            <td class="text-red-400 font-medium">97</td>
+            <td>14</td>
+            <td class="text-red-400">At Risk</td>
           </tr>
 
           <tr>
-            <td class="py-4">Prepaid Expense</td>
-            <td class="text-yellow-400 font-medium">61% MoM increase</td>
-            <td>$42,000</td>
-            <td class="text-yellow-400">Review threshold</td>
+            <td class="py-4">Intercompany</td>
+            <td class="text-yellow-400 font-medium">82</td>
+            <td>7</td>
+            <td class="text-yellow-400">Delayed</td>
           </tr>
 
           <tr>
-            <td class="py-4">Marketing Expense</td>
-            <td class="text-red-400 font-medium">Unusual posting pattern</td>
-            <td>$12,200</td>
-            <td class="text-red-400">Possible miscoding</td>
+            <td class="py-4">Reserve Adjustment</td>
+            <td class="text-red-400 font-medium">91</td>
+            <td>11</td>
+            <td class="text-red-400">Escalated</td>
           </tr>
 
           <tr>
             <td class="py-4">Deferred Revenue</td>
-            <td class="text-yellow-400 font-medium">Variance spike</td>
-            <td>$27,100</td>
-            <td class="text-yellow-400">Check mapping</td>
+            <td class="text-yellow-400 font-medium">74</td>
+            <td>5</td>
+            <td class="text-yellow-400">Review Needed</td>
           </tr>
 
         </tbody>
@@ -173,14 +173,14 @@
       <div class="bg-blue-500/5 border border-blue-500/20 rounded-lg p-4 mt-6">
 
         <p class="text-blue-400 text-xs mb-2 font-medium">
-          Accounting Signals
+          Risk Signals
         </p>
 
         <ul class="list-disc ml-4 text-gray-300 text-xs space-y-1">
-          <li>Potential miscoded transaction based on historical account usage</li>
-          <li>Unusual variance compared with prior months</li>
-          <li>Sales tax payment does not tie to expected liability detail</li>
-          <li>Large transaction may need prepaid or fixed asset review</li>
+          <li>Prepaid balance increased 42% vs prior cycle</li>
+          <li>Historical reconciliation lag detected</li>
+          <li>Delayed upstream dependency impacting readiness</li>
+          <li>Recurring exception pattern across accrual accounts</li>
         </ul>
 
       </div>
@@ -193,31 +193,31 @@
   <section id="problem" class="px-8 py-20 max-w-7xl mx-auto text-center">
 
     <h2 class="text-4xl font-bold mb-5">
-      Controllers Shouldn’t Have to Find Every Issue Manually
+      The Close Doesn’t Fail on Day 1
     </h2>
 
     <p class="text-gray-400 max-w-3xl mx-auto text-lg leading-relaxed mb-12">
-      Every close requires the same accounting detective work: researching variances,
-      reconciling messy accounts, checking unusual entries, and deciding what needs human review.
-      Cavryon helps surface those items faster so controllers can focus judgment where it matters.
+      Most close delays begin weeks earlier through unresolved reconciliations,
+      hidden dependencies, exception spikes, and delayed upstream data.
+      Finance teams usually discover the impact too late.
     </p>
 
     <div class="grid md:grid-cols-4 gap-6">
 
       <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
-        Messy accounts take too long to reconcile
+        Reconciliations remain unresolved too long
       </div>
 
       <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
-        Variance analysis is still too manual
+        Exception spikes are discovered late
       </div>
 
       <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
-        Miscoded or wrong-period entries are hard to spot
+        Hidden dependencies delay close readiness
       </div>
 
       <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
-        Lean teams lose hours to repetitive review work
+        Teams spend Day 1 firefighting instead of closing
       </div>
 
     </div>
@@ -239,11 +239,12 @@
         </div>
 
         <h3 class="text-xl font-semibold mb-3">
-          Upload Accounting Data
+          Detect Operational Risk
         </h3>
 
         <p class="text-gray-400 text-sm leading-relaxed">
-          Start with a GL export, trial balance, or accounting system download from tools like QuickBooks, NetSuite, or Excel.
+          Surface abnormal reconciliation patterns, delayed dependencies,
+          and recurring exception trends.
         </p>
       </div>
 
@@ -253,11 +254,12 @@
         </div>
 
         <h3 class="text-xl font-semibold mb-3">
-          Analyze Patterns and Variances
+          Prioritize What Matters
         </h3>
 
         <p class="text-gray-400 text-sm leading-relaxed">
-          Cavryon compares historical activity, account behavior, transaction thresholds, and period-over-period changes.
+          Identify accounts most likely to impact close timelines
+          and operational readiness.
         </p>
       </div>
 
@@ -267,11 +269,12 @@
         </div>
 
         <h3 class="text-xl font-semibold mb-3">
-          Review Flagged Items
+          Accelerate Resolution
         </h3>
 
         <p class="text-gray-400 text-sm leading-relaxed">
-          Controllers review the unusual items, reconciliation differences, and potential coding issues that need attention.
+          Reduce firefighting and improve operational visibility
+          across the close process.
         </p>
       </div>
 
@@ -283,7 +286,7 @@
   <section id="audience" class="px-8 py-20 max-w-7xl mx-auto">
 
     <h2 class="text-4xl font-bold text-center mb-12">
-      Built for Lean Finance Teams That Still Rely on Judgment
+      Built for Finance Teams Operating Under Close Pressure
     </h2>
 
     <div class="grid md:grid-cols-4 gap-6">
@@ -293,34 +296,34 @@
           Controllers
         </h3>
         <p class="text-gray-400 text-sm">
-          Reduce manual investigation work during close.
+          Reduce surprises during month-end close.
         </p>
       </div>
 
       <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
         <h3 class="font-semibold mb-3">
-          Lean Accounting Teams
+          Accounting Operations
         </h3>
         <p class="text-gray-400 text-sm">
-          Find issues faster without adding headcount.
+          Prioritize operational bottlenecks earlier.
         </p>
       </div>
 
       <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
         <h3 class="font-semibold mb-3">
-          SMB & Mid-Market Finance Teams
+          Finance Transformation
         </h3>
         <p class="text-gray-400 text-sm">
-          Work from Excel exports and accounting downloads.
+          Improve visibility across close workflows.
         </p>
       </div>
 
       <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
         <h3 class="font-semibold mb-3">
-          Cleanup & Catch-Up Projects
+          Reconciliation Teams
         </h3>
         <p class="text-gray-400 text-sm">
-          Analyze messy historical books more efficiently.
+          Detect recurring risk patterns earlier.
         </p>
       </div>
 
@@ -332,37 +335,38 @@
   <section id="signals" class="px-8 py-20 max-w-7xl mx-auto">
 
     <h2 class="text-4xl font-bold text-center mb-5">
-      Example Operational Accounting Signals
+      Example Operational Risk Signals
     </h2>
 
     <p class="text-gray-400 max-w-3xl mx-auto text-center text-lg leading-relaxed mb-12">
-      Cavryon is designed around practical accounting tasks that come up every month-end close and every messy-book cleanup project.
+      Cavryon is designed around the operational patterns that usually
+      create close pressure before teams officially enter the close window.
     </p>
 
     <div class="grid md:grid-cols-2 gap-6">
 
       <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
-        Reconcile sales tax liability detail against prior payments
+        Reconciliation unresolved for 5+ days
       </div>
 
       <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
-        Compare current vs prior months and explain material variances
+        Exception count increased 42% vs prior cycle
       </div>
 
       <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
-        Flag transactions that look miscoded or posted to the wrong period
+        Historical Day 1 delay pattern detected
       </div>
 
       <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
-        Identify large expenses that may need prepaid or fixed asset review
+        Upstream dependency blocking close readiness
       </div>
 
       <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
-        Detect unusual GL activity compared with historical posting patterns
+        Journal aging variance spike identified
       </div>
 
       <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
-        Support cleanup analysis across months or years of messy books
+        Repeated reviewer escalation patterns detected
       </div>
 
     </div>
@@ -380,41 +384,41 @@
 
       <div class="bg-[#111827] border border-gray-800 rounded-xl p-8">
         <h3 class="text-xl font-semibold mb-2">
-          Find Unusual Transactions Faster
+          Detect High-Risk Accounts Earlier
         </h3>
 
         <p class="text-gray-400">
-          Surface entries that do not match historical account patterns or expected period activity.
+          Identify accounts likely to impact close readiness before Day 1.
         </p>
       </div>
 
       <div class="bg-[#111827] border border-gray-800 rounded-xl p-8">
         <h3 class="text-xl font-semibold mb-2">
-          Speed Up Reconciliation Review
+          Prioritize Investigation Effort
         </h3>
 
         <p class="text-gray-400">
-          Identify unmatched entries, timing differences, and unexplained account movements faster.
+          Focus accounting teams on the highest operational risks first.
         </p>
       </div>
 
       <div class="bg-[#111827] border border-gray-800 rounded-xl p-8">
         <h3 class="text-xl font-semibold mb-2">
-          Reduce Manual Variance Analysis
+          Improve Close Visibility
         </h3>
 
         <p class="text-gray-400">
-          Compare periods automatically and highlight the changes most worth reviewing.
+          Surface operational bottlenecks before they become close blockers.
         </p>
       </div>
 
       <div class="bg-[#111827] border border-gray-800 rounded-xl p-8">
         <h3 class="text-xl font-semibold mb-2">
-          Support Controller Judgment
+          Reduce Month-End Firefighting
         </h3>
 
         <p class="text-gray-400">
-          Give controllers a focused list of items to investigate instead of another dashboard to monitor.
+          Enable earlier action and more predictable close execution.
         </p>
       </div>
 
@@ -422,32 +426,36 @@
 
   </section>
 
-  <!-- LIGHTWEIGHT SETUP -->
+  <!-- CLOSE STORIES -->
   <section class="px-8 py-20 max-w-5xl mx-auto">
 
-    <h2 class="text-4xl font-bold text-center mb-5">
-      No Heavy Implementation Required
+    <h2 class="text-4xl font-bold text-center mb-12">
+      Close Stories We’re Exploring
     </h2>
 
-    <p class="text-gray-400 max-w-3xl mx-auto text-center text-lg leading-relaxed mb-12">
-      Cavryon is being designed to work alongside the close process you already have — starting with accounting exports, spreadsheets, and trial balances.
-    </p>
-
-    <div class="grid md:grid-cols-3 gap-6">
+    <div class="space-y-6">
 
       <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
-        <h3 class="font-semibold mb-3">Start with exports</h3>
-        <p class="text-gray-400 text-sm">Use GL activity, trial balance, or account detail downloads.</p>
+        <h3 class="font-semibold mb-2">
+          Why Day 1 Firefighting Happens
+        </h3>
+
+        <p class="text-gray-400">
+          Most close failures begin weeks earlier through unresolved
+          dependencies, recurring reconciliation bottlenecks, and delayed
+          operational signals.
+        </p>
       </div>
 
       <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
-        <h3 class="font-semibold mb-3">Keep your system</h3>
-        <p class="text-gray-400 text-sm">No ERP replacement, no workflow rip-and-replace, and no long IT project.</p>
-      </div>
+        <h3 class="font-semibold mb-2">
+          The Riskiest Accounts Are Rarely the Loudest
+        </h3>
 
-      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
-        <h3 class="font-semibold mb-3">Review, don’t autopost</h3>
-        <p class="text-gray-400 text-sm">Cavryon flags items for human review so controllers stay in control.</p>
+        <p class="text-gray-400">
+          Finance teams often optimize for visible issues, while the
+          highest operational impact may be hidden in recurring patterns.
+        </p>
       </div>
 
     </div>
@@ -458,13 +466,13 @@
   <section class="px-8 py-20 text-center max-w-5xl mx-auto">
 
     <h2 class="text-3xl font-bold mb-6">
-      Built with Controller and Operator Feedback
+      Built by Operators Who Understand Financial Close Complexity
     </h2>
 
     <p class="text-gray-400 text-lg leading-relaxed">
-      Cavryon is being shaped with input from controllers, accounting operators,
-      and finance leaders who understand the practical work behind month-end close,
-      reconciliations, variance analysis, and messy-book cleanup.
+      Cavryon is being built by leaders with deep experience operating
+      enterprise-scale financial data, reconciliation, and accounting systems
+      supporting complex finance organizations.
     </p>
 
   </section>
@@ -473,12 +481,12 @@
   <section class="px-8 py-24 text-center">
 
     <h2 class="text-4xl font-bold mb-5">
-      Spend Less Time Hunting for Accounting Issues.
-      More Time Closing With Confidence.
+      Stop Reacting to the Close.
+      Start Seeing Risk Earlier.
     </h2>
 
     <p class="text-gray-400 text-lg mb-8">
-      Join the early access group for controllers and lean accounting teams.
+      Join the early access group for finance leaders and accounting teams.
     </p>
 
     <a
