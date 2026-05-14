@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Cavryon | Pre-Close Risk Visibility</title>
+
+  <meta
+    name="description"
+    content="Cavryon helps accounting teams identify high-risk reconciliations, operational bottlenecks, and close delays before they impact month-end close."
+  />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-[#0B1020] text-white">
+
+  <!-- NAVBAR -->
+  <nav class="flex items-center justify-between px-8 py-5 border-b border-gray-800 sticky top-0 z-50 bg-[#0B1020]/90 backdrop-blur">
+
+    <div class="text-2xl font-bold tracking-tight">
+      Cavryon
+    </div>
+
+    <div class="hidden md:flex gap-8 text-gray-300 text-sm">
+      <a href="#problem" class="hover:text-white">Problem</a>
+      <a href="#workflow" class="hover:text-white">Workflow</a>
+      <a href="#signals" class="hover:text-white">Risk Signals</a>
+      <a href="#audience" class="hover:text-white">Who It’s For</a>
+    </div>
+
+    <a href="#waitlist" class="bg-blue-600 hover:bg-blue-700 px-5 py-2 rounded-lg text-sm font-medium">
+      Request Early Access
+    </a>
+
+  </nav>
+
+  <!-- HERO -->
+  <section class="grid md:grid-cols-2 gap-12 px-8 py-24 items-center max-w-7xl mx-auto">
+
+    <div>
+
+      <div class="inline-block mb-5 px-4 py-2 rounded-full bg-blue-600/10 text-blue-400 text-sm border border-blue-500/20">
+        Operational Visibility for Month-End Close
+      </div>
+
+      <h1 class="text-5xl md:text-6xl font-bold leading-tight mb-6">
+        Know Where Your Close Is At Risk — Before Day 1
+      </h1>
+
+      <p class="text-gray-300 text-lg leading-relaxed mb-8 max-w-xl">
+        Cavryon helps accounting teams identify high-risk reconciliations,
+        operational bottlenecks, and close delays before they impact the
+        month-end close.
+      </p>
+
+      <!-- WAITLIST FORM -->
+      <form
+        id="waitlist"
+        onsubmit="handleSubmit(event)"
+        class="flex flex-col sm:flex-row gap-3 max-w-2xl"
+      >
+
+        <input
+          type="email"
+          id="email"
+          required
+          placeholder="Enter your work email"
+          class="px-4 py-3 rounded-lg text-black w-full"
+        />
+
+        <select
+          id="role"
+          required
+          class="px-4 py-3 rounded-lg text-black w-full sm:w-56"
+        >
+          <option value="">Select role</option>
+          <option>Controller</option>
+          <option>Accounting</option>
+          <option>Finance Operations</option>
+          <option>Finance Transformation</option>
+          <option>FP&A</option>
+          <option>Founder / Operator</option>
+          <option>Other</option>
+        </select>
+
+        <button
+          id="submitBtn"
+          class="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg font-medium whitespace-nowrap"
+        >
+          Request Access
+        </button>
+
+      </form>
+
+      <p id="successMsg" class="text-green-400 text-sm mt-3 hidden">
+        Thanks — you’re on the early access list.
+      </p>
+
+      <p class="text-gray-500 text-sm mt-4">
+        Built for controllers, accounting operations, and finance transformation teams.
+      </p>
+
+    </div>
+
+    <!-- DASHBOARD MOCK -->
+    <div class="bg-[#111827] border border-gray-700 rounded-2xl p-6 shadow-2xl">
+
+      <div class="flex justify-between items-center mb-6">
+
+        <div>
+          <p class="text-gray-400 text-sm">
+            March Close Cycle
+          </p>
+
+          <h3 class="text-xl font-semibold">
+            Operational Risk Dashboard
+          </h3>
+        </div>
+
+        <span class="bg-red-500/10 text-red-400 px-3 py-1 rounded-full text-sm">
+          High Risk
+        </span>
+
+      </div>
+
+      <table class="w-full text-left text-sm">
+
+        <thead class="text-gray-500 border-b border-gray-800">
+          <tr>
+            <th class="py-3">Account</th>
+            <th>Risk</th>
+            <th>Exceptions</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+
+        <tbody class="divide-y divide-gray-800">
+
+          <tr>
+            <td class="py-4">Revenue Accrual</td>
+            <td class="text-red-400 font-medium">97</td>
+            <td>14</td>
+            <td class="text-red-400">At Risk</td>
+          </tr>
+
+          <tr>
+            <td class="py-4">Intercompany</td>
+            <td class="text-yellow-400 font-medium">82</td>
+            <td>7</td>
+            <td class="text-yellow-400">Delayed</td>
+          </tr>
+
+          <tr>
+            <td class="py-4">Reserve Adjustment</td>
+            <td class="text-red-400 font-medium">91</td>
+            <td>11</td>
+            <td class="text-red-400">Escalated</td>
+          </tr>
+
+          <tr>
+            <td class="py-4">Deferred Revenue</td>
+            <td class="text-yellow-400 font-medium">74</td>
+            <td>5</td>
+            <td class="text-yellow-400">Review Needed</td>
+          </tr>
+
+        </tbody>
+
+      </table>
+
+      <div class="bg-blue-500/5 border border-blue-500/20 rounded-lg p-4 mt-6">
+
+        <p class="text-blue-400 text-xs mb-2 font-medium">
+          Risk Signals
+        </p>
+
+        <ul class="list-disc ml-4 text-gray-300 text-xs space-y-1">
+          <li>Prepaid balance increased 42% vs prior cycle</li>
+          <li>Historical reconciliation lag detected</li>
+          <li>Delayed upstream dependency impacting readiness</li>
+          <li>Recurring exception pattern across accrual accounts</li>
+        </ul>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- PROBLEM -->
+  <section id="problem" class="px-8 py-20 max-w-7xl mx-auto text-center">
+
+    <h2 class="text-4xl font-bold mb-5">
+      The Close Doesn’t Fail on Day 1
+    </h2>
+
+    <p class="text-gray-400 max-w-3xl mx-auto text-lg leading-relaxed mb-12">
+      Most close delays begin weeks earlier through unresolved reconciliations,
+      hidden dependencies, exception spikes, and delayed upstream data.
+      Finance teams usually discover the impact too late.
+    </p>
+
+    <div class="grid md:grid-cols-4 gap-6">
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
+        Reconciliations remain unresolved too long
+      </div>
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
+        Exception spikes are discovered late
+      </div>
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
+        Hidden dependencies delay close readiness
+      </div>
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
+        Teams spend Day 1 firefighting instead of closing
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section id="workflow" class="px-8 py-20 max-w-7xl mx-auto text-center">
+
+    <h2 class="text-4xl font-bold mb-12">
+      How Cavryon Works
+    </h2>
+
+    <div class="grid md:grid-cols-3 gap-8">
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-8">
+        <div class="text-blue-400 text-sm mb-2">
+          Step 1
+        </div>
+
+        <h3 class="text-xl font-semibold mb-3">
+          Detect Operational Risk
+        </h3>
+
+        <p class="text-gray-400 text-sm leading-relaxed">
+          Surface abnormal reconciliation patterns, delayed dependencies,
+          and recurring exception trends.
+        </p>
+      </div>
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-8">
+        <div class="text-blue-400 text-sm mb-2">
+          Step 2
+        </div>
+
+        <h3 class="text-xl font-semibold mb-3">
+          Prioritize What Matters
+        </h3>
+
+        <p class="text-gray-400 text-sm leading-relaxed">
+          Identify accounts most likely to impact close timelines
+          and operational readiness.
+        </p>
+      </div>
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-8">
+        <div class="text-blue-400 text-sm mb-2">
+          Step 3
+        </div>
+
+        <h3 class="text-xl font-semibold mb-3">
+          Accelerate Resolution
+        </h3>
+
+        <p class="text-gray-400 text-sm leading-relaxed">
+          Reduce firefighting and improve operational visibility
+          across the close process.
+        </p>
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- SUPPORTED INPUTS -->
+  <section class="px-8 py-20 max-w-7xl mx-auto text-center">
+
+    <h2 class="text-4xl font-bold mb-5">
+      Start with the Data You Already Have
+    </h2>
+
+    <p class="text-gray-400 max-w-3xl mx-auto text-lg leading-relaxed mb-12">
+      Cavryon is designed for real-world accounting environments — including Excel-heavy close processes and messy historical books.
+    </p>
+
+    <div class="grid md:grid-cols-5 gap-6">
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
+        QuickBooks Exports
+      </div>
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
+        NetSuite GL Detail
+      </div>
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
+        Trial Balance Files
+      </div>
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
+        Excel Reconciliation Schedules
+      </div>
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
+        Journal Activity Exports
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- WHO IT'S FOR -->
+  <section id="audience" class="px-8 py-20 max-w-7xl mx-auto">
+
+    <h2 class="text-4xl font-bold text-center mb-12">
+      Built for Finance Teams Operating Under Close Pressure
+    </h2>
+
+    <div class="grid md:grid-cols-4 gap-6">
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
+        <h3 class="font-semibold mb-3">
+          Controllers
+        </h3>
+        <p class="text-gray-400 text-sm">
+          Reduce surprises during month-end close.
+        </p>
+      </div>
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
+        <h3 class="font-semibold mb-3">
+          Accounting Operations
+        </h3>
+        <p class="text-gray-400 text-sm">
+          Prioritize operational bottlenecks earlier.
+        </p>
+      </div>
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
+        <h3 class="font-semibold mb-3">
+          Finance Transformation
+        </h3>
+        <p class="text-gray-400 text-sm">
+          Improve visibility across close workflows.
+        </p>
+      </div>
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
+        <h3 class="font-semibold mb-3">
+          Reconciliation Teams
+        </h3>
+        <p class="text-gray-400 text-sm">
+          Detect recurring risk patterns earlier.
+        </p>
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- RISK SIGNALS -->
+  <section id="signals" class="px-8 py-20 max-w-7xl mx-auto">
+
+    <h2 class="text-4xl font-bold text-center mb-5">
+      Example Operational Risk Signals
+    </h2>
+
+    <p class="text-gray-400 max-w-3xl mx-auto text-center text-lg leading-relaxed mb-12">
+      Cavryon is designed around the operational patterns that usually
+      create close pressure before teams officially enter the close window.
+    </p>
+
+    <div class="grid md:grid-cols-2 gap-6">
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
+        Reconciliation unresolved for 5+ days
+      </div>
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
+        Exception count increased 42% vs prior cycle
+      </div>
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
+        Historical Day 1 delay pattern detected
+      </div>
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
+        Upstream dependency blocking close readiness
+      </div>
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
+        Journal aging variance spike identified
+      </div>
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
+        Repeated reviewer escalation patterns detected
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- CAPABILITIES -->
+  <section id="features" class="px-8 py-20 max-w-7xl mx-auto">
+
+    <h2 class="text-4xl font-bold text-center mb-12">
+      What Cavryon Helps You Do
+    </h2>
+
+    <div class="grid md:grid-cols-2 gap-6">
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-8">
+        <h3 class="text-xl font-semibold mb-2">
+          Detect High-Risk Accounts Earlier
+        </h3>
+
+        <p class="text-gray-400">
+          Identify accounts likely to impact close readiness before Day 1.
+        </p>
+      </div>
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-8">
+        <h3 class="text-xl font-semibold mb-2">
+          Prioritize Investigation Effort
+        </h3>
+
+        <p class="text-gray-400">
+          Focus accounting teams on the highest operational risks first.
+        </p>
+      </div>
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-8">
+        <h3 class="text-xl font-semibold mb-2">
+          Improve Close Visibility
+        </h3>
+
+        <p class="text-gray-400">
+          Surface operational bottlenecks before they become close blockers.
+        </p>
+      </div>
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-8">
+        <h3 class="text-xl font-semibold mb-2">
+          Reduce Month-End Firefighting
+        </h3>
+
+        <p class="text-gray-400">
+          Enable earlier action and more predictable close execution.
+        </p>
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- CLOSE STORIES -->
+  <section class="px-8 py-20 max-w-5xl mx-auto">
+
+    <h2 class="text-4xl font-bold text-center mb-12">
+      Close Stories We’re Exploring
+    </h2>
+
+    <div class="space-y-6">
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
+        <h3 class="font-semibold mb-2">
+          Why Day 1 Firefighting Happens
+        </h3>
+
+        <p class="text-gray-400">
+          Most close failures begin weeks earlier through unresolved
+          dependencies, recurring reconciliation bottlenecks, and delayed
+          operational signals.
+        </p>
+      </div>
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
+        <h3 class="font-semibold mb-2">
+          The Riskiest Accounts Are Rarely the Loudest
+        </h3>
+
+        <p class="text-gray-400">
+          Finance teams often optimize for visible issues, while the
+          highest operational impact may be hidden in recurring patterns.
+        </p>
+      </div>
+
+    </div>
+
+  </section>
+
+
+
+  <!-- QUESTIONS -->
+  <section class="px-8 py-20 max-w-6xl mx-auto">
+
+    <h2 class="text-4xl font-bold text-center mb-5">
+      Questions Cavryon Helps Surface
+    </h2>
+
+    <p class="text-gray-400 max-w-3xl mx-auto text-center text-lg leading-relaxed mb-12">
+      Cavryon focuses on helping accounting teams investigate issues faster during close.
+    </p>
+
+    <div class="grid md:grid-cols-2 gap-6">
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
+        Why did prepaid expense increase 61% this month?
+      </div>
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
+        Which entries may be posted to the wrong period?
+      </div>
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
+        Which reconciliations are repeatedly delayed?
+      </div>
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
+        What changed in this liability account versus prior close?
+      </div>
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
+        Which transactions look inconsistent with historical posting patterns?
+      </div>
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
+        Which transactions should potentially be capitalized?
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- EXAMPLE WORKFLOW -->
+  <section class="px-8 py-20 max-w-6xl mx-auto">
+
+    <h2 class="text-4xl font-bold text-center mb-5">
+      Example Accounting Investigation Workflow
+    </h2>
+
+    <p class="text-gray-400 max-w-3xl mx-auto text-center text-lg leading-relaxed mb-12">
+      Cavryon helps controllers investigate accounting issues faster using practical workflows that happen during every close.
+    </p>
+
+    <div class="bg-[#111827] border border-gray-800 rounded-2xl p-8 shadow-xl">
+
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <p class="text-gray-500 text-sm">Account Investigation</p>
+          <h3 class="text-2xl font-semibold">Sales Tax Liability Reconciliation</h3>
+        </div>
+
+        <span class="bg-yellow-500/10 text-yellow-400 px-3 py-1 rounded-full text-sm">
+          Review Recommended
+        </span>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-8">
+
+        <div>
+          <h4 class="text-lg font-semibold mb-4 text-white">
+            Detected Signals
+          </h4>
+
+          <ul class="space-y-3 text-gray-300 text-sm">
+            <li>• Payment mismatch of $8,421 detected</li>
+            <li>• Prior-period carryforward inconsistency identified</li>
+            <li>• Missing offsetting journal entry suspected</li>
+            <li>• Historical posting pattern deviation flagged</li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="text-lg font-semibold mb-4 text-white">
+            Suggested Review
+          </h4>
+
+          <div class="bg-[#0B1020] border border-gray-700 rounded-xl p-5 text-sm text-gray-300 leading-relaxed">
+            Investigate timing difference between payment posting and accrual reversal.
+            Review unmatched entries from prior close cycle and validate offsetting journal activity.
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- CREDIBILITY -->
+  <section class="px-8 py-20 text-center max-w-5xl mx-auto">
+
+    <h2 class="text-3xl font-bold mb-6">
+      Built by Finance and Data Leaders Who Understand Close Operations
+    </h2>
+
+    <p class="text-gray-400 text-lg leading-relaxed">
+      Cavryon is being designed with direct input from controllers, accounting operators, and finance teams managing real month-end close pressure across SMB and enterprise environments.
+    </p>
+
+  </section>
+
+
+  <!-- LIGHTWEIGHT SETUP -->
+  <section class="px-8 py-20 max-w-5xl mx-auto text-center">
+
+    <h2 class="text-4xl font-bold mb-6">
+      No Heavy Implementation Required
+    </h2>
+
+    <p class="text-gray-400 text-lg leading-relaxed max-w-3xl mx-auto mb-10">
+      Cavryon is designed to work alongside existing accounting workflows — without ERP replacement projects or major process redesign.
+    </p>
+
+    <div class="grid md:grid-cols-4 gap-6">
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
+        No ERP Migration
+      </div>
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
+        No Workflow Replacement
+      </div>
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
+        No Large IT Project
+      </div>
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
+        Start with Existing Exports
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- FINAL CTA -->
+  <section class="px-8 py-24 text-center">
+
+    <h2 class="text-4xl font-bold mb-5">
+      Reduce Manual Accounting Investigation Work During Every Close.
+    </h2>
+
+    <p class="text-gray-400 text-lg mb-8">
+      Join the early access group for controllers and accounting teams exploring practical AI-assisted close workflows.
+    </p>
+
+    <a
+      href="#waitlist"
+      class="bg-blue-600 hover:bg-blue-700 px-8 py-4 rounded-lg font-medium"
+    >
+      Join Early Access
+    </a>
+
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-gray-800 px-8 py-8 text-center text-gray-500">
+    Cavryon © 2026
+  </footer>
+
+  <!-- SCRIPT -->
+  <script>
+    const SCRIPT_URL =
+      "https://script.google.com/macros/s/AKfycbx91eNuAbjR4nqAQfubA7fMk5jmFxFmeHyy8KZSvk_4wWY66CsfWlAzAfDbcqtvN4AOSQ/exec";
+
+    async function handleSubmit(e) {
+      e.preventDefault();
+
+      const emailInput = document.getElementById("email");
+      const roleInput = document.getElementById("role");
+      const submitBtn = document.getElementById("submitBtn");
+      const successMsg = document.getElementById("successMsg");
+
+      const payload = {
+        email: emailInput.value,
+        role: roleInput.value,
+        source: "cavryon_landing_page",
+        submittedAt: new Date().toISOString()
+      };
+
+      submitBtn.innerText = "Submitting...";
+      submitBtn.disabled = true;
+
+      try {
+        await fetch(SCRIPT_URL, {
+          method: "POST",
+          mode: "no-cors",
+          body: JSON.stringify(payload),
+          headers: {
+            "Content-Type": "application/json"
+          }
+        });
+
+        successMsg.classList.remove("hidden");
+        emailInput.value = "";
+        roleInput.value = "";
+
+      } catch (err) {
+        console.error(err);
+        alert("Something went wrong. Please try again.");
+      }
+
+      submitBtn.innerText = "Request Access";
+      submitBtn.disabled = false;
+    }
+  </script>
+
+</body>
+</html>
