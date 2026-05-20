@@ -52,7 +52,11 @@
       <!-- LEFT -->
       <div class="bg-[#111827] border border-gray-800 rounded-2xl p-8">
 
-        <form class="space-y-5">
+        <form
+          id="contactForm"
+          onsubmit="submitContact(event)"
+          class="space-y-5"
+        >
 
           <div>
             <label class="block text-sm text-gray-400 mb-2">
@@ -61,6 +65,8 @@
 
             <input
               type="text"
+              id="name"
+              required
               class="w-full bg-[#0B1020] border border-gray-700 rounded-lg px-4 py-3"
               placeholder="Your name"
             />
@@ -73,6 +79,8 @@
 
             <input
               type="email"
+              id="email"
+              required
               class="w-full bg-[#0B1020] border border-gray-700 rounded-lg px-4 py-3"
               placeholder="you@company.com"
             />
@@ -85,6 +93,7 @@
 
             <input
               type="text"
+              id="company"
               class="w-full bg-[#0B1020] border border-gray-700 rounded-lg px-4 py-3"
               placeholder="Company name"
             />
@@ -95,7 +104,10 @@
               Role
             </label>
 
-            <select class="w-full bg-[#0B1020] border border-gray-700 rounded-lg px-4 py-3">
+            <select
+              id="role"
+              class="w-full bg-[#0B1020] border border-gray-700 rounded-lg px-4 py-3"
+            >
               <option>Controller</option>
               <option>Accountant</option>
               <option>Finance Lead</option>
@@ -111,6 +123,7 @@
             </label>
 
             <textarea
+              id="message"
               rows="5"
               class="w-full bg-[#0B1020] border border-gray-700 rounded-lg px-4 py-3"
               placeholder="Tell us about your reconciliation, cleanup, or reporting challenges..."
@@ -118,10 +131,18 @@
           </div>
 
           <button
+            id="submitBtn"
             class="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg font-medium"
           >
             Send Message
           </button>
+
+          <p
+            id="successMsg"
+            class="text-green-400 text-sm hidden"
+          >
+            Thanks — we’ll reach out shortly.
+          </p>
 
           <p class="text-gray-500 text-xs">
             We read every submission personally.
@@ -197,6 +218,65 @@
     </div>
 
   </section>
+
+  <!-- SCRIPT -->
+  <script>
+
+    const SCRIPT_URL =
+      "https://script.google.com/macros/s/AKfycbxWTv2GFZZPUIzTwb-wCE3meF9AKKawcJMmOfoxApWjANOLzGcWCEuzro7MVFB6h-e4/exec";
+
+    async function submitContact(e) {
+
+      e.preventDefault();
+
+      const submitBtn =
+        document.getElementById("submitBtn");
+
+      submitBtn.innerText = "Submitting...";
+      submitBtn.disabled = true;
+
+      const payload = {
+        name: document.getElementById("name").value,
+        email: document.getElementById("email").value,
+        company: document.getElementById("company").value,
+        role: document.getElementById("role").value,
+        message: document.getElementById("message").value,
+        source: "contact_page"
+      };
+
+      try {
+
+        await fetch(SCRIPT_URL, {
+          method: "POST",
+          mode: "no-cors",
+          body: JSON.stringify(payload),
+          headers: {
+            "Content-Type": "application/json"
+          }
+        });
+
+        document
+          .getElementById("successMsg")
+          .classList.remove("hidden");
+
+        document
+          .getElementById("contactForm")
+          .reset();
+
+      } catch (err) {
+
+        console.error(err);
+
+        alert("Something went wrong.");
+
+      }
+
+      submitBtn.innerText = "Send Message";
+      submitBtn.disabled = false;
+
+    }
+
+  </script>
 
 </body>
 </html>
