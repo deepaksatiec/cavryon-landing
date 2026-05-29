@@ -32,11 +32,8 @@
     </div>
 
 <div class="flex gap-3">
-  <a href="#waitlist" class="bg-blue-600 hover:bg-blue-700 px-5 py-2 rounded-lg text-sm font-medium">
-    Request Early Access
-  </a>
 
-  <a href="https://calendly.com/YOUR-CALENDLY-LINK"
+  <a href="https://calendly.com/y-cavryon"
      target="_blank"
      class="border border-gray-600 hover:border-white px-5 py-2 rounded-lg text-sm font-medium">
     Book Research Call
@@ -110,6 +107,7 @@
       </p>
 
     </div>
+
 
     <!-- DASHBOARD MOCK -->
     <div class="bg-[#111827] border border-gray-700 rounded-2xl p-6 shadow-2xl">
@@ -190,6 +188,39 @@
     </div>
 
   </section>
+
+<!-- CONTROLLER RESEARCH -->
+<section class="px-8 py-20 max-w-5xl mx-auto">
+
+  <div class="bg-[#111827] border border-gray-800 rounded-3xl p-10 text-center">
+
+    <div class="text-blue-400 text-sm mb-4">
+      CONTROLLER RESEARCH PROGRAM
+    </div>
+
+    <h2 class="text-4xl font-bold mb-6">
+      Help Shape the Future of Month-End Close
+    </h2>
+
+    <p class="text-gray-400 text-lg leading-relaxed max-w-3xl mx-auto mb-8">
+      We're speaking with Controllers, Accounting Managers, and Fractional CFOs to better understand what creates the most investigation work during month-end close.
+    </p>
+
+    <p class="text-gray-300 mb-8">
+      No sales pitch. Just a 20-minute conversation about close processes, reconciliation challenges, and accounting workflows.
+    </p>
+
+    <a
+      href="https://calendly.com/YOUR-CALENDLY-LINK"
+      target="_blank"
+      class="bg-blue-600 hover:bg-blue-700 px-8 py-4 rounded-lg font-medium"
+    >
+      Schedule a Research Call
+    </a>
+
+  </div>
+
+</section>
 
   <!-- FEATURES -->
   <section id="features" class="px-8 py-20 max-w-7xl mx-auto text-center">
@@ -459,8 +490,27 @@
     </h2>
 
     <p class="text-gray-400 text-lg mb-8">
-      Join the early access group for startups and SMB finance teams exploring AI-powered accounting workflows.
+      Join Controllers and finance leaders helping shape the future of month-end close.
     </p>
+
+    <div class="flex justify-center gap-4 mt-8">
+
+  <a
+    href="#waitlist"
+    class="bg-blue-600 hover:bg-blue-700 px-8 py-4 rounded-lg font-medium"
+  >
+    Join Early Access
+  </a>
+
+  <a
+    href="https://calendly.com/YOUR-CALENDLY-LINK"
+    target="_blank"
+    class="border border-gray-600 hover:border-white px-8 py-4 rounded-lg font-medium"
+  >
+    Book Research Call
+  </a>
+
+</div>
 
     <a
       href="#waitlist"
@@ -494,16 +544,19 @@
       const roleInput = document.getElementById("role");
       const submitBtn = document.getElementById("submitBtn");
       const successMsg = document.getElementById("successMsg");
+      const painPointInput = document.getElementById("painPoint");
 
       const payload = {
         email: emailInput.value,
         role: roleInput.value,
+        painPoint: painPointInput.value,
         source: "cavryon_landing_page",
         submittedAt: new Date().toISOString()
       };
 
       submitBtn.innerText = "Submitting...";
       submitBtn.disabled = true;
+      painPointInput.value = "";
 
       try {
         await fetch(SCRIPT_URL, {
