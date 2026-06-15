@@ -8,7 +8,7 @@
 
   <meta
     name="description"
-    content="Cavryon helps startups and SMB finance teams reconcile accounts faster, analyze GL anomalies, and clean up messy books using AI."
+    content="Cavryon scans your GL export before month-end close and flags duplicates, vendor miscoding, prepaid candidates, and unusual activity — returned as a flagged Excel workbook. No ERP integration needed."
   />
 
   <script src="https://cdn.tailwindcss.com"></script>
@@ -56,7 +56,7 @@
       </h1>
 
       <p class="text-gray-300 text-lg leading-relaxed mb-8 max-w-xl">
-        Cavryon helps Controllers and finance teams identify accounting issues before month-end close, reducing investigation work, reconciliation effort, and unexpected surprises.
+        Upload your GL export. Get back a flagged workbook showing exactly what needs investigation — before close day.
       </p>
 
       <!-- WAITLIST FORM -->
@@ -101,6 +101,11 @@
       <p id="successMsg" class="text-green-400 text-sm mt-3 hidden">
         Thanks — you’re on the early access list.
       </p>
+
+      <p class="text-gray-500 text-sm mt-6 italic border-l border-blue-500 pl-4">
+  "Finally something that tells me what to look at instead of making me go find it." 
+  <span class="not-italic">— Controller, SaaS company</span>
+</p>
 
       <p class="text-gray-500 text-sm mt-4">
         Works with QuickBooks exports, Excel schedules, trial balances, and GL activity files.
@@ -537,7 +542,7 @@
   <section class="px-8 py-24 text-center">
 
     <h2 class="text-4xl font-bold mb-5">
-      Spend Less Time Cleaning Up Your Books
+      Stop Finding Problems at 9pm on Close Day
     </h2>
 
     <p class="text-gray-400 text-lg mb-8">
@@ -550,7 +555,7 @@
     href="#waitlist"
     class="bg-blue-600 hover:bg-blue-700 px-8 py-4 rounded-lg font-medium"
   >
-    Scan Your First GL File Free" or "Start Your First Pre-Close Review
+    Scan Your First GL File Free
   </a>
 
   <a
@@ -588,7 +593,7 @@
       const roleInput = document.getElementById("role");
       const submitBtn = document.getElementById("submitBtn");
       const successMsg = document.getElementById("successMsg");
-      const painPointInput = document.getElementById("painPoint");
+      // const painPointInput = document.getElementById("painPoint");
 
       const payload = {
         email: emailInput.value,
