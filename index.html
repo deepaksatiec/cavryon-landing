@@ -12,6 +12,7 @@
   />
 
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="icon" type="image/svg+xml" href="/cavryon-favicon.svg">
 </head>
 
 <body class="bg-[#0B1020] text-white">
@@ -593,19 +594,16 @@
       const roleInput = document.getElementById("role");
       const submitBtn = document.getElementById("submitBtn");
       const successMsg = document.getElementById("successMsg");
-      // const painPointInput = document.getElementById("painPoint");
 
       const payload = {
         email: emailInput.value,
         role: roleInput.value,
-        painPoint: painPointInput.value,
         source: "cavryon_landing_page",
         submittedAt: new Date().toISOString()
       };
 
       submitBtn.innerText = "Submitting...";
       submitBtn.disabled = true;
-      painPointInput.value = "";
 
       try {
         await fetch(SCRIPT_URL, {
