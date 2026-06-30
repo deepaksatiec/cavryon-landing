@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Blog | Accounting Intelligence for Controllers | Cavryon</title>
+  <meta name="description" content="Practical insights for Controllers and SMB finance teams — GL investigation, month-end close, duplicate detection, and accounting intelligence." />
+  <meta name="keywords" content="controller blog, accounting intelligence, month end close, GL review, SMB accounting" />
+  <link rel="canonical" href="https://www.cavryon.ai/blog" />
+  <link rel="icon" type="image/svg+xml" href="/cavryon-favicon.svg">
+  <meta property="og:title" content="Blog | Accounting Intelligence for Controllers | Cavryon" />
+  <meta property="og:description" content="Practical insights for Controllers and SMB finance teams." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://www.cavryon.ai/blog" />
+</head>
+
+<body class="bg-[#0B1020] text-white">
+
+  <!-- NAV -->
+  <nav class="flex items-center justify-between px-8 py-5 border-b border-gray-800 sticky top-0 z-50 bg-[#0B1020]/90 backdrop-blur">
+    <a href="/" class="text-2xl font-bold tracking-tight">Cavryon</a>
+    <div class="hidden md:flex gap-8 text-gray-300 text-sm">
+      <a href="/#features" class="hover:text-white">Features</a>
+      <a href="/#workflow" class="hover:text-white">Workflow</a>
+      <a href="/blog" class="text-white font-medium">Blog</a>
+      <a href="/resources.html" class="hover:text-white">Resources</a>
+      <a href="/contact.html" class="hover:text-white">Contact</a>
+    </div>
+    <a href="https://calendly.com/y-cavryon" target="_blank"
+       class="bg-blue-600 hover:bg-blue-700 px-5 py-2 rounded-lg text-sm font-medium">
+      Book a Demo
+    </a>
+  </nav>
+
+  <!-- HERO -->
+  <section class="px-8 py-16 max-w-6xl mx-auto">
+    <div class="max-w-3xl">
+      <div class="inline-block mb-5 px-4 py-2 rounded-full bg-blue-600/10 text-blue-400 text-sm border border-blue-500/20">
+        Accounting Intelligence Blog
+      </div>
+      <h1 class="text-5xl font-bold leading-tight mb-4">
+        Practical insights for Controllers
+      </h1>
+      <p class="text-gray-400 text-lg leading-relaxed">
+        GL investigation, month-end close, duplicate detection, and what it actually takes to keep books clean at a growing company.
+      </p>
+    </div>
+  </section>
+
+  <!-- CATEGORY FILTER -->
+  <section class="px-8 pb-8 max-w-6xl mx-auto">
+    <div class="flex flex-wrap gap-3">
+      <button onclick="filterPosts('all')" id="filter-all"
+        class="filter-btn active px-4 py-2 rounded-full text-sm font-medium bg-blue-600 text-white border border-blue-600">
+        All Posts
+      </button>
+      <button onclick="filterPosts('gl-investigation')" id="filter-gl-investigation"
+        class="filter-btn px-4 py-2 rounded-full text-sm font-medium bg-transparent text-gray-400 border border-gray-700 hover:border-gray-500">
+        GL Investigation
+      </button>
+      <button onclick="filterPosts('month-end-close')" id="filter-month-end-close"
+        class="filter-btn px-4 py-2 rounded-full text-sm font-medium bg-transparent text-gray-400 border border-gray-700 hover:border-gray-500">
+        Month-End Close
+      </button>
+      <button onclick="filterPosts('duplicates')" id="filter-duplicates"
+        class="filter-btn px-4 py-2 rounded-full text-sm font-medium bg-transparent text-gray-400 border border-gray-700 hover:border-gray-500">
+        Duplicate Detection
+      </button>
+      <button onclick="filterPosts('accounting-intelligence')" id="filter-accounting-intelligence"
+        class="filter-btn px-4 py-2 rounded-full text-sm font-medium bg-transparent text-gray-400 border border-gray-700 hover:border-gray-500">
+        Accounting Intelligence
+      </button>
+    </div>
+  </section>
+
+  <!-- FEATURED POST -->
+  <section class="px-8 pb-12 max-w-6xl mx-auto" id="featured-post">
+    <a href="/blog/duplicate-transactions-quickbooks"
+       class="block bg-[#111827] border border-gray-800 rounded-2xl p-8 hover:border-blue-500/50 transition group">
+      <div class="grid md:grid-cols-2 gap-8 items-center">
+        <div>
+          <div class="flex items-center gap-3 mb-4">
+            <span class="px-3 py-1 rounded-full text-xs font-medium bg-blue-600/10 text-blue-400 border border-blue-500/20">
+              Duplicate Detection
+            </span>
+            <span class="text-gray-500 text-sm">June 29, 2026 · 5 min read</span>
+          </div>
+          <h2 class="text-3xl font-bold mb-4 group-hover:text-blue-400 transition leading-tight">
+            Why Duplicate Transactions Slip Through QuickBooks — And How to Find Them
+          </h2>
+          <p class="text-gray-400 leading-relaxed mb-6">
+            Duplicate transactions are one of the most common — and most costly — issues Controllers find during month-end close. Here's why they happen, why QuickBooks misses them, and how to catch them before they become problems.
+          </p>
+          <div class="flex items-center gap-2 text-blue-400 text-sm font-medium">
+            Read article <span class="group-hover:translate-x-1 transition">→</span>
+          </div>
+        </div>
+        <div class="bg-[#0B1020] rounded-xl p-6 border border-gray-800">
+          <div class="text-xs text-gray-500 mb-3 font-medium uppercase tracking-wider">Example — Flagged GL Row</div>
+          <div class="space-y-2">
+            <div class="flex justify-between items-center py-2 px-3 rounded-lg bg-red-950/30 border border-red-900/30">
+              <div>
+                <div class="text-sm text-white font-medium">Acme Software Inc</div>
+                <div class="text-xs text-gray-400">Office Expense · Jun 12</div>
+              </div>
+              <div class="text-right">
+                <div class="text-sm text-white">$2,850</div>
+                <div class="text-xs text-red-400 font-medium">⚠ Duplicate</div>
+              </div>
+            </div>
+            <div class="flex justify-between items-center py-2 px-3 rounded-lg bg-red-950/30 border border-red-900/30">
+              <div>
+                <div class="text-sm text-white font-medium">Acme Software Inc</div>
+                <div class="text-xs text-gray-400">Office Expense · Jun 14</div>
+              </div>
+              <div class="text-right">
+                <div class="text-sm text-white">$2,850</div>
+                <div class="text-xs text-red-400 font-medium">⚠ Duplicate</div>
+              </div>
+            </div>
+            <div class="flex justify-between items-center py-2 px-3 rounded-lg">
+              <div>
+                <div class="text-sm text-gray-400">Uplift Desk</div>
+                <div class="text-xs text-gray-500">Office Expense · Jun 15</div>
+              </div>
+              <div class="text-right">
+                <div class="text-sm text-gray-400">$1,200</div>
+                <div class="text-xs text-green-400 font-medium">✓ Clean</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </a>
+  </section>
+
+  <!-- BLOG GRID -->
+  <section class="px-8 pb-20 max-w-6xl mx-auto">
+    <div class="grid md:grid-cols-3 gap-6" id="blog-grid">
+
+      <!-- Post 1 -->
+      <article class="blog-card" data-category="gl-investigation">
+        <a href="/blog/why-month-end-investigation-takes-hours"
+           class="block bg-[#111827] border border-gray-800 rounded-xl p-6 hover:border-blue-500/50 transition group h-full">
+          <div class="flex items-center gap-2 mb-4">
+            <span class="px-2 py-1 rounded-full text-xs font-medium bg-blue-600/10 text-blue-400 border border-blue-500/20">
+              GL Investigation
+            </span>
+          </div>
+          <h3 class="text-lg font-semibold mb-3 group-hover:text-blue-400 transition leading-snug">
+            Why GL Investigation Takes Hours When the Fix Takes Minutes
+          </h3>
+          <p class="text-gray-400 text-sm leading-relaxed mb-4">
+            The most frustrating pattern in month-end close — and what it tells us about how accounting software has been built.
+          </p>
+          <div class="flex items-center justify-between mt-auto pt-4 border-t border-gray-800">
+            <span class="text-gray-500 text-xs">June 25, 2026 · 4 min</span>
+            <span class="text-blue-400 text-xs group-hover:translate-x-1 transition">Read →</span>
+          </div>
+        </a>
+      </article>
+
+      <!-- Post 2 -->
+      <article class="blog-card" data-category="month-end-close">
+        <a href="/blog/what-controllers-dread-before-close"
+           class="block bg-[#111827] border border-gray-800 rounded-xl p-6 hover:border-blue-500/50 transition group h-full">
+          <div class="flex items-center gap-2 mb-4">
+            <span class="px-2 py-1 rounded-full text-xs font-medium bg-purple-600/10 text-purple-400 border border-purple-500/20">
+              Month-End Close
+            </span>
+          </div>
+          <h3 class="text-lg font-semibold mb-3 group-hover:text-blue-400 transition leading-snug">
+            What Controllers Dread Before They Open the GL
+          </h3>
+          <p class="text-gray-400 text-sm leading-relaxed mb-4">
+            The feeling before close isn't about the work. It's about what you know is in there but haven't found yet.
+          </p>
+          <div class="flex items-center justify-between mt-auto pt-4 border-t border-gray-800">
+            <span class="text-gray-500 text-xs">June 22, 2026 · 3 min</span>
+            <span class="text-blue-400 text-xs group-hover:translate-x-1 transition">Read →</span>
+          </div>
+        </a>
+      </article>
+
+      <!-- Post 3 -->
+      <article class="blog-card" data-category="accounting-intelligence">
+        <a href="/blog/is-the-close-done-vs-is-the-close-right"
+           class="block bg-[#111827] border border-gray-800 rounded-xl p-6 hover:border-blue-500/50 transition group h-full">
+          <div class="flex items-center gap-2 mb-4">
+            <span class="px-2 py-1 rounded-full text-xs font-medium bg-green-600/10 text-green-400 border border-green-500/20">
+              Accounting Intelligence
+            </span>
+          </div>
+          <h3 class="text-lg font-semibold mb-3 group-hover:text-blue-400 transition leading-snug">
+            Is the Close Done vs Is the Close Right — The Question Nobody Asks
+          </h3>
+          <p class="text-gray-400 text-sm leading-relaxed mb-4">
+            Every accounting tool answers the same question. Nobody is answering the more important one.
+          </p>
+          <div class="flex items-center justify-between mt-auto pt-4 border-t border-gray-800">
+            <span class="text-gray-500 text-xs">June 18, 2026 · 4 min</span>
+            <span class="text-blue-400 text-xs group-hover:translate-x-1 transition">Read →</span>
+          </div>
+        </a>
+      </article>
+
+      <!-- Post 4 -->
+      <article class="blog-card" data-category="duplicates">
+        <a href="/blog/vendor-miscoding-accounting"
+           class="block bg-[#111827] border border-gray-800 rounded-xl p-6 hover:border-blue-500/50 transition group h-full">
+          <div class="flex items-center gap-2 mb-4">
+            <span class="px-2 py-1 rounded-full text-xs font-medium bg-yellow-600/10 text-yellow-400 border border-yellow-500/20">
+              Duplicate Detection
+            </span>
+          </div>
+          <h3 class="text-lg font-semibold mb-3 group-hover:text-blue-400 transition leading-snug">
+            Vendor Miscoding — The GL Issue That Skews Your Reports All Quarter
+          </h3>
+          <p class="text-gray-400 text-sm leading-relaxed mb-4">
+            When a vendor posts to the wrong account it doesn't just affect one transaction — it distorts every report that follows.
+          </p>
+          <div class="flex items-center justify-between mt-auto pt-4 border-t border-gray-800">
+            <span class="text-gray-500 text-xs">June 15, 2026 · 5 min</span>
+            <span class="text-blue-400 text-xs group-hover:translate-x-1 transition">Read →</span>
+          </div>
+        </a>
+      </article>
+
+      <!-- Post 5 -->
+      <article class="blog-card" data-category="month-end-close">
+        <a href="/blog/prepaid-candidates-accounting"
+           class="block bg-[#111827] border border-gray-800 rounded-xl p-6 hover:border-blue-500/50 transition group h-full">
+          <div class="flex items-center gap-2 mb-4">
+            <span class="px-2 py-1 rounded-full text-xs font-medium bg-purple-600/10 text-purple-400 border border-purple-500/20">
+              Month-End Close
+            </span>
+          </div>
+          <h3 class="text-lg font-semibold mb-3 group-hover:text-blue-400 transition leading-snug">
+            Prepaid Candidates — Why Annual Subscriptions Keep Slipping Through Close
+          </h3>
+          <p class="text-gray-400 text-sm leading-relaxed mb-4">
+            The $14,400 software renewal expensed in full in January. A pattern every Controller has seen — and most have missed at least once.
+          </p>
+          <div class="flex items-center justify-between mt-auto pt-4 border-t border-gray-800">
+            <span class="text-gray-500 text-xs">June 10, 2026 · 4 min</span>
+            <span class="text-blue-400 text-xs group-hover:translate-x-1 transition">Read →</span>
+          </div>
+        </a>
+      </article>
+
+      <!-- Post 6 -->
+      <article class="blog-card" data-category="accounting-intelligence">
+        <a href="/blog/accounting-software-blind-spot"
+           class="block bg-[#111827] border border-gray-800 rounded-xl p-6 hover:border-blue-500/50 transition group h-full">
+          <div class="flex items-center gap-2 mb-4">
+            <span class="px-2 py-1 rounded-full text-xs font-medium bg-green-600/10 text-green-400 border border-green-500/20">
+              Accounting Intelligence
+            </span>
+          </div>
+          <h3 class="text-lg font-semibold mb-3 group-hover:text-blue-400 transition leading-snug">
+            Accounting Software Has a Blind Spot — And It's Costing Controllers Hours Every Month
+          </h3>
+          <p class="text-gray-400 text-sm leading-relaxed mb-4">
+            Billions invested in close management. Nobody solved the investigation problem.
+          </p>
+          <div class="flex items-center justify-between mt-auto pt-4 border-t border-gray-800">
+            <span class="text-gray-500 text-xs">June 5, 2026 · 5 min</span>
+            <span class="text-blue-400 text-xs group-hover:translate-x-1 transition">Read →</span>
+          </div>
+        </a>
+      </article>
+
+    </div>
+
+    <!-- Empty state for filter -->
+    <div id="empty-state" class="hidden text-center py-20">
+      <p class="text-gray-500">No posts in this category yet — check back soon.</p>
+    </div>
+  </section>
+
+  <!-- NEWSLETTER CTA -->
+  <section class="px-8 py-16 max-w-6xl mx-auto">
+    <div class="bg-blue-600/10 border border-blue-500/20 rounded-2xl p-10 text-center">
+      <h2 class="text-3xl font-bold mb-3">Get new posts in your inbox</h2>
+      <p class="text-gray-400 mb-8 max-w-xl mx-auto">
+        Practical GL insights for Controllers — no fluff, no product pitches. Just useful content on catching accounting issues before they catch you.
+      </p>
+      <form id="blogSubscribeForm" class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+        <input type="email" id="blogEmail" placeholder="your@email.com"
+               class="flex-1 px-4 py-3 rounded-lg bg-[#0B1020] border border-gray-700 text-white placeholder-gray-500 focus:outline-none focus:border-blue-500" />
+        <button type="submit"
+                class="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg font-medium whitespace-nowrap">
+          Subscribe
+        </button>
+      </form>
+      <p id="blogSubscribeSuccess" class="hidden text-green-400 text-sm mt-4">
+        You're subscribed — first post coming soon.
+      </p>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-gray-800 px-8 py-8 text-center text-gray-500">
+    <div class="mb-3 flex justify-center gap-6 text-sm">
+      <a href="/" class="text-blue-400 hover:text-blue-300">Home</a>
+      <a href="/blog" class="text-blue-400 hover:text-blue-300">Blog</a>
+      <a href="/resources.html" class="text-blue-400 hover:text-blue-300">Resources</a>
+      <a href="/contact.html" class="text-blue-400 hover:text-blue-300">Contact</a>
+    </div>
+    Cavryon © 2026
+  </footer>
+
+  <script>
+    // Category filter
+    function filterPosts(category) {
+      const cards = document.querySelectorAll('.blog-card');
+      const buttons = document.querySelectorAll('.filter-btn');
+      const featured = document.getElementById('featured-post');
+      const emptyState = document.getElementById('empty-state');
+
+      // Update button states
+      buttons.forEach(btn => {
+        btn.classList.remove('bg-blue-600', 'text-white', 'border-blue-600');
+        btn.classList.add('bg-transparent', 'text-gray-400', 'border-gray-700');
+      });
+      const activeBtn = document.getElementById('filter-' + category);
+      if (activeBtn) {
+        activeBtn.classList.add('bg-blue-600', 'text-white', 'border-blue-600');
+        activeBtn.classList.remove('bg-transparent', 'text-gray-400', 'border-gray-700');
+      }
+
+      // Show/hide featured post
+      featured.style.display = (category === 'all' || category === 'duplicates') ? 'block' : 'none';
+
+      // Filter cards
+      let visibleCount = 0;
+      cards.forEach(card => {
+        const cardCategory = card.getAttribute('data-category');
+        if (category === 'all' || cardCategory === category) {
+          card.style.display = 'block';
+          visibleCount++;
+        } else {
+          card.style.display = 'none';
+        }
+      });
+
+      emptyState.classList.toggle('hidden', visibleCount > 0);
+    }
+
+    // Newsletter subscribe
+    document.getElementById('blogSubscribeForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('blogEmail').value;
+      if (!email) return;
+
+      try {
+        await fetch('https://hook.us1.make.com/your-webhook-url', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, source: 'blog_subscribe', submittedAt: new Date().toISOString() })
+        });
+      } catch (e) {}
+
+      document.getElementById('blogSubscribeForm').classList.add('hidden');
+      document.getElementById('blogSubscribeSuccess').classList.remove('hidden');
+    });
+  </script>
+
+</body>
+</html>

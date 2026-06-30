@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <title>How to Find (and Fix) Duplicate Transactions in QuickBooks | Cavryon</title>
+  <meta name="description" content="Step-by-step guide for Controllers to find and fix duplicate transactions in QuickBooks Online and Desktop before month-end close." />
+  <meta name="keywords" content="duplicate transactions QuickBooks, find duplicate transactions QuickBooks, QuickBooks duplicate payment, month end close QuickBooks" />
+  <link rel="canonical" href="https://www.cavryon.ai/blog/duplicate-transactions-quickbooks" />
+  <link rel="icon" type="image/svg+xml" href="/cavryon-favicon.svg">
+
+  <meta property="og:title" content="How to Find (and Fix) Duplicate Transactions in QuickBooks | Cavryon" />
+  <meta property="og:description" content="Step-by-step guide for Controllers to find and fix duplicate transactions in QuickBooks Online and Desktop before month-end close." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://www.cavryon.ai/blog/duplicate-transactions-quickbooks" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "How to Find (and Fix) Duplicate Transactions in QuickBooks",
+    "description": "Step-by-step guide for Controllers to find and fix duplicate transactions in QuickBooks Online and Desktop before month-end close.",
+    "url": "https://www.cavryon.ai/blog/duplicate-transactions-quickbooks",
+    "publisher": {
+      "@type": "Organization",
+      "name": "Cavryon",
+      "url": "https://www.cavryon.ai"
+    },
+    "datePublished": "2026-06-29",
+    "dateModified": "2026-06-29"
+  }
+  </script>
+</head>
+
+<body class="bg-[#0B1020] text-white">
+
+  <!-- NAV -->
+  <nav class="flex items-center justify-between px-8 py-5 border-b border-gray-800 sticky top-0 z-50 bg-[#0B1020]/90 backdrop-blur">
+    <a href="/" class="text-2xl font-bold tracking-tight">Cavryon</a>
+    <div class="hidden md:flex gap-8 text-gray-300 text-sm">
+      <a href="/#features" class="hover:text-white">Features</a>
+      <a href="/#workflow" class="hover:text-white">Workflow</a>
+      <a href="/blog" class="text-white font-medium">Blog</a>
+      <a href="/resources.html" class="hover:text-white">Resources</a>
+      <a href="/contact.html" class="hover:text-white">Contact</a>
+    </div>
+    <a href="https://calendly.com/y-cavryon" target="_blank"
+       class="bg-blue-600 hover:bg-blue-700 px-5 py-2 rounded-lg text-sm font-medium">
+      Book a Demo
+    </a>
+  </nav>
+
+  <!-- ARTICLE HEADER -->
+  <article class="max-w-3xl mx-auto px-8 py-16">
+
+    <!-- Breadcrumb -->
+    <div class="flex items-center gap-2 text-sm text-gray-500 mb-8">
+      <a href="/" class="hover:text-gray-300">Home</a>
+      <span>→</span>
+      <a href="/blog" class="hover:text-gray-300">Blog</a>
+      <span>→</span>
+      <span class="text-gray-400">Duplicate Transactions in QuickBooks</span>
+    </div>
+
+    <!-- Meta -->
+    <div class="flex items-center gap-3 mb-6">
+      <span class="px-3 py-1 rounded-full text-xs font-medium bg-blue-600/10 text-blue-400 border border-blue-500/20">
+        Duplicate Detection
+      </span>
+      <span class="text-gray-500 text-sm">June 29, 2026 · 6 min read</span>
+    </div>
+
+    <!-- Title -->
+    <h1 class="text-4xl md:text-5xl font-bold leading-tight mb-6">
+      How to Find (and Fix) Duplicate Transactions in QuickBooks
+    </h1>
+
+    <!-- Intro -->
+    <p class="text-gray-300 text-lg leading-relaxed mb-12 border-l-2 border-blue-500 pl-6">
+      You're reconciling and something doesn't add up. The bank balance and QuickBooks are off — not by a lot, but enough to make you suspicious. You dig in and eventually find it: a payment posted twice. Here's how to track them down and what to do once you find them.
+    </p>
+
+    <!-- STEP 1 -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-bold mb-4">Step 1: Run a Transaction Detail Report by Vendor or Account</h2>
+      <p class="text-gray-300 leading-relaxed mb-4">
+        The fastest starting point is a Transaction Detail by Account report — or Transaction List by Vendor if you suspect a specific payee.
+      </p>
+
+      <div class="grid md:grid-cols-2 gap-4 mb-4">
+        <div class="bg-[#111827] border border-gray-800 rounded-xl p-5">
+          <div class="text-blue-400 text-sm font-semibold mb-3">QuickBooks Online</div>
+          <ul class="space-y-2 text-gray-300 text-sm">
+            <li>→ Go to <span class="text-white font-medium">Reports → Transaction Detail by Account</span></li>
+            <li>→ Filter by the date range you're investigating</li>
+            <li>→ Sort by <span class="text-white font-medium">Amount</span>, then scan for amounts that appear more than once on the same or adjacent dates</li>
+          </ul>
+        </div>
+        <div class="bg-[#111827] border border-gray-800 rounded-xl p-5">
+          <div class="text-blue-400 text-sm font-semibold mb-3">QuickBooks Desktop</div>
+          <ul class="space-y-2 text-gray-300 text-sm">
+            <li>→ Go to <span class="text-white font-medium">Reports → Accountant & Taxes → Transaction Detail by Account</span></li>
+            <li>→ Sort by the <span class="text-white font-medium">Amount</span> column</li>
+            <li>→ Look for repeated dollar amounts from the same vendor within a narrow date window</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="bg-blue-600/10 border border-blue-500/20 rounded-xl p-4 text-sm text-blue-300">
+        💡 Sorting by amount is the key move. Duplicate transactions almost always share the same dollar value — clustering them visually cuts your search time dramatically.
+      </div>
+    </section>
+
+    <!-- STEP 2 -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-bold mb-4">Step 2: Check the Bank Feed Matching Log</h2>
+      <p class="text-gray-300 leading-relaxed mb-4">
+        If you use bank feeds, QuickBooks can inadvertently create duplicates when a manually entered transaction and a bank-imported transaction both get recorded rather than matched.
+      </p>
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-5 mb-4">
+        <div class="text-blue-400 text-sm font-semibold mb-3">QuickBooks Online — Banking Tab</div>
+        <ul class="space-y-2 text-gray-300 text-sm">
+          <li>→ Go to <span class="text-white font-medium">Banking → Bank Transactions</span></li>
+          <li>→ Look in the <span class="text-white font-medium">Reviewed</span> tab for transactions marked "Added" that closely match amounts and dates of existing entries</li>
+          <li>→ If you see a match between what was added and what already existed, one of them is a duplicate</li>
+        </ul>
+      </div>
+      <div class="bg-yellow-600/10 border border-yellow-500/20 rounded-xl p-4 text-sm text-yellow-300">
+        ⚠️ The tell: two entries for the same amount on the same or consecutive dates — one tagged as "manually entered" and one as "imported."
+      </div>
+    </section>
+
+    <!-- STEP 3 -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-bold mb-4">Step 3: Use the Find / Search Tool for Specific Amounts</h2>
+      <p class="text-gray-300 leading-relaxed mb-4">
+        If you already know the amount in question, search for it directly.
+      </p>
+      <div class="grid md:grid-cols-2 gap-4">
+        <div class="bg-[#111827] border border-gray-800 rounded-xl p-5">
+          <div class="text-blue-400 text-sm font-semibold mb-3">QuickBooks Online</div>
+          <ul class="space-y-2 text-gray-300 text-sm">
+            <li>→ Use the <span class="text-white font-medium">Search bar</span> (magnifying glass, top right)</li>
+            <li>→ Enter the dollar amount</li>
+            <li>→ Filter results by date range and transaction type</li>
+            <li>→ Any amount appearing more than once in the same period from the same vendor is a candidate</li>
+          </ul>
+        </div>
+        <div class="bg-[#111827] border border-gray-800 rounded-xl p-5">
+          <div class="text-blue-400 text-sm font-semibold mb-3">QuickBooks Desktop</div>
+          <ul class="space-y-2 text-gray-300 text-sm">
+            <li>→ Go to <span class="text-white font-medium">Edit → Find</span></li>
+            <li>→ Search by amount, date, and payee simultaneously</li>
+            <li>→ Compare results to identify entries that shouldn't both exist</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 4 -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-bold mb-4">Step 4: Confirm Before Deleting</h2>
+      <p class="text-gray-300 leading-relaxed mb-4">
+        Before you delete anything, confirm which entry is the "real" one.
+      </p>
+      <ul class="space-y-3 text-gray-300 mb-6">
+        <li class="flex gap-3"><span class="text-blue-400 mt-1">→</span> Check against the original invoice or bill from the vendor</li>
+        <li class="flex gap-3"><span class="text-blue-400 mt-1">→</span> Cross-reference the bank statement to see which date the payment actually cleared</li>
+        <li class="flex gap-3"><span class="text-blue-400 mt-1">→</span> Look at the reference or check number — the correct entry usually has it; the duplicate often doesn't</li>
+      </ul>
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-5">
+        <div class="text-white font-semibold mb-2">Void, don't delete</div>
+        <p class="text-gray-400 text-sm">Once you've identified the duplicate, <span class="text-white">void it rather than delete it</span> when possible. Voiding preserves the audit trail. Deleting removes it entirely, which can create questions during a future audit.</p>
+      </div>
+    </section>
+
+    <!-- STEP 5 -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-bold mb-4">Step 5: Reconcile to Confirm</h2>
+      <p class="text-gray-300 leading-relaxed">
+        After voiding or deleting, re-run your reconciliation for the affected period. If the difference clears, you found it. If you're still off, you either have more duplicates or a different issue — misposted amount, wrong period, or a timing difference.
+      </p>
+    </section>
+
+    <!-- WHY THEY HAPPEN -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-bold mb-4">Why Duplicates Keep Happening</h2>
+      <p class="text-gray-300 leading-relaxed mb-6">
+        One-time duplicates are usually a data entry accident. Recurring duplicates are a process problem. Common culprits:
+      </p>
+      <div class="space-y-3">
+        <div class="bg-[#111827] border border-gray-800 rounded-xl p-4">
+          <div class="text-white font-medium mb-1">No PO or bill matching workflow</div>
+          <p class="text-gray-400 text-sm">Payments go out without being matched to an approved bill, so the same expense gets entered twice by different people.</p>
+        </div>
+        <div class="bg-[#111827] border border-gray-800 rounded-xl p-4">
+          <div class="text-white font-medium mb-1">Bank sync + manual entry overlap</div>
+          <p class="text-gray-400 text-sm">Someone enters a bill payment manually, then the bank feed imports the same transaction as a new entry rather than matching it.</p>
+        </div>
+        <div class="bg-[#111827] border border-gray-800 rounded-xl p-4">
+          <div class="text-white font-medium mb-1">Vendor invoice numbering inconsistencies</div>
+          <p class="text-gray-400 text-sm">Vendors who re-use or slightly vary invoice numbers make it hard for QuickBooks to flag them as potential duplicates.</p>
+        </div>
+        <div class="bg-[#111827] border border-gray-800 rounded-xl p-4">
+          <div class="text-white font-medium mb-1">Multiple people with AP access</div>
+          <p class="text-gray-400 text-sm">Without a clear approval and entry ownership process, the same invoice can get touched by two people — and posted twice.</p>
+        </div>
+      </div>
+      <p class="text-gray-400 text-sm mt-4">
+        If you're seeing duplicates regularly, the fix isn't just finding them — it's building a pre-posting check into your close process.
+      </p>
+    </section>
+
+    <!-- CTA BOX -->
+    <section class="bg-blue-600/10 border border-blue-500/20 rounded-2xl p-8 mb-12">
+      <h2 class="text-2xl font-bold mb-3">The Faster Way</h2>
+      <p class="text-gray-300 leading-relaxed mb-6">
+        Hunting for duplicates manually works, but it takes time — and it only catches what you know to look for. Controllers running a clean month-end close need a systematic check that flags anomalies before they compound.
+      </p>
+      <p class="text-gray-300 leading-relaxed mb-6">
+        Cavryon catches duplicate transactions automatically — scanning your GL for repeated amounts, vendors, dates, and reference numbers so they surface before you reconcile, not after.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-3">
+        <a href="https://www.cavryon.ai/#waitlist"
+           class="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg font-medium text-center">
+          Join Early Access
+        </a>
+        <a href="https://calendly.com/y-cavryon" target="_blank"
+           class="border border-gray-600 hover:border-white px-6 py-3 rounded-lg font-medium text-center">
+          Book a Demo
+        </a>
+      </div>
+    </section>
+
+    <!-- RELATED POSTS -->
+    <section class="mb-8">
+      <h2 class="text-xl font-semibold mb-4">Related Resources</h2>
+      <div class="grid md:grid-cols-2 gap-4">
+        <a href="/month-end-close-checklist"
+           class="bg-[#111827] border border-gray-800 rounded-xl p-5 hover:border-blue-500 transition">
+          <div class="text-blue-400 text-xs font-medium mb-2">FREE CHECKLIST</div>
+          <div class="font-semibold text-sm mb-1">Month-End Close Checklist for Controllers</div>
+          <div class="text-gray-400 text-xs">A step-by-step close checklist for SMB finance teams.</div>
+        </a>
+        <a href="/gl-variance-analysis-guide"
+           class="bg-[#111827] border border-gray-800 rounded-xl p-5 hover:border-blue-500 transition">
+          <div class="text-blue-400 text-xs font-medium mb-2">CONTROLLER GUIDE</div>
+          <div class="font-semibold text-sm mb-1">GL Variance Analysis Guide</div>
+          <div class="text-gray-400 text-xs">How to investigate unusual account movement before close.</div>
+        </a>
+        <a href="/blog"
+           class="bg-[#111827] border border-gray-800 rounded-xl p-5 hover:border-blue-500 transition">
+          <div class="text-blue-400 text-xs font-medium mb-2">BLOG</div>
+          <div class="font-semibold text-sm mb-1">More Accounting Intelligence Articles</div>
+          <div class="text-gray-400 text-xs">Practical insights for Controllers and SMB finance teams.</div>
+        </a>
+        <a href="/book-cleanup-checklist"
+           class="bg-[#111827] border border-gray-800 rounded-xl p-5 hover:border-blue-500 transition">
+          <div class="text-blue-400 text-xs font-medium mb-2">FREE CHECKLIST</div>
+          <div class="font-semibold text-sm mb-1">Book Cleanup Checklist</div>
+          <div class="text-gray-400 text-xs">Identify duplicate vendors, stale balances, and GL issues.</div>
+        </a>
+      </div>
+    </section>
+
+  </article>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-gray-800 px-8 py-8 text-center text-gray-500">
+    <div class="mb-3 flex justify-center gap-6 text-sm">
+      <a href="/" class="text-blue-400 hover:text-blue-300">Home</a>
+      <a href="/blog" class="text-blue-400 hover:text-blue-300">Blog</a>
+      <a href="/resources.html" class="text-blue-400 hover:text-blue-300">Resources</a>
+      <a href="/contact.html" class="text-blue-400 hover:text-blue-300">Contact</a>
+    </div>
+    Cavryon © 2026
+  </footer>
+
+</body>
+</html>
