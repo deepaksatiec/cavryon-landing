@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Vendor Miscoding — The GL Issue That Skews Your Reports All Quarter | Cavryon</title>
+  <meta name="description" content="When a vendor posts to the wrong account it doesn't just affect one transaction — it distorts every report that follows. Here's how to catch vendor miscoding before close." />
+  <meta name="keywords" content="vendor miscoding accounting, vendor posted wrong account QuickBooks, GL account mismatch, vendor account coding error" />
+  <link rel="canonical" href="https://www.cavryon.ai/blog/vendor-miscoding-accounting" />
+  <link rel="icon" type="image/svg+xml" href="/cavryon-favicon.svg">
+  <meta property="og:title" content="Vendor Miscoding — The GL Issue That Skews Your Reports All Quarter | Cavryon" />
+  <meta property="og:description" content="When a vendor posts to the wrong account it doesn't just affect one transaction — it distorts every report that follows." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://www.cavryon.ai/blog/vendor-miscoding-accounting" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Vendor Miscoding — The GL Issue That Skews Your Reports All Quarter",
+    "description": "When a vendor posts to the wrong account it doesn't just affect one transaction — it distorts every report that follows.",
+    "url": "https://www.cavryon.ai/blog/vendor-miscoding-accounting",
+    "publisher": { "@type": "Organization", "name": "Cavryon", "url": "https://www.cavryon.ai" },
+    "datePublished": "2026-06-15",
+    "dateModified": "2026-06-15"
+  }
+  </script>
+</head>
+<body class="bg-[#0B1020] text-white">
+
+  <nav class="flex items-center justify-between px-8 py-5 border-b border-gray-800 sticky top-0 z-50 bg-[#0B1020]/90 backdrop-blur">
+    <a href="/" class="text-2xl font-bold tracking-tight">Cavryon</a>
+    <div class="hidden md:flex gap-8 text-gray-300 text-sm">
+      <a href="/#features" class="hover:text-white">Features</a>
+      <a href="/#workflow" class="hover:text-white">Workflow</a>
+      <a href="/blog" class="text-white font-medium">Blog</a>
+      <a href="/resources.html" class="hover:text-white">Resources</a>
+      <a href="/contact.html" class="hover:text-white">Contact</a>
+    </div>
+    <a href="https://calendly.com/y-cavryon" target="_blank" class="bg-blue-600 hover:bg-blue-700 px-5 py-2 rounded-lg text-sm font-medium">Book a Demo</a>
+  </nav>
+
+  <article class="max-w-3xl mx-auto px-8 py-16">
+
+    <div class="flex items-center gap-2 text-sm text-gray-500 mb-8">
+      <a href="/" class="hover:text-gray-300">Home</a><span>→</span>
+      <a href="/blog" class="hover:text-gray-300">Blog</a><span>→</span>
+      <span class="text-gray-400">Vendor Miscoding</span>
+    </div>
+
+    <div class="flex items-center gap-3 mb-6">
+      <span class="px-3 py-1 rounded-full text-xs font-medium bg-yellow-600/10 text-yellow-400 border border-yellow-500/20">Duplicate Detection</span>
+      <span class="text-gray-500 text-sm">June 15, 2026 · 5 min read</span>
+    </div>
+
+    <h1 class="text-4xl md:text-5xl font-bold leading-tight mb-6">Vendor Miscoding — The GL Issue That Skews Your Reports All Quarter</h1>
+
+    <p class="text-gray-300 text-lg leading-relaxed mb-12 border-l-2 border-yellow-500 pl-6">
+      A duplicate is obvious once you find it. Vendor miscoding is different — it sits quietly in your books for months, distorting every report and ratio that touches the affected accounts, until someone looks closely enough to catch it. By then, you may have already presented incorrect numbers to leadership.
+    </p>
+
+    <section class="mb-12">
+      <h2 class="text-2xl font-bold mb-4">What Vendor Miscoding Actually Is</h2>
+      <p class="text-gray-300 leading-relaxed mb-4">Vendor miscoding happens when a vendor's transactions are posted to an account that isn't where they typically — or should — appear. It's not always a mistake in the traditional sense. Sometimes it's intentional at entry and wrong in context. Sometimes it's a system default that nobody updated. Sometimes it's a new employee who made a judgment call.</p>
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6 mb-6">
+        <div class="text-xs text-gray-500 mb-3 font-medium uppercase tracking-wider">Common examples</div>
+        <div class="space-y-4">
+          <div class="border-b border-gray-800 pb-4">
+            <div class="flex justify-between items-start mb-1">
+              <span class="text-white text-sm font-medium">Uplift Desk (office furniture vendor)</span>
+              <span class="text-yellow-400 text-xs font-medium bg-yellow-950/30 px-2 py-1 rounded">MISCODED</span>
+            </div>
+            <div class="text-gray-400 text-xs">Usually posts to: Office Expense · Currently posting to: Legal Fees</div>
+          </div>
+          <div class="border-b border-gray-800 pb-4">
+            <div class="flex justify-between items-start mb-1">
+              <span class="text-white text-sm font-medium">AWS (cloud infrastructure)</span>
+              <span class="text-yellow-400 text-xs font-medium bg-yellow-950/30 px-2 py-1 rounded">MISCODED</span>
+            </div>
+            <div class="text-gray-400 text-xs">Usually posts to: Software & Subscriptions · Currently posting to: Miscellaneous Expense</div>
+          </div>
+          <div>
+            <div class="flex justify-between items-start mb-1">
+              <span class="text-white text-sm font-medium">FedEx (shipping vendor)</span>
+              <span class="text-yellow-400 text-xs font-medium bg-yellow-950/30 px-2 py-1 rounded">MISCODED</span>
+            </div>
+            <div class="text-gray-400 text-xs">Usually posts to: Shipping & Fulfillment · Currently posting to: Office Expense</div>
+          </div>
+        </div>
+      </div>
+      <p class="text-gray-300 leading-relaxed">Each of these looks fine in isolation. A charge in Legal Fees doesn't automatically raise a flag. The problem only surfaces when you know that Uplift Desk has never once posted to Legal Fees in 18 months of history.</p>
+    </section>
+
+    <section class="mb-12">
+      <h2 class="text-2xl font-bold mb-4">Why It's Harder to Catch Than Duplicates</h2>
+      <p class="text-gray-300 leading-relaxed mb-4">Duplicates are relatively easy to spot because you're looking for the same thing twice. Vendor miscoding requires knowing what something should look like before you can recognize that it looks wrong.</p>
+      <div class="space-y-4 mb-6">
+        <div class="bg-[#111827] border border-gray-800 rounded-xl p-5">
+          <div class="text-white font-semibold mb-2">No built-in baseline</div>
+          <p class="text-gray-400 text-sm">QuickBooks and NetSuite don't track "where this vendor usually posts." Every transaction is evaluated in isolation. The system has no concept of historical posting patterns — so it can't flag deviations from them.</p>
+        </div>
+        <div class="bg-[#111827] border border-gray-800 rounded-xl p-5">
+          <div class="text-white font-semibold mb-2">The amounts look normal</div>
+          <p class="text-gray-400 text-sm">A miscoded transaction is usually the right amount for that vendor. It's not suspicious on its own. Only the account is wrong — and catching that requires comparing the account to historical behavior, not just looking at the transaction itself.</p>
+        </div>
+        <div class="bg-[#111827] border border-gray-800 rounded-xl p-5">
+          <div class="text-white font-semibold mb-2">It compounds over time</div>
+          <p class="text-gray-400 text-sm">If AWS posts to Miscellaneous Expense in January and nobody catches it, the same miscoding is likely to happen in February, March, and April — because the default account wasn't corrected. By the time it's caught, you have four months of misclassified cloud costs.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="mb-12">
+      <h2 class="text-2xl font-bold mb-4">The Downstream Impact</h2>
+      <p class="text-gray-300 leading-relaxed mb-6">The reason vendor miscoding matters beyond the entry itself is what it does to every report built on top of it.</p>
+      <div class="grid md:grid-cols-2 gap-4 mb-6">
+        <div class="bg-[#111827] border border-gray-800 rounded-xl p-5">
+          <div class="text-red-400 text-sm font-semibold mb-2">Account that's overstated</div>
+          <p class="text-gray-400 text-sm">Legal Fees looks higher than it is. Management asks why the legal spend is up. You investigate. You spend an hour finding that it's actually Uplift Desk. You correct it. You explain it. Time wasted.</p>
+        </div>
+        <div class="bg-[#111827] border border-gray-800 rounded-xl p-5">
+          <div class="text-red-400 text-sm font-semibold mb-2">Account that's understated</div>
+          <p class="text-gray-400 text-sm">Office Expense looks lower than it should. Budget vs actuals looks better than reality. Decisions get made on incorrect numbers before anyone notices the discrepancy.</p>
+        </div>
+        <div class="bg-[#111827] border border-gray-800 rounded-xl p-5">
+          <div class="text-red-400 text-sm font-semibold mb-2">Department allocations</div>
+          <p class="text-gray-400 text-sm">If costs are allocated by department, a miscoded vendor charge hits the wrong cost center. Engineering gets charged for office supplies. Operations gets charged for software. Every department's P&L is wrong.</p>
+        </div>
+        <div class="bg-[#111827] border border-gray-800 rounded-xl p-5">
+          <div class="text-red-400 text-sm font-semibold mb-2">Tax implications</div>
+          <p class="text-gray-400 text-sm">Some expense categories have different tax treatment. A miscoded expense in the wrong category might affect deductibility — and that's a problem that outlasts the accounting period.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="mb-12">
+      <h2 class="text-2xl font-bold mb-4">How to Catch It Manually</h2>
+      <p class="text-gray-300 leading-relaxed mb-4">If you're reviewing your GL manually, here's the most efficient approach for catching vendor miscoding:</p>
+      <div class="space-y-3 mb-6">
+        <div class="flex gap-3"><span class="text-blue-400 font-bold mt-0.5">1.</span><p class="text-gray-300 text-sm leading-relaxed"><span class="text-white font-medium">Run a Transaction List by Vendor</span> for the current month. Sort by vendor name. For each vendor, look at the account column and ask: does this match where they usually post?</p></div>
+        <div class="flex gap-3"><span class="text-blue-400 font-bold mt-0.5">2.</span><p class="text-gray-300 text-sm leading-relaxed"><span class="text-white font-medium">Compare to prior months.</span> Pull the same report for the last 3 months. Filter by your highest-spend vendors. If a vendor appears in an account this month that they've never appeared in before — investigate.</p></div>
+        <div class="flex gap-3"><span class="text-blue-400 font-bold mt-0.5">3.</span><p class="text-gray-300 text-sm leading-relaxed"><span class="text-white font-medium">Focus on Miscellaneous Expense.</span> This is the most common landing spot for miscoded transactions. Any vendor appearing in Miscellaneous that you'd expect in a specific category is worth investigating.</p></div>
+        <div class="flex gap-3"><span class="text-blue-400 font-bold mt-0.5">4.</span><p class="text-gray-300 text-sm leading-relaxed"><span class="text-white font-medium">Check new vendors separately.</span> New vendors don't have historical posting patterns, which means miscoding risk is higher. Review every new vendor added this month and confirm their account assignment makes sense.</p></div>
+      </div>
+      <div class="bg-yellow-600/10 border border-yellow-500/20 rounded-xl p-4">
+        <p class="text-yellow-300 text-sm">This process works — but it takes time. For a GL with 50+ vendors and 3,000+ transactions, a thorough vendor posting review can take 60–90 minutes on its own.</p>
+      </div>
+    </section>
+
+    <section class="bg-blue-600/10 border border-blue-500/20 rounded-2xl p-8 mb-12">
+      <h2 class="text-2xl font-bold mb-3">Cavryon Catches Vendor Miscoding Automatically</h2>
+      <p class="text-gray-300 leading-relaxed mb-4">Cavryon builds a posting pattern baseline from your GL history — then flags any vendor that posts to an account they rarely or never use. Instead of manually comparing this month to prior months, you get a flagged workbook showing exactly which vendors posted unusually, and where.</p>
+      <p class="text-gray-300 leading-relaxed mb-6">Upload your GL export. Get results in under 2 minutes. No ERP integration needed.</p>
+      <div class="flex flex-col sm:flex-row gap-3">
+        <a href="https://www.cavryon.ai/#waitlist" class="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg font-medium text-center">Join Early Access</a>
+        <a href="https://calendly.com/y-cavryon" target="_blank" class="border border-gray-600 hover:border-white px-6 py-3 rounded-lg font-medium text-center">Book a Demo</a>
+      </div>
+    </section>
+
+    <section class="mb-8">
+      <h2 class="text-xl font-semibold mb-4">Related Articles</h2>
+      <div class="grid md:grid-cols-2 gap-4">
+        <a href="/blog/duplicate-transactions-quickbooks" class="bg-[#111827] border border-gray-800 rounded-xl p-5 hover:border-blue-500 transition">
+          <div class="text-blue-400 text-xs font-medium mb-2">DUPLICATE DETECTION</div>
+          <div class="font-semibold text-sm mb-1">How to Find (and Fix) Duplicate Transactions in QuickBooks</div>
+          <div class="text-gray-400 text-xs">Step-by-step guide for Controllers.</div>
+        </a>
+        <a href="/blog/prepaid-candidates-accounting" class="bg-[#111827] border border-gray-800 rounded-xl p-5 hover:border-blue-500 transition">
+          <div class="text-purple-400 text-xs font-medium mb-2">MONTH-END CLOSE</div>
+          <div class="font-semibold text-sm mb-1">Prepaid Candidates — Why Annual Subscriptions Keep Slipping Through Close</div>
+          <div class="text-gray-400 text-xs">The $14,400 mistake that keeps happening.</div>
+        </a>
+        <a href="/gl-variance-analysis-guide" class="bg-[#111827] border border-gray-800 rounded-xl p-5 hover:border-blue-500 transition">
+          <div class="text-blue-400 text-xs font-medium mb-2">CONTROLLER GUIDE</div>
+          <div class="font-semibold text-sm mb-1">GL Variance Analysis Guide</div>
+          <div class="text-gray-400 text-xs">How to investigate unusual account movement before close.</div>
+        </a>
+        <a href="/blog" class="bg-[#111827] border border-gray-800 rounded-xl p-5 hover:border-blue-500 transition">
+          <div class="text-blue-400 text-xs font-medium mb-2">BLOG</div>
+          <div class="font-semibold text-sm mb-1">More Accounting Intelligence Articles</div>
+          <div class="text-gray-400 text-xs">Practical insights for Controllers and SMB finance teams.</div>
+        </a>
+      </div>
+    </section>
+
+  </article>
+
+  <footer class="border-t border-gray-800 px-8 py-8 text-center text-gray-500">
+    <div class="mb-3 flex justify-center gap-6 text-sm">
+      <a href="/" class="text-blue-400 hover:text-blue-300">Home</a>
+      <a href="/blog" class="text-blue-400 hover:text-blue-300">Blog</a>
+      <a href="/resources.html" class="text-blue-400 hover:text-blue-300">Resources</a>
+      <a href="/contact.html" class="text-blue-400 hover:text-blue-300">Contact</a>
+    </div>
+    Cavryon © 2026
+  </footer>
+
+</body>
+</html>
