@@ -263,6 +263,45 @@
     </div>
   </div>
 
+  <div id="columnMapModal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center px-4">
+    <div class="bg-[#111827] border border-gray-800 rounded-2xl max-w-lg w-full p-8 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-start justify-between mb-1">
+        <h3 class="text-xl font-bold">Match your columns</h3>
+        <button onclick="closeColumnMapModal()" class="text-gray-500 hover:text-white text-xl leading-none">&times;</button>
+      </div>
+      <p class="text-gray-400 text-sm mb-6" id="columnMapSubtitle">We couldn't automatically match all the required columns. Tell us which column in your file is which.</p>
+
+      <div class="space-y-4">
+        <div>
+          <label class="block text-sm text-gray-400 mb-2">Vendor <span class="text-red-400">*</span></label>
+          <select id="mapVendor" class="w-full bg-[#0B1020] border border-gray-700 rounded-lg px-4 py-3 text-sm"></select>
+        </div>
+        <div>
+          <label class="block text-sm text-gray-400 mb-2">Department <span class="text-gray-600">(optional)</span></label>
+          <select id="mapDept" class="w-full bg-[#0B1020] border border-gray-700 rounded-lg px-4 py-3 text-sm"></select>
+        </div>
+        <div>
+          <label class="block text-sm text-gray-400 mb-2">Amount <span class="text-red-400">*</span></label>
+          <select id="mapAmount" class="w-full bg-[#0B1020] border border-gray-700 rounded-lg px-4 py-3 text-sm"></select>
+        </div>
+        <div>
+          <label class="block text-sm text-gray-400 mb-2">License Start Date <span class="text-red-400">*</span></label>
+          <select id="mapStart" class="w-full bg-[#0B1020] border border-gray-700 rounded-lg px-4 py-3 text-sm"></select>
+        </div>
+        <div>
+          <label class="block text-sm text-gray-400 mb-2">Term (Months) <span class="text-red-400">*</span></label>
+          <select id="mapTerm" class="w-full bg-[#0B1020] border border-gray-700 rounded-lg px-4 py-3 text-sm"></select>
+        </div>
+      </div>
+
+      <p id="columnMapError" class="hidden text-red-400 text-sm mt-4"></p>
+
+      <button onclick="confirmColumnMapping()" class="w-full bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg font-medium mt-6">
+        Import with this mapping
+      </button>
+    </div>
+  </div>
+
   <!-- FOOTER -->
   <footer class="border-t border-gray-800 px-8 py-8 text-center text-gray-500">
     <div class="mb-3 flex justify-center gap-6 text-sm flex-wrap">
@@ -601,11 +640,11 @@ function renderJE() {
    FILE UPLOAD — Excel / CSV IMPORT
    ============================================================ */
 const COLUMN_ALIASES = {
-  vendor: ['vendor', 'vendor name', 'payee', 'software', 'software / license', 'software/license'],
-  dept: ['department', 'dept', 'cost center', 'cost centre'],
-  amount: ['amount', 'total', 'price', 'cost'],
-  start: ['license start date', 'start date', 'license start', 'date', 'transaction date'],
-  term: ['term (months)', 'term', 'months', 'term months', 'license term']
+  vendor: ['vendor', 'vendor name', 'payee', 'software', 'software / license', 'software/license', 'supplier', 'supplier name', 'merchant', 'company', 'provider'],
+  dept: ['department', 'dept', 'cost center', 'cost centre', 'division', 'business unit', 'bu', 'team', 'group'],
+  amount: ['amount', 'total', 'price', 'cost', 'annual cost', 'total cost', 'contract value', 'invoice amount', 'annual amount', 'subtotal', 'amount paid', 'payment amount'],
+  start: ['license start date', 'start date', 'license start', 'date', 'transaction date', 'renewal date', 'purchase date', 'effective date', 'invoice date', 'contract start', 'contract start date', 'billing date'],
+  term: ['term (months)', 'term', 'months', 'term months', 'license term', 'contract length', 'duration', 'length (months)', 'subscription length', 'contract term', 'months of coverage']
 };
 
 function normalizeHeader(h) {
@@ -698,8 +737,7 @@ function parseUploadedFile(file) {
         }
       }
 
-      // Fall back to the first sheet with data if nothing matched, so the existing missing-columns
-      // error message below can explain exactly what's absent.
+      // Fall back to the first sheet with data if nothing auto-matched.
       if (!rows) {
         chosenSheetName = wb.SheetNames[0];
         const ws = wb.Sheets[chosenSheetName];
@@ -725,57 +763,12 @@ function parseUploadedFile(file) {
       if (termCol === -1) missing.push('Term (Months)');
 
       if (missing.length > 0) {
-        const multiSheetNote = wb.SheetNames.length > 1
-          ? ` Your file has ${wb.SheetNames.length} tabs (${wb.SheetNames.join(', ')}) — none had a matching header row. If your data is on a different tab, make sure that tab has these headers.`
-          : '';
-        showUploadBanner(`Couldn't find these columns: ${missing.join(', ')}. Expected headers like Vendor, Department, Amount, License Start Date, Term (Months).${multiSheetNote}`, true);
+        // Couldn't auto-match everything — let the user manually map columns instead of just failing.
+        openColumnMapModal({ headers, rows, fileName: file.name, chosenSheetName, sheetCount: wb.SheetNames.length, sheetNames: wb.SheetNames, missing });
         return;
       }
 
-      const dataRows = rows.slice(1).filter(r => r[vendorCol] || r[amountCol]);
-      if (dataRows.length === 0) {
-        showUploadBanner('No transaction rows found below the header.', true);
-        return;
-      }
-
-      transactions = [];
-      idCounter = 0;
-      let skipped = 0;
-      let invalid = 0;
-
-      dataRows.forEach(r => {
-        const vendor = String(r[vendorCol] || '').trim();
-        const dept = deptCol !== -1 ? String(r[deptCol] || '').trim() : '';
-        const amount = parseFloat(r[amountCol]);
-        const start = excelSerialToISO(r[startCol]);
-        const rawTerm = r[termCol];
-        const term = parseFloat(rawTerm);
-
-        if (!vendor || !start || amount === undefined || isNaN(amount) || rawTerm === undefined || rawTerm === '' || isNaN(term)) {
-          skipped++;
-          return;
-        }
-        if (amount <= 0 || term <= 0 || !Number.isInteger(term)) {
-          invalid++;
-          return;
-        }
-        addRow({ vendor, dept, amount, start, term });
-      });
-
-      if (transactions.length === 0) {
-        showUploadBanner('None of the rows had all required, valid fields (Vendor, positive Amount, Start Date, whole-number Term in months). Check the file and try again.', true);
-        return;
-      }
-
-      const parts = [`Imported ${transactions.length} transaction${transactions.length === 1 ? '' : 's'}`];
-      if (wb.SheetNames.length > 1) parts.push(`from the "${chosenSheetName}" tab`);
-      if (skipped > 0) parts.push(`skipped ${skipped} row${skipped === 1 ? '' : 's'} missing required fields`);
-      if (invalid > 0) parts.push(`skipped ${invalid} row${invalid === 1 ? '' : 's'} with an invalid amount or term (amount must be positive; term must be a whole number of months)`);
-      const msg = parts.length > 1
-        ? parts.join(' — ') + '.'
-        : `Imported ${transactions.length} transaction${transactions.length === 1 ? '' : 's'} from "${file.name}".`;
-      showUploadBanner(msg, false);
-      updateDropZoneVisibility();
+      finishImport({ rows, vendorCol, deptCol, amountCol, startCol, termCol, fileName: file.name, chosenSheetName, sheetCount: wb.SheetNames.length });
 
     } catch (err) {
       console.error(err);
@@ -783,6 +776,123 @@ function parseUploadedFile(file) {
     }
   };
   reader.readAsArrayBuffer(file);
+}
+
+// Shared by both the auto-detect path and the manual column-mapping path.
+function finishImport({ rows, vendorCol, deptCol, amountCol, startCol, termCol, fileName, chosenSheetName, sheetCount }) {
+  const dataRows = rows.slice(1).filter(r => r[vendorCol] || r[amountCol]);
+  if (dataRows.length === 0) {
+    showUploadBanner('No transaction rows found below the header.', true);
+    return;
+  }
+
+  transactions = [];
+  idCounter = 0;
+  let skipped = 0;
+  let invalid = 0;
+
+  dataRows.forEach(r => {
+    const vendor = String(r[vendorCol] || '').trim();
+    const dept = deptCol !== -1 && deptCol !== undefined ? String(r[deptCol] || '').trim() : '';
+    const amount = parseFloat(r[amountCol]);
+    const start = excelSerialToISO(r[startCol]);
+    const rawTerm = r[termCol];
+    const term = parseFloat(rawTerm);
+
+    if (!vendor || !start || amount === undefined || isNaN(amount) || rawTerm === undefined || rawTerm === '' || isNaN(term)) {
+      skipped++;
+      return;
+    }
+    if (amount <= 0 || term <= 0 || !Number.isInteger(term)) {
+      invalid++;
+      return;
+    }
+    addRow({ vendor, dept, amount, start, term });
+  });
+
+  if (transactions.length === 0) {
+    showUploadBanner('None of the rows had all required, valid fields (Vendor, positive Amount, Start Date, whole-number Term in months). Check the file and try again.', true);
+    return;
+  }
+
+  const parts = [`Imported ${transactions.length} transaction${transactions.length === 1 ? '' : 's'}`];
+  if (sheetCount > 1) parts.push(`from the "${chosenSheetName}" tab`);
+  if (skipped > 0) parts.push(`skipped ${skipped} row${skipped === 1 ? '' : 's'} missing required fields`);
+  if (invalid > 0) parts.push(`skipped ${invalid} row${invalid === 1 ? '' : 's'} with an invalid amount or term (amount must be positive; term must be a whole number of months)`);
+  const msg = parts.length > 1
+    ? parts.join(' — ') + '.'
+    : `Imported ${transactions.length} transaction${transactions.length === 1 ? '' : 's'} from "${fileName}".`;
+  showUploadBanner(msg, false);
+  updateDropZoneVisibility();
+}
+
+// ---- Manual column mapping modal ----
+let pendingMap = null;
+
+function openColumnMapModal({ headers, rows, fileName, chosenSheetName, sheetCount, sheetNames, missing }) {
+  pendingMap = { headers, rows, fileName, chosenSheetName, sheetCount };
+
+  const subtitleEl = document.getElementById('columnMapSubtitle');
+  const sheetNote = sheetCount > 1 ? ` (checked tabs: ${sheetNames.join(', ')})` : '';
+  subtitleEl.textContent = missing.length
+    ? `We couldn't automatically find: ${missing.join(', ')}${sheetNote}. Match each field to a column from your file below.`
+    : `Match each field to a column from your file below.`;
+
+  const buildOptions = (selectEl, aliasKey, optional) => {
+    selectEl.innerHTML = '';
+    if (optional) {
+      const noneOpt = document.createElement('option');
+      noneOpt.value = '-1';
+      noneOpt.textContent = '— None —';
+      selectEl.appendChild(noneOpt);
+    }
+    headers.forEach((h, i) => {
+      const opt = document.createElement('option');
+      opt.value = i;
+      opt.textContent = h || `(column ${i + 1})`;
+      selectEl.appendChild(opt);
+    });
+    const guess = matchColumn(headers, aliasKey);
+    if (guess !== -1) selectEl.value = String(guess);
+  };
+
+  buildOptions(document.getElementById('mapVendor'), 'vendor', false);
+  buildOptions(document.getElementById('mapDept'), 'dept', true);
+  buildOptions(document.getElementById('mapAmount'), 'amount', false);
+  buildOptions(document.getElementById('mapStart'), 'start', false);
+  buildOptions(document.getElementById('mapTerm'), 'term', false);
+
+  document.getElementById('columnMapError').classList.add('hidden');
+  document.getElementById('columnMapModal').classList.remove('hidden');
+}
+
+function closeColumnMapModal() {
+  document.getElementById('columnMapModal').classList.add('hidden');
+  pendingMap = null;
+}
+
+function confirmColumnMapping() {
+  if (!pendingMap) return;
+  const vendorCol = parseInt(document.getElementById('mapVendor').value);
+  const deptCol = parseInt(document.getElementById('mapDept').value);
+  const amountCol = parseInt(document.getElementById('mapAmount').value);
+  const startCol = parseInt(document.getElementById('mapStart').value);
+  const termCol = parseInt(document.getElementById('mapTerm').value);
+
+  const chosen = [vendorCol, amountCol, startCol, termCol];
+  const requiredLabels = ['Vendor', 'Amount', 'License Start Date', 'Term (Months)'];
+  const dupes = chosen.some((c, i) => chosen.indexOf(c) !== i);
+  const errEl = document.getElementById('columnMapError');
+  if (dupes) {
+    errEl.textContent = 'Each required field must map to a different column.';
+    errEl.classList.remove('hidden');
+    return;
+  }
+  errEl.classList.add('hidden');
+
+  const { rows, fileName, chosenSheetName, sheetCount } = pendingMap;
+  closeColumnMapModal();
+  finishImport({ rows, vendorCol, deptCol, amountCol, startCol, termCol, fileName, chosenSheetName, sheetCount });
 }
 
 function updateDropZoneVisibility() {
