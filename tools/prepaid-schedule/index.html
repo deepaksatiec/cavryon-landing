@@ -370,16 +370,16 @@ function renderTable() {
           class="w-full bg-[#0B1020] border border-gray-700 rounded px-2 py-1.5 text-sm" placeholder="Department" />
       </td>
       <td class="px-2 py-2">
-        <input type="number" step="0.01" value="${t.amount || ''}" onchange="updateRow(${t.id},'amount',this.value)"
-          class="num-input w-full bg-[#0B1020] border border-gray-700 rounded px-2 py-1.5 text-sm text-right" placeholder="0.00" />
+        <input type="number" step="0.01" min="0.01" value="${t.amount || ''}" onchange="updateRow(${t.id},'amount',this.value)"
+          class="num-input w-full bg-[#0B1020] border ${t.amount > 0 ? 'border-gray-700' : 'border-red-700'} rounded px-2 py-1.5 text-sm text-right" placeholder="0.00" />
       </td>
       <td class="px-2 py-2">
         <input type="date" value="${t.start || ''}" onchange="updateRow(${t.id},'start',this.value)"
           class="w-full bg-[#0B1020] border border-gray-700 rounded px-2 py-1.5 text-sm" />
       </td>
       <td class="px-2 py-2">
-        <input type="number" value="${t.term || 12}" onchange="updateRow(${t.id},'term',this.value)"
-          class="num-input w-full bg-[#0B1020] border border-gray-700 rounded px-2 py-1.5 text-sm text-right" />
+        <input type="number" step="1" min="1" value="${t.term || 12}" onchange="updateRow(${t.id},'term',this.value)"
+          class="num-input w-full bg-[#0B1020] border ${Number.isInteger(t.term) && t.term > 0 ? 'border-gray-700' : 'border-red-700'} rounded px-2 py-1.5 text-sm text-right" />
       </td>
       <td class="px-2 py-2 text-center">
         <button onclick="removeRow(${t.id})" class="text-gray-500 hover:text-red-400 text-sm">Remove</button>
@@ -398,7 +398,9 @@ function renderTable() {
    ============================================================ */
 function computePerTxnSchedule(t) {
   if (!t.start || !t.amount || !t.term) return null;
+  if (t.amount <= 0 || t.term <= 0 || !Number.isInteger(t.term)) return null;
   const startDate = parseDate(t.start);
+  if (isNaN(startDate)) return null;
   const day = startDate.getDate();
   const amortStart = (day <= 15) ? firstOfMonth(startDate) : firstOfMonth(addMonths(startDate,1));
   const term = t.term;
@@ -415,7 +417,7 @@ function computePerTxnSchedule(t) {
 }
 
 function compute() {
-  const validTxns = transactions.filter(t => t.start && t.amount && t.term);
+  const validTxns = transactions.filter(t => t.start && t.amount > 0 && Number.isInteger(t.term) && t.term > 0);
 
   // Build full month timeline across all transactions
   let allMonthKeys = new Set();
@@ -708,25 +710,37 @@ function parseUploadedFile(file) {
       transactions = [];
       idCounter = 0;
       let skipped = 0;
+      let invalid = 0;
 
       dataRows.forEach(r => {
         const vendor = String(r[vendorCol] || '').trim();
         const dept = deptCol !== -1 ? String(r[deptCol] || '').trim() : '';
-        const amount = parseFloat(r[amountCol]) || 0;
+        const amount = parseFloat(r[amountCol]);
         const start = excelSerialToISO(r[startCol]);
-        const term = parseInt(r[termCol]) || 0;
+        const rawTerm = r[termCol];
+        const term = parseFloat(rawTerm);
 
-        if (!vendor || !amount || !start || !term) { skipped++; return; }
+        if (!vendor || !start || amount === undefined || isNaN(amount) || rawTerm === undefined || rawTerm === '' || isNaN(term)) {
+          skipped++;
+          return;
+        }
+        if (amount <= 0 || term <= 0 || !Number.isInteger(term)) {
+          invalid++;
+          return;
+        }
         addRow({ vendor, dept, amount, start, term });
       });
 
       if (transactions.length === 0) {
-        showUploadBanner('None of the rows had all required fields (Vendor, Amount, Start Date, Term). Check the file and try again.', true);
+        showUploadBanner('None of the rows had all required, valid fields (Vendor, positive Amount, Start Date, whole-number Term in months). Check the file and try again.', true);
         return;
       }
 
-      const msg = skipped > 0
-        ? `Imported ${transactions.length} transaction${transactions.length === 1 ? '' : 's'} — skipped ${skipped} row${skipped === 1 ? '' : 's'} missing required fields.`
+      const parts = [`Imported ${transactions.length} transaction${transactions.length === 1 ? '' : 's'}`];
+      if (skipped > 0) parts.push(`skipped ${skipped} row${skipped === 1 ? '' : 's'} missing required fields`);
+      if (invalid > 0) parts.push(`skipped ${invalid} row${invalid === 1 ? '' : 's'} with an invalid amount or term (amount must be positive; term must be a whole number of months)`);
+      const msg = parts.length > 1
+        ? parts.join(' — ') + '.'
         : `Imported ${transactions.length} transaction${transactions.length === 1 ? '' : 's'} from "${file.name}".`;
       showUploadBanner(msg, false);
       updateDropZoneVisibility();
