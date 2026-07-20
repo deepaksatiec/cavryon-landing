@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<title>Free Prepaid Expense Amortization Schedule Generator | Cavryon</title>
+<meta name="description" content="Free prepaid expense amortization schedule generator for Controllers. Enter your software renewals and get a mid-month-convention amortization schedule and monthly journal entry — instantly, in your browser." />
+<meta name="keywords" content="prepaid amortization schedule template, prepaid expense schedule generator, software subscription amortization, prepaid journal entry generator" />
+<link rel="canonical" href="https://www.cavryon.ai/tools/prepaid-schedule" />
+<link rel="icon" type="image/svg+xml" href="/cavryon-favicon.svg">
+<meta property="og:title" content="Free Prepaid Expense Amortization Schedule Generator | Cavryon" />
+<meta property="og:description" content="Enter your software renewals and get an instant amortization schedule and journal entry. Free, in your browser, no signup to use." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://www.cavryon.ai/tools/prepaid-schedule" />
+
+<style>
+  /* Reduced motion respect */
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+  input:focus-visible, select:focus-visible, button:focus-visible, textarea:focus-visible {
+    outline: 2px solid #5B8BFF; outline-offset: 2px;
+  }
+  .num-input::-webkit-outer-spin-button, .num-input::-webkit-inner-spin-button { opacity: 1; }
+  .schedule-table { border-collapse: separate; border-spacing: 0; }
+  .sticky-col { position: sticky; left: 0; z-index: 2; }
+  ::-webkit-scrollbar { height: 10px; width: 10px; }
+  ::-webkit-scrollbar-track { background: #0D1525; }
+  ::-webkit-scrollbar-thumb { background: #2A3752; border-radius: 8px; }
+</style>
+</head>
+
+<body class="bg-[#0B1020] text-white">
+
+  <!-- NAV -->
+  <nav class="flex items-center justify-between px-8 py-5 border-b border-gray-800 sticky top-0 z-50 bg-[#0B1020]/90 backdrop-blur">
+    <a href="/" class="text-2xl font-bold tracking-tight">Cavryon</a>
+    <div class="hidden md:flex gap-8 text-gray-300 text-sm">
+      <a href="/#features" class="hover:text-white">Features</a>
+      <a href="/blog" class="hover:text-white">Blog</a>
+      <a href="/resources.html" class="hover:text-white">Resources</a>
+      <a href="/tools/prepaid-schedule" class="text-white font-medium">Free Tools</a>
+      <a href="/contact.html" class="hover:text-white">Contact</a>
+    </div>
+    <a href="https://calendly.com/y-cavryon" target="_blank" class="bg-blue-600 hover:bg-blue-700 px-5 py-2 rounded-lg text-sm font-medium">
+      Book a Demo
+    </a>
+  </nav>
+
+  <!-- HERO -->
+  <section class="px-8 pt-16 pb-10 max-w-6xl mx-auto">
+    <div class="max-w-3xl">
+      <div class="inline-block mb-5 px-4 py-2 rounded-full bg-blue-600/10 text-blue-400 text-sm border border-blue-500/20">
+        Free Tool · No Signup to Use
+      </div>
+      <h1 class="text-4xl md:text-5xl font-bold leading-tight mb-5">
+        Prepaid Expense Amortization Schedule Generator
+      </h1>
+      <p class="text-gray-300 text-lg leading-relaxed mb-3">
+        Enter your annual software renewals below — real numbers or the sample data we've preloaded. Get an instant amortization schedule using mid-month convention, plus the monthly journal entry by department.
+      </p>
+      <p class="text-gray-500 text-sm">
+        Everything runs in your browser. Nothing is uploaded or stored until you choose to download.
+      </p>
+    </div>
+  </section>
+
+  <!-- STEP 1 — DATA TABLE -->
+  <section class="px-8 pb-10 max-w-6xl mx-auto">
+    <div class="flex items-center justify-between mb-4 flex-wrap gap-3">
+      <h2 class="text-xl font-semibold">1. Your Transactions</h2>
+      <div class="flex gap-2 flex-wrap">
+        <button onclick="loadSample()" class="text-sm px-4 py-2 rounded-lg border border-gray-700 hover:border-blue-500 hover:text-blue-400 transition">
+          Load Sample Data
+        </button>
+        <button onclick="clearAll()" class="text-sm px-4 py-2 rounded-lg border border-gray-700 hover:border-red-500 hover:text-red-400 transition">
+          Clear All
+        </button>
+        <button onclick="addRow()" class="text-sm px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 font-medium transition">
+          + Add Transaction
+        </button>
+      </div>
+    </div>
+
+    <div class="bg-[#111827] border border-gray-800 rounded-xl overflow-x-auto">
+      <table class="w-full text-sm min-w-[900px]">
+        <thead>
+          <tr class="bg-[#0D1525] text-gray-500 text-xs uppercase tracking-wider">
+            <th class="text-left px-3 py-3 font-medium">Vendor</th>
+            <th class="text-left px-3 py-3 font-medium">Department</th>
+            <th class="text-right px-3 py-3 font-medium">Amount ($)</th>
+            <th class="text-left px-3 py-3 font-medium">License Start Date</th>
+            <th class="text-right px-3 py-3 font-medium">Term (months)</th>
+            <th class="text-left px-3 py-3 font-medium"></th>
+          </tr>
+        </thead>
+        <tbody id="txnBody"></tbody>
+      </table>
+    </div>
+    <p class="text-gray-500 text-xs mt-3">Mid-month convention: a license starting on or before the 15th begins amortizing that same month. Starting on or after the 16th begins the following month.</p>
+  </section>
+
+  <!-- STEP 2 — SUMMARY -->
+  <section class="px-8 pb-10 max-w-6xl mx-auto">
+    <h2 class="text-xl font-semibold mb-4">2. Summary</h2>
+    <div class="grid md:grid-cols-4 gap-4 mb-6">
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-5">
+        <div class="text-gray-500 text-xs uppercase tracking-wider mb-2">Total Prepaid Recorded</div>
+        <div id="statTotal" class="text-2xl font-bold">$0</div>
+      </div>
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-5">
+        <div class="text-gray-500 text-xs uppercase tracking-wider mb-2">Transactions</div>
+        <div id="statCount" class="text-2xl font-bold">0</div>
+      </div>
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-5">
+        <div class="text-gray-500 text-xs uppercase tracking-wider mb-2">Schedule Spans</div>
+        <div id="statSpan" class="text-2xl font-bold">—</div>
+      </div>
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-5">
+        <div class="text-gray-500 text-xs uppercase tracking-wider mb-2">Remaining Balance (latest month)</div>
+        <div id="statRemaining" class="text-2xl font-bold text-blue-400">$0</div>
+      </div>
+    </div>
+
+    <!-- Monthly recognized expense chart -->
+    <div class="bg-[#111827] border border-gray-800 rounded-xl p-5">
+      <div class="text-gray-400 text-sm font-medium mb-4">Monthly Recognized Expense (P&L)</div>
+      <div id="chartWrap" class="overflow-x-auto">
+        <div id="chart" class="flex items-end gap-1 h-40 min-w-[600px]"></div>
+        <div id="chartLabels" class="flex gap-1 min-w-[600px] mt-2"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STEP 3 — SCHEDULE TABLE -->
+  <section class="px-8 pb-10 max-w-6xl mx-auto">
+    <h2 class="text-xl font-semibold mb-4">3. Full Amortization Schedule</h2>
+    <div class="bg-[#111827] border border-gray-800 rounded-xl overflow-x-auto">
+      <table class="schedule-table w-full text-xs min-w-[1200px]" id="scheduleTable"></table>
+    </div>
+  </section>
+
+  <!-- STEP 4 — JE GENERATOR -->
+  <section class="px-8 pb-16 max-w-6xl mx-auto">
+    <h2 class="text-xl font-semibold mb-4">4. Monthly Journal Entry</h2>
+    <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
+      <div class="flex items-center gap-3 mb-5">
+        <label class="text-sm text-gray-400">Month to recognize:</label>
+        <select id="jeMonth" onchange="renderJE()" class="bg-[#0B1020] border border-gray-700 rounded-lg px-3 py-2 text-sm"></select>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="text-gray-500 text-xs uppercase tracking-wider border-b border-gray-800">
+              <th class="text-left py-2 px-2">Account</th>
+              <th class="text-left py-2 px-2">Department</th>
+              <th class="text-right py-2 px-2">Debit</th>
+              <th class="text-right py-2 px-2">Credit</th>
+            </tr>
+          </thead>
+          <tbody id="jeBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- DOWNLOAD CTA -->
+  <section class="px-8 pb-20 max-w-6xl mx-auto">
+    <div class="bg-blue-600/10 border border-blue-500/20 rounded-2xl p-8 md:p-10">
+      <div class="max-w-2xl">
+        <h2 class="text-2xl md:text-3xl font-bold mb-3">Download the Full Excel Workbook</h2>
+        <p class="text-gray-300 leading-relaxed mb-6">
+          Get an Excel file with your GL data, the full amortization schedule, and the monthly journal entry generator — built exactly like the model above, ready to plug into your close process.
+        </p>
+        <button onclick="openModal()" class="bg-blue-600 hover:bg-blue-700 px-8 py-4 rounded-lg font-medium">
+          Download Excel Workbook
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHAT'S COMING -->
+  <section class="px-8 pb-20 max-w-6xl mx-auto">
+    <h2 class="text-2xl font-bold mb-2">More Free Tools — Coming Soon</h2>
+    <p class="text-gray-400 mb-8">Same underlying engine, different accounting task. Tell us which ones you'd use and we'll let you know the moment they're ready.</p>
+    <div class="grid md:grid-cols-2 gap-4">
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
+        <div class="text-blue-400 text-sm font-medium mb-2">Coming Next</div>
+        <div class="font-semibold mb-1">Fixed Asset Depreciation Schedule</div>
+        <div class="text-gray-400 text-sm">Straight-line depreciation schedules with monthly journal entries by department.</div>
+      </div>
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
+        <div class="text-blue-400 text-sm font-medium mb-2">Coming Next</div>
+        <div class="font-semibold mb-1">Subscription Revenue Recognition Schedule</div>
+        <div class="text-gray-400 text-sm">Spread annual subscription revenue across the service period, ASC 606-ready.</div>
+      </div>
+    </div>
+    <p class="text-gray-500 text-sm mt-6">Want early access to either — or something else entirely? Use the download form above, it's the same place we're collecting requests.</p>
+  </section>
+
+  <!-- MODAL -->
+  <div id="modalOverlay" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center px-4">
+    <div class="bg-[#111827] border border-gray-800 rounded-2xl max-w-lg w-full p-8 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-start justify-between mb-1">
+        <h3 class="text-xl font-bold">Get your Excel workbook</h3>
+        <button onclick="closeModal()" class="text-gray-500 hover:text-white text-xl leading-none">&times;</button>
+      </div>
+      <p class="text-gray-400 text-sm mb-6">One email, no spam. Just this file and, if you opt in below, a heads-up when new tools ship.</p>
+
+      <form id="leadForm" onsubmit="submitLead(event)" class="space-y-5">
+        <div>
+          <label class="block text-sm text-gray-400 mb-2">Work email</label>
+          <input type="email" id="leadEmail" required class="w-full bg-[#0B1020] border border-gray-700 rounded-lg px-4 py-3 text-sm" placeholder="you@company.com" />
+        </div>
+
+        <div>
+          <label class="block text-sm text-gray-400 mb-3">Also notify me when these are ready — optional</label>
+          <div class="space-y-2">
+            <label class="flex items-center gap-2 text-sm text-gray-300">
+              <input type="checkbox" name="notify" value="Depreciation Schedule" class="rounded border-gray-600 bg-[#0B1020]">
+              Fixed Asset Depreciation Schedule
+            </label>
+            <label class="flex items-center gap-2 text-sm text-gray-300">
+              <input type="checkbox" name="notify" value="Rev Rec Schedule" class="rounded border-gray-600 bg-[#0B1020]">
+              Subscription Revenue Recognition Schedule
+            </label>
+            <label class="flex items-center gap-2 text-sm text-gray-300">
+              <input type="checkbox" name="notify" value="GL Anomaly Scan" class="rounded border-gray-600 bg-[#0B1020]">
+              Automatic GL duplicate &amp; anomaly scan (Cavryon)
+            </label>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm text-gray-400 mb-2">Anything you wish existed for your close? — optional</label>
+          <textarea id="leadComment" rows="3" class="w-full bg-[#0B1020] border border-gray-700 rounded-lg px-4 py-3 text-sm" placeholder="Tell us what would save you the most time..."></textarea>
+        </div>
+
+        <button id="submitBtn" type="submit" class="w-full bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg font-medium">
+          Download Workbook
+        </button>
+        <p class="text-gray-500 text-xs text-center">This is just a heads-up list for new tools — not a marketing list.</p>
+      </form>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-gray-800 px-8 py-8 text-center text-gray-500">
+    <div class="mb-3 flex justify-center gap-6 text-sm flex-wrap">
+      <a href="/" class="text-blue-400 hover:text-blue-300">Home</a>
+      <a href="/blog" class="text-blue-400 hover:text-blue-300">Blog</a>
+      <a href="/resources.html" class="text-blue-400 hover:text-blue-300">Resources</a>
+      <a href="/contact.html" class="text-blue-400 hover:text-blue-300">Contact</a>
+    </div>
+    Cavryon © 2026
+  </footer>
+
+<script>
+/* ============================================================
+   DATA MODEL
+   ============================================================ */
+let transactions = [];
+let idCounter = 0;
+
+const SAMPLE_DATA = [
+  { vendor: "Calendly", dept: "Sales", amount: 3650, start: "2026-01-03", term: 12 },
+  { vendor: "Adobe Creative Cloud", dept: "Marketing", amount: 7215.40, start: "2026-01-05", term: 12 },
+  { vendor: "NetSuite", dept: "Finance", amount: 16825.50, start: "2026-01-09", term: 12 },
+  { vendor: "HubSpot", dept: "Marketing", amount: 14432.75, start: "2026-01-11", term: 12 },
+  { vendor: "Gusto", dept: "HR", amount: 4215.75, start: "2026-01-15", term: 12 },
+  { vendor: "Slack", dept: "Operations", amount: 5432.10, start: "2026-01-16", term: 12 },
+  { vendor: "Salesforce", dept: "Sales", amount: 28850.25, start: "2026-01-18", term: 24 },
+  { vendor: "Zoom", dept: "IT", amount: 3915.25, start: "2026-01-21", term: 12 },
+  { vendor: "DocuSign", dept: "Finance", amount: 2895.60, start: "2026-01-22", term: 12 },
+  { vendor: "Asana", dept: "Operations", amount: 3120, start: "2026-01-25", term: 12 },
+  { vendor: "Greenhouse", dept: "HR", amount: 9600, start: "2026-02-09", term: 12 },
+  { vendor: "Datadog", dept: "Engineering", amount: 12000, start: "2026-03-11", term: 12 },
+];
+
+/* ============================================================
+   DATE HELPERS
+   ============================================================ */
+function parseDate(str) { const [y,m,d] = str.split('-').map(Number); return new Date(y, m-1, d); }
+function fmtMonthKey(d) { return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0'); }
+function fmtMonthLabel(d) {
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return months[d.getMonth()] + ' ' + d.getFullYear();
+}
+function firstOfMonth(d) { return new Date(d.getFullYear(), d.getMonth(), 1); }
+function addMonths(d, n) { return new Date(d.getFullYear(), d.getMonth()+n, 1); }
+function fmtUSD(n) {
+  return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+function fmtUSDShort(n) {
+  if (Math.abs(n) >= 1000) return '$' + (n/1000).toFixed(1) + 'k';
+  return '$' + n.toFixed(0);
+}
+
+/* ============================================================
+   ROW RENDERING (editable table)
+   ============================================================ */
+function addRow(data) {
+  const id = idCounter++;
+  const row = data ? { id, ...data } : { id, vendor: '', dept: '', amount: '', start: '', term: 12 };
+  transactions.push(row);
+  renderTable();
+  compute();
+}
+
+function removeRow(id) {
+  transactions = transactions.filter(t => t.id !== id);
+  renderTable();
+  compute();
+}
+
+function updateRow(id, field, value) {
+  const row = transactions.find(t => t.id === id);
+  if (!row) return;
+  row[field] = (field === 'amount' || field === 'term') ? parseFloat(value) || 0 : value;
+  compute();
+}
+
+function loadSample() {
+  transactions = [];
+  idCounter = 0;
+  SAMPLE_DATA.forEach(d => addRow(d));
+}
+
+function clearAll() {
+  transactions = [];
+  renderTable();
+  compute();
+}
+
+function renderTable() {
+  const tbody = document.getElementById('txnBody');
+  tbody.innerHTML = '';
+  transactions.forEach(t => {
+    const tr = document.createElement('tr');
+    tr.className = 'border-t border-gray-800';
+    tr.innerHTML = `
+      <td class="px-2 py-2">
+        <input value="${t.vendor || ''}" onchange="updateRow(${t.id},'vendor',this.value)"
+          class="w-full bg-[#0B1020] border border-gray-700 rounded px-2 py-1.5 text-sm" placeholder="Vendor" />
+      </td>
+      <td class="px-2 py-2">
+        <input value="${t.dept || ''}" onchange="updateRow(${t.id},'dept',this.value)"
+          class="w-full bg-[#0B1020] border border-gray-700 rounded px-2 py-1.5 text-sm" placeholder="Department" />
+      </td>
+      <td class="px-2 py-2">
+        <input type="number" step="0.01" value="${t.amount || ''}" onchange="updateRow(${t.id},'amount',this.value)"
+          class="num-input w-full bg-[#0B1020] border border-gray-700 rounded px-2 py-1.5 text-sm text-right" placeholder="0.00" />
+      </td>
+      <td class="px-2 py-2">
+        <input type="date" value="${t.start || ''}" onchange="updateRow(${t.id},'start',this.value)"
+          class="w-full bg-[#0B1020] border border-gray-700 rounded px-2 py-1.5 text-sm" />
+      </td>
+      <td class="px-2 py-2">
+        <input type="number" value="${t.term || 12}" onchange="updateRow(${t.id},'term',this.value)"
+          class="num-input w-full bg-[#0B1020] border border-gray-700 rounded px-2 py-1.5 text-sm text-right" />
+      </td>
+      <td class="px-2 py-2 text-center">
+        <button onclick="removeRow(${t.id})" class="text-gray-500 hover:text-red-400 text-sm">Remove</button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+  if (transactions.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="6" class="px-3 py-8 text-center text-gray-500 text-sm">No transactions yet. Click "Load Sample Data" or "+ Add Transaction" to begin.</td></tr>`;
+  }
+}
+
+/* ============================================================
+   AMORTIZATION ENGINE
+   Mirrors mid-month convention + final-month rounding plug
+   ============================================================ */
+function computePerTxnSchedule(t) {
+  if (!t.start || !t.amount || !t.term) return null;
+  const startDate = parseDate(t.start);
+  const day = startDate.getDate();
+  const amortStart = (day <= 15) ? firstOfMonth(startDate) : firstOfMonth(addMonths(startDate,1));
+  const term = t.term;
+  const monthlyBase = Math.round((t.amount / term) * 100) / 100;
+  const finalAmt = Math.round((t.amount - monthlyBase * (term - 1)) * 100) / 100;
+
+  const months = [];
+  for (let i = 0; i < term; i++) {
+    const monthDate = addMonths(amortStart, i);
+    const amt = (i === term - 1) ? finalAmt : monthlyBase;
+    months.push({ key: fmtMonthKey(monthDate), date: monthDate, amount: amt });
+  }
+  return { amortStart, term, months };
+}
+
+function compute() {
+  const validTxns = transactions.filter(t => t.start && t.amount && t.term);
+
+  // Build full month timeline across all transactions
+  let allMonthKeys = new Set();
+  const txnSchedules = validTxns.map(t => ({ txn: t, sched: computePerTxnSchedule(t) }));
+  txnSchedules.forEach(({sched}) => sched.months.forEach(m => allMonthKeys.add(m.key)));
+
+  const sortedKeys = Array.from(allMonthKeys).sort();
+  const monthDates = sortedKeys.map(k => { const [y,m] = k.split('-').map(Number); return new Date(y, m-1, 1); });
+
+  // Stats
+  const total = validTxns.reduce((s,t) => s + t.amount, 0);
+  document.getElementById('statTotal').textContent = fmtUSD(total);
+  document.getElementById('statCount').textContent = validTxns.length;
+  document.getElementById('statSpan').textContent = sortedKeys.length
+    ? fmtMonthLabel(monthDates[0]) + ' – ' + fmtMonthLabel(monthDates[monthDates.length-1])
+    : '—';
+
+  // Monthly recognized expense totals
+  const monthlyTotals = {};
+  sortedKeys.forEach(k => monthlyTotals[k] = 0);
+  txnSchedules.forEach(({sched}) => sched.months.forEach(m => { monthlyTotals[m.key] += m.amount; }));
+
+  // Cumulative + remaining balance
+  let cumulative = 0;
+  const cumByMonth = {};
+  sortedKeys.forEach(k => { cumulative += monthlyTotals[k]; cumByMonth[k] = cumulative; });
+  const lastKey = sortedKeys[sortedKeys.length - 1];
+  const remaining = lastKey ? (total - cumByMonth[lastKey]) : 0;
+  document.getElementById('statRemaining').textContent = fmtUSD(Math.max(remaining, 0));
+
+  renderChart(sortedKeys, monthDates, monthlyTotals);
+  renderScheduleTable(txnSchedules, sortedKeys, monthDates, monthlyTotals, cumByMonth, total);
+  renderJEMonthOptions(sortedKeys, monthDates);
+  renderJE();
+
+  window._computedState = { txnSchedules, sortedKeys, monthDates, monthlyTotals, validTxns };
+}
+
+/* ============================================================
+   CHART
+   ============================================================ */
+function renderChart(sortedKeys, monthDates, monthlyTotals) {
+  const chart = document.getElementById('chart');
+  const labels = document.getElementById('chartLabels');
+  chart.innerHTML = '';
+  labels.innerHTML = '';
+  if (sortedKeys.length === 0) {
+    chart.innerHTML = '<div class="text-gray-600 text-sm self-center">No data yet</div>';
+    return;
+  }
+  const max = Math.max(...sortedKeys.map(k => monthlyTotals[k]), 1);
+  sortedKeys.forEach((k, i) => {
+    const val = monthlyTotals[k];
+    const heightPct = Math.max((val / max) * 100, 2);
+    const bar = document.createElement('div');
+    bar.className = 'flex-1 bg-blue-600 hover:bg-blue-500 rounded-t transition-colors relative group';
+    bar.style.height = heightPct + '%';
+    bar.innerHTML = `<div class="absolute -top-7 left-1/2 -translate-x-1/2 bg-[#0B1020] border border-gray-700 rounded px-2 py-1 text-[10px] whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">${fmtUSD(val)}</div>`;
+    chart.appendChild(bar);
+
+    const lbl = document.createElement('div');
+    lbl.className = 'flex-1 text-center text-[9px] text-gray-500';
+    lbl.style.writingMode = sortedKeys.length > 18 ? 'vertical-rl' : 'horizontal-tb';
+    lbl.textContent = fmtMonthLabel(monthDates[i]).replace(' ', "'").slice(0,-2);
+    labels.appendChild(lbl);
+  });
+}
+
+/* ============================================================
+   SCHEDULE TABLE
+   ============================================================ */
+function renderScheduleTable(txnSchedules, sortedKeys, monthDates, monthlyTotals, cumByMonth, total) {
+  const table = document.getElementById('scheduleTable');
+  if (txnSchedules.length === 0) {
+    table.innerHTML = `<tr><td class="px-4 py-8 text-center text-gray-500 text-sm">Add transactions above to see the schedule.</td></tr>`;
+    return;
+  }
+
+  let thead = `<thead><tr class="bg-[#0D1525] text-gray-500 uppercase tracking-wider">
+    <th class="sticky-col bg-[#0D1525] text-left px-3 py-3 min-w-[160px]">Vendor</th>
+    <th class="text-left px-3 py-3">Dept</th>
+    <th class="text-right px-3 py-3">Amount</th>`;
+  monthDates.forEach(d => { thead += `<th class="text-right px-2 py-3 min-w-[70px]">${fmtMonthLabel(d)}</th>`; });
+  thead += `</tr></thead>`;
+
+  let tbody = '<tbody>';
+  txnSchedules.forEach(({txn, sched}) => {
+    tbody += `<tr class="border-t border-gray-800 hover:bg-[#0D1525]/50">
+      <td class="sticky-col bg-[#111827] px-3 py-2 font-medium">${txn.vendor}</td>
+      <td class="px-3 py-2 text-gray-400">${txn.dept}</td>
+      <td class="px-3 py-2 text-right text-gray-300">${fmtUSD(txn.amount)}</td>`;
+    sortedKeys.forEach(k => {
+      const m = sched.months.find(mm => mm.key === k);
+      tbody += `<td class="px-2 py-2 text-right ${m ? 'text-white' : 'text-gray-700'}">${m ? fmtUSDShort(m.amount) : '—'}</td>`;
+    });
+    tbody += '</tr>';
+  });
+
+  // Summary rows
+  tbody += `<tr class="border-t-2 border-gray-700 bg-[#0D1525] font-medium">
+    <td class="sticky-col bg-[#0D1525] px-3 py-2" colspan="3">Total Recognized Expense (P&L)</td>`;
+  sortedKeys.forEach(k => { tbody += `<td class="px-2 py-2 text-right text-blue-400">${fmtUSDShort(monthlyTotals[k])}</td>`; });
+  tbody += '</tr>';
+
+  tbody += `<tr class="border-t border-gray-800 bg-[#0D1525]/50">
+    <td class="sticky-col bg-[#0D1525] px-3 py-2 text-gray-400" colspan="3">Cumulative Recognized</td>`;
+  sortedKeys.forEach(k => { tbody += `<td class="px-2 py-2 text-right text-gray-400">${fmtUSDShort(cumByMonth[k])}</td>`; });
+  tbody += '</tr>';
+
+  tbody += `<tr class="border-t border-gray-800 bg-[#0D1525]/50">
+    <td class="sticky-col bg-[#0D1525] px-3 py-2 text-gray-400" colspan="3">Prepaid Balance, End of Month</td>`;
+  sortedKeys.forEach(k => { tbody += `<td class="px-2 py-2 text-right text-gray-400">${fmtUSDShort(Math.max(total - cumByMonth[k],0))}</td>`; });
+  tbody += '</tr>';
+
+  tbody += '</tbody>';
+  table.innerHTML = thead + tbody;
+}
+
+/* ============================================================
+   JE GENERATOR
+   ============================================================ */
+function renderJEMonthOptions(sortedKeys, monthDates) {
+  const sel = document.getElementById('jeMonth');
+  const prevVal = sel.value;
+  sel.innerHTML = '';
+  sortedKeys.forEach((k, i) => {
+    const opt = document.createElement('option');
+    opt.value = k;
+    opt.textContent = fmtMonthLabel(monthDates[i]);
+    sel.appendChild(opt);
+  });
+  if (sortedKeys.includes(prevVal)) sel.value = prevVal;
+}
+
+function renderJE() {
+  const state = window._computedState;
+  const jeBody = document.getElementById('jeBody');
+  if (!state || state.sortedKeys.length === 0) {
+    jeBody.innerHTML = `<tr><td colspan="4" class="text-center text-gray-500 py-6 text-sm">No schedule yet.</td></tr>`;
+    return;
+  }
+  const monthKey = document.getElementById('jeMonth').value || state.sortedKeys[0];
+
+  // Sum by department for this month
+  const byDept = {};
+  state.txnSchedules.forEach(({txn, sched}) => {
+    const m = sched.months.find(mm => mm.key === monthKey);
+    if (m) { byDept[txn.dept] = (byDept[txn.dept] || 0) + m.amount; }
+  });
+
+  let rows = '';
+  let debitTotal = 0;
+  Object.entries(byDept).forEach(([dept, amt]) => {
+    debitTotal += amt;
+    rows += `<tr class="border-b border-gray-800/50">
+      <td class="py-2 px-2">Software Expense</td>
+      <td class="py-2 px-2 text-gray-400">${dept}</td>
+      <td class="py-2 px-2 text-right">${fmtUSD(amt)}</td>
+      <td class="py-2 px-2 text-right text-gray-600">—</td>
+    </tr>`;
+  });
+  rows += `<tr class="border-t border-gray-700 font-medium">
+    <td class="py-2 px-2" colspan="2">Subtotal Debit</td>
+    <td class="py-2 px-2 text-right">${fmtUSD(debitTotal)}</td>
+    <td class="py-2 px-2 text-right text-gray-600">—</td>
+  </tr>`;
+  rows += `<tr class="border-b border-gray-800">
+    <td class="py-2 px-2">Prepaid Software (B/S)</td>
+    <td class="py-2 px-2 text-gray-400">All Departments</td>
+    <td class="py-2 px-2 text-right text-gray-600">—</td>
+    <td class="py-2 px-2 text-right">${fmtUSD(debitTotal)}</td>
+  </tr>`;
+  rows += `<tr class="text-green-400 text-xs">
+    <td class="py-2 px-2" colspan="4">Check (Debit − Credit): ${fmtUSD(0)} ✓</td>
+  </tr>`;
+
+  jeBody.innerHTML = rows;
+}
+
+/* ============================================================
+   MODAL + LEAD CAPTURE + DOWNLOAD
+   ============================================================ */
+function openModal() {
+  if (!window._computedState || window._computedState.validTxns.length === 0) {
+    alert('Add at least one transaction (or click "Load Sample Data") before downloading.');
+    return;
+  }
+  document.getElementById('modalOverlay').classList.remove('hidden');
+}
+function closeModal() { document.getElementById('modalOverlay').classList.add('hidden'); }
+
+async function submitLead(e) {
+  e.preventDefault();
+  const btn = document.getElementById('submitBtn');
+  btn.textContent = 'Preparing your file...';
+  btn.disabled = true;
+
+  const email = document.getElementById('leadEmail').value;
+  const comment = document.getElementById('leadComment').value;
+  const notify = Array.from(document.querySelectorAll('input[name="notify"]:checked')).map(cb => cb.value);
+
+  // Fire-and-forget lead capture — replace with your Cavryon webhook URL
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxWTv2GFZZPUIzTwb-wCE3meF9AKKawcJMmOfoxApWjANOLzGcWCEuzro7MVFB6h-e4/exec";
+  try {
+    await fetch(SCRIPT_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email, comment, notify: notify.join(', '),
+        source: "prepaid_schedule_tool",
+        submittedAt: new Date().toISOString()
+      })
+    });
+  } catch (err) { console.error(err); }
+
+  downloadWorkbook();
+
+  btn.textContent = 'Downloaded!';
+  setTimeout(() => { closeModal(); btn.textContent = 'Download Workbook'; btn.disabled = false; document.getElementById('leadForm').reset(); }, 1200);
+}
+
+function downloadWorkbook() {
+  const state = window._computedState;
+  const wb = XLSX.utils.book_new();
+
+  // --- GL Data sheet ---
+  const glRows = [["Vendor","Department","Amount","License Start Date","Term (Months)"]];
+  state.validTxns.forEach(t => glRows.push([t.vendor, t.dept, t.amount, t.start, t.term]));
+  const wsGL = XLSX.utils.aoa_to_sheet(glRows);
+  XLSX.utils.book_append_sheet(wb, wsGL, "GL Data");
+
+  // --- Amortization Schedule sheet ---
+  const header = ["Vendor","Department","Amount", ...state.monthDates.map(d => fmtMonthLabel(d))];
+  const schedRows = [header];
+  state.txnSchedules.forEach(({txn, sched}) => {
+    const row = [txn.vendor, txn.dept, txn.amount];
+    state.sortedKeys.forEach(k => {
+      const m = sched.months.find(mm => mm.key === k);
+      row.push(m ? m.amount : 0);
+    });
+    schedRows.push(row);
+  });
+  // Totals row
+  const totalsRow = ["Total Recognized Expense (P&L)", "", ""];
+  state.sortedKeys.forEach(k => totalsRow.push(state.monthlyTotals[k]));
+  schedRows.push(totalsRow);
+  const wsSched = XLSX.utils.aoa_to_sheet(schedRows);
+  XLSX.utils.book_append_sheet(wb, wsSched, "Amortization Schedule");
+
+  // --- Monthly JE sheet (first month as example) ---
+  const jeRows = [["Month", document.getElementById('jeMonth').selectedOptions[0]?.textContent || ""],[],
+    ["Account","Department","Debit","Credit"]];
+  const monthKey = document.getElementById('jeMonth').value;
+  const byDept = {};
+  state.txnSchedules.forEach(({txn, sched}) => {
+    const m = sched.months.find(mm => mm.key === monthKey);
+    if (m) byDept[txn.dept] = (byDept[txn.dept] || 0) + m.amount;
+  });
+  let debitTotal = 0;
+  Object.entries(byDept).forEach(([dept, amt]) => { debitTotal += amt; jeRows.push(["Software Expense", dept, amt, ""]); });
+  jeRows.push(["Subtotal Debit","", debitTotal, ""]);
+  jeRows.push(["Prepaid Software (B/S)","All Departments","", debitTotal]);
+  jeRows.push(["Check (Debit - Credit)","","", 0]);
+  const wsJE = XLSX.utils.aoa_to_sheet(jeRows);
+  XLSX.utils.book_append_sheet(wb, wsJE, "Monthly JE");
+
+  XLSX.writeFile(wb, "cavryon-prepaid-amortization-schedule.xlsx");
+}
+
+/* ============================================================
+   INIT
+   ============================================================ */
+loadSample();
+</script>
+
+</body>
+</html>

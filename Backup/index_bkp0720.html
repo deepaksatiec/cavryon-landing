@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Cavryon | Accounting Intelligence for Controllers</title>
+
+  <meta
+    name="description"
+    content="Cavryon scans your GL export before month-end close and flags duplicates, vendor miscoding, prepaid candidates, and unusual activity — returned as a flagged Excel workbook. No ERP integration needed."
+  />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="icon" type="image/svg+xml" href="/cavryon-favicon.svg">
+</head>
+
+<body class="bg-[#0B1020] text-white">
+
+  <!-- NAVBAR -->
+  <nav class="flex items-center justify-between px-8 py-5 border-b border-gray-800 sticky top-0 z-50 bg-[#0B1020]/90 backdrop-blur">
+
+    <div class="text-2xl font-bold tracking-tight">
+      Cavryon
+    </div>
+
+<div class="hidden md:flex gap-8 text-gray-300 text-sm">
+  <a href="#features" class="hover:text-white">Features</a>
+  <a href="#workflow" class="hover:text-white">Workflow</a>
+  <a href="/blog/index.html" class="hover:text-white">Blog</a>
+  <a href="/tools/prepaid-schedule" class="hover:text-white">Free Tools</a>
+  <a href="/resources.html" class="hover:text-white">Resources</a>
+  <a href="/month-end-close-checklist.html" class="hover:text-white">Checklist</a>
+  <a href="/contact.html" class="hover:text-white">Contact</a>
+</div>
+
+<div class="flex gap-3">
+
+  <a href="https://calendly.com/y-cavryon"
+     target="_blank"
+     class="bg-blue-600 hover:bg-blue-700 px-5 py-2 rounded-lg text-sm font-medium">
+    Book a Demo
+  </a>
+</div>
+
+  </nav>
+
+  <!-- HERO -->
+  <section class="grid md:grid-cols-2 gap-12 px-8 py-24 items-center max-w-7xl mx-auto">
+
+    <div>
+
+      <div class="inline-block mb-5 px-4 py-2 rounded-full bg-blue-600/10 text-blue-400 text-sm border border-blue-500/20">
+        Pre-Close Intelligence for Controllers
+      </div>
+
+      <h1 class="text-5xl md:text-6xl font-bold leading-tight mb-6">
+        Catch Accounting Issues Before They Become Month-End Fire Drills.
+      </h1>
+
+      <p class="text-gray-300 text-lg leading-relaxed mb-8 max-w-xl">
+        Upload your GL export. Get back a flagged workbook showing exactly what needs investigation — before close day.
+      </p>
+
+      <!-- WAITLIST FORM -->
+      <form
+        id="waitlist"
+        onsubmit="handleSubmit(event)"
+        class="flex flex-col sm:flex-row gap-3 max-w-2xl"
+      >
+
+        <input
+          type="email"
+          id="email"
+          required
+          placeholder="Enter your work email"
+          class="px-4 py-3 rounded-lg text-black w-full"
+        />
+
+        <select
+          id="role"
+          required
+          class="px-4 py-3 rounded-lg text-black w-full sm:w-56"
+        >
+          <option value="">Select role</option>
+          <option>Controller</option>
+          <option>Accountant</option>
+          <option>Founder</option>
+          <option>Fractional CFO</option>
+          <option>Bookkeeper</option>
+          <option>Finance Lead</option>
+          <option>Other</option>
+        </select>
+
+        <button
+          id="submitBtn"
+          class="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg font-medium whitespace-nowrap"
+        >
+          Request Access
+        </button>
+
+      </form>
+
+      <p id="successMsg" class="text-green-400 text-sm mt-3 hidden">
+        Thanks — you’re on the early access list.
+      </p>
+
+      <p class="text-gray-500 text-sm mt-6 italic border-l border-blue-500 pl-4">
+  "Finally something that tells me what to look at instead of making me go find it." 
+  <span class="not-italic">— Controller, SaaS company</span>
+</p>
+
+      <p class="text-gray-500 text-sm mt-4">
+        Works with QuickBooks exports, Excel schedules, trial balances, and GL activity files.
+      </p>
+
+    </div>
+
+
+    <!-- DASHBOARD MOCK -->
+    <div class="bg-[#111827] border border-gray-700 rounded-2xl p-6 shadow-2xl">
+
+      <div class="flex justify-between items-center mb-6">
+
+        <div>
+          <p class="text-gray-400 text-sm">
+            Month-End Review
+          </p>
+
+          <h3 class="text-xl font-semibold">
+            Accounting Insights Dashboard
+          </h3>
+        </div>
+
+        <span class="bg-yellow-500/10 text-yellow-400 px-3 py-1 rounded-full text-sm">
+          Review Needed
+        </span>
+
+      </div>
+
+      <table class="w-full text-left text-sm">
+
+        <thead class="text-gray-500 border-b border-gray-800">
+          <tr>
+            <th class="py-3">Account</th>
+            <th>Status</th>
+            <th>Insight</th>
+          </tr>
+        </thead>
+
+        <tbody class="divide-y divide-gray-800">
+
+          <tr>
+            <td class="py-4">Prepaid Expenses</td>
+            <td class="text-yellow-400">Review</td>
+            <td>Above $2,500 threshold</td>
+          </tr>
+
+          <tr>
+            <td class="py-4">Sales Tax Payable</td>
+            <td class="text-red-400">Mismatch</td>
+            <td>Payment variance detected</td>
+          </tr>
+
+          <tr>
+            <td class="py-4">Office Expenses</td>
+            <td class="text-yellow-400">Duplicate Risk</td>
+            <td>Same amount booked 3x</td>
+          </tr>
+
+          <tr>
+            <td class="py-4">Bank Reconciliation</td>
+            <td class="text-red-400">Unreconciled</td>
+            <td>12 unmatched transactions</td>
+          </tr>
+
+        </tbody>
+
+      </table>
+
+      <div class="bg-blue-500/5 border border-blue-500/20 rounded-lg p-4 mt-6">
+
+        <p class="text-blue-400 text-xs mb-2 font-medium">
+          AI Insights
+        </p>
+
+        <ul class="list-disc ml-4 text-gray-300 text-xs space-y-1">
+          <li>Duplicate transaction pattern identified</li>
+          <li>Prepaid schedule recommendation generated</li>
+          <li>Month-over-month expense spike detected</li>
+          <li>Unreconciled carryforward balance found</li>
+        </ul>
+
+      </div>
+
+    </div>
+
+  </section>
+
+<!-- CONTROLLER RESEARCH -->
+<section class="px-8 py-20 max-w-5xl mx-auto">
+
+  <div class="bg-[#111827] border border-gray-800 rounded-3xl p-10 text-center">
+
+    <div class="text-blue-400 text-sm mb-4">
+      CONTROLLER RESEARCH PROGRAM
+    </div>
+
+    <h2 class="text-4xl font-bold mb-6">
+      Help Shape the Future of Month-End Close
+    </h2>
+
+    <p class="text-gray-400 text-lg leading-relaxed max-w-3xl mx-auto mb-8">
+      We're speaking with Controllers, Accounting Managers, and Fractional CFOs to better understand what creates the most investigation work during month-end close.
+    </p>
+
+    <p class="text-gray-300 mb-8">
+      No sales pitch. Just a 20-minute conversation about close processes, reconciliation challenges, and accounting workflows.
+    </p>
+
+    <a
+      href="https://calendly.com/y-cavryon"
+      target="_blank"
+      class="bg-blue-600 hover:bg-blue-700 px-8 py-4 rounded-lg font-medium"
+    >
+      Schedule a Research Call
+    </a>
+
+  </div>
+
+</section>
+
+  <!-- FEATURES -->
+  <section id="features" class="px-8 py-20 max-w-7xl mx-auto text-center">
+
+    <h2 class="text-4xl font-bold mb-5">
+      Built for Practical Accounting Work
+    </h2>
+
+    <p class="text-gray-400 max-w-3xl mx-auto text-lg leading-relaxed mb-12">
+      Cavryon focuses on the repetitive accounting work finance teams deal with every month — reconciliation, investigation, cleanup, and anomaly review.
+    </p>
+
+    <div class="grid md:grid-cols-3 gap-8">
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-8">
+
+        <h3 class="text-xl font-semibold mb-4">
+          Smart Reconciliation Assistant
+        </h3>
+
+        <ul class="text-gray-400 text-sm space-y-2 text-left">
+          <li>• Match transactions faster</li>
+          <li>• Detect unreconciled balances</li>
+          <li>• Identify duplicate entries</li>
+          <li>• Review reconciliation aging</li>
+        </ul>
+
+      </div>
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-8">
+
+        <h3 class="text-xl font-semibold mb-4">
+          GL Variance Analyzer
+        </h3>
+
+        <ul class="text-gray-400 text-sm space-y-2 text-left">
+          <li>• Month-over-month anomaly detection</li>
+          <li>• Duplicate posting detection</li>
+          <li>• Unexpected balance movement</li>
+          <li>• Historical pattern analysis</li>
+        </ul>
+
+      </div>
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-8">
+
+        <h3 class="text-xl font-semibold mb-4">
+          Book Cleanup Intelligence
+        </h3>
+
+        <ul class="text-gray-400 text-sm space-y-2 text-left">
+          <li>• Detect stale balances</li>
+          <li>• Clean uncategorized entries</li>
+          <li>• Identify mapping inconsistencies</li>
+          <li>• Fix messy historical books</li>
+        </ul>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- PREPAID -->
+  <section class="px-8 py-20 max-w-6xl mx-auto">
+
+    <div class="bg-[#111827] border border-gray-800 rounded-3xl p-10">
+
+      <div class="grid md:grid-cols-2 gap-10 items-center">
+
+        <div>
+
+          <div class="text-blue-400 text-sm mb-4">
+            PREPAID & ACCRUAL AUTOMATION
+          </div>
+
+          <h2 class="text-4xl font-bold mb-6">
+            Automatically Generate Prepaid Schedules
+          </h2>
+
+          <p class="text-gray-400 text-lg leading-relaxed mb-6">
+            Cavryon can identify transactions above capitalization thresholds and automatically suggest prepaid schedules and amortization tracking.
+          </p>
+
+          <ul class="space-y-3 text-gray-300">
+            <li>• Detect transactions above threshold</li>
+            <li>• Recommend prepaid classification</li>
+            <li>• Generate amortization schedules</li>
+            <li>• Track monthly expense recognition</li>
+          </ul>
+
+        </div>
+
+        <div class="bg-[#0B1020] border border-gray-700 rounded-2xl p-6">
+
+          <div class="flex justify-between mb-4">
+            <span class="text-gray-400 text-sm">
+              Transaction Review
+            </span>
+
+            <span class="text-green-400 text-sm">
+              Suggested
+            </span>
+          </div>
+
+          <div class="space-y-4">
+
+            <div class="border border-gray-700 rounded-xl p-4">
+              <div class="flex justify-between mb-2">
+                <span>Software Renewal</span>
+                <span>$12,000</span>
+              </div>
+
+              <p class="text-gray-400 text-sm">
+                Above capitalization threshold. Suggested prepaid schedule created.
+              </p>
+            </div>
+
+            <div class="border border-gray-700 rounded-xl p-4">
+              <div class="flex justify-between mb-2">
+                <span>Insurance Renewal</span>
+                <span>$8,500</span>
+              </div>
+
+              <p class="text-gray-400 text-sm">
+                Recommended 12-month amortization schedule.
+              </p>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- WORKFLOW -->
+  <section id="workflow" class="px-8 py-20 max-w-7xl mx-auto text-center">
+
+    <h2 class="text-4xl font-bold mb-12">
+      How Cavryon Works
+    </h2>
+
+    <div class="grid md:grid-cols-3 gap-8">
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-8">
+
+        <div class="text-blue-400 text-sm mb-2">
+          Step 1
+        </div>
+
+        <h3 class="text-xl font-semibold mb-3">
+          Upload Existing Files
+        </h3>
+
+        <p class="text-gray-400 text-sm leading-relaxed">
+          Start with QuickBooks exports, Excel schedules, trial balances, or GL activity files.
+        </p>
+
+      </div>
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-8">
+
+        <div class="text-blue-400 text-sm mb-2">
+          Step 2
+        </div>
+
+        <h3 class="text-xl font-semibold mb-3">
+          Detect Issues Automatically
+        </h3>
+
+        <p class="text-gray-400 text-sm leading-relaxed">
+          Cavryon identifies anomalies, reconciliation gaps, duplicate postings, and cleanup opportunities.
+        </p>
+
+      </div>
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-8">
+
+        <div class="text-blue-400 text-sm mb-2">
+          Step 3
+        </div>
+
+        <h3 class="text-xl font-semibold mb-3">
+          Resolve Faster
+        </h3>
+
+        <p class="text-gray-400 text-sm leading-relaxed">
+          Spend less time investigating accounting issues and more time understanding your business.
+        </p>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- AUDIENCE -->
+  <section class="px-8 py-20 max-w-7xl mx-auto">
+
+    <h2 class="text-4xl font-bold text-center mb-4">
+      Built for Accounting Intelligence
+    </h2>
+
+    <p class="text-gray-400 text-center max-w-2xl mx-auto mb-12">
+      Cavryon is designed for the people who own the books and need confidence in every number.
+    </p>
+
+    <div class="grid md:grid-cols-3 gap-6">
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
+        <div class="text-blue-400 text-2xl mb-3">📊</div>
+        <h3 class="font-semibold mb-3">SMB Controllers</h3>
+        <p class="text-gray-400 text-sm">
+          Catch duplicates, vendor miscoding, and prepaid candidates before close day — without hours of manual GL review.
+        </p>
+      </div>
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
+        <div class="text-blue-400 text-2xl mb-3">🔁</div>
+        <h3 class="font-semibold mb-3">Fractional CFOs</h3>
+        <p class="text-gray-400 text-sm">
+          Handle more clients with less investigation time. Cavryon flags what needs attention across every GL you manage.
+        </p>
+      </div>
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
+        <div class="text-blue-400 text-2xl mb-3">🧾</div>
+        <h3 class="font-semibold mb-3">Accounting Managers</h3>
+        <p class="text-gray-400 text-sm">
+          Give your team a clear investigation list every month instead of spending hours finding what to look at.
+        </p>
+      </div>
+
+    </div>
+
+  </section>
+
+  <section class="px-8 py-20 max-w-6xl mx-auto">
+
+  <h2 class="text-4xl font-bold text-center mb-10">
+    Free Resources for Controllers & Finance Teams
+  </h2>
+
+  <div class="grid md:grid-cols-3 gap-6">
+
+    <a href="/month-end-close-checklist"
+       class="bg-[#111827] border border-gray-800 rounded-xl p-6 hover:border-blue-500">
+
+      <h3 class="text-xl font-semibold mb-3">
+        Month-End Close Checklist
+      </h3>
+
+      <p class="text-gray-400">
+        Practical checklist for startups and SMB finance teams.
+      </p>
+
+    </a>
+
+    <a href="/gl-variance-analysis-guide"
+       class="bg-[#111827] border border-gray-800 rounded-xl p-6 hover:border-blue-500">
+
+      <h3 class="text-xl font-semibold mb-3">
+        GL Variance Analysis Guide
+      </h3>
+
+      <p class="text-gray-400">
+        Learn how controllers investigate unusual account movement.
+      </p>
+
+    </a>
+
+    <a href="/book-cleanup-checklist"
+       class="bg-[#111827] border border-gray-800 rounded-xl p-6 hover:border-blue-500">
+
+      <h3 class="text-xl font-semibold mb-3">
+        Book Cleanup Checklist
+      </h3>
+
+      <p class="text-gray-400">
+        Identify stale balances, duplicate entries, and cleanup opportunities.
+      </p>
+
+    </a>
+
+  </div>
+
+</section>
+
+  <!-- COMPATIBILITY -->
+  <section class="px-8 py-16 max-w-5xl mx-auto text-center">
+    <p class="text-gray-500 text-sm uppercase tracking-widest mb-8">Works with your existing accounting stack</p>
+    <div class="flex flex-wrap justify-center items-center gap-8">
+      <div class="bg-[#111827] border border-gray-800 rounded-xl px-8 py-4 text-white font-semibold">QuickBooks Online</div>
+      <div class="bg-[#111827] border border-gray-800 rounded-xl px-8 py-4 text-white font-semibold">QuickBooks Desktop</div>
+      <div class="bg-[#111827] border border-gray-800 rounded-xl px-8 py-4 text-white font-semibold">NetSuite</div>
+      <div class="bg-[#111827] border border-gray-800 rounded-xl px-8 py-4 text-white font-semibold">Xero</div>
+      <div class="bg-[#111827] border border-gray-800 rounded-xl px-8 py-4 text-white font-semibold">Sage Intacct</div>
+    </div>
+    <p class="text-gray-500 text-sm mt-6">No integration required — just export your GL to Excel and upload.</p>
+  </section>
+
+  <!-- TRUST -->
+  <section class="px-8 py-16 max-w-5xl mx-auto">
+    <h2 class="text-3xl font-bold text-center mb-10">Your Data is Safe</h2>
+    <div class="grid md:grid-cols-3 gap-6">
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6 text-center">
+        <div class="text-blue-400 text-3xl mb-4">🔒</div>
+        <h3 class="font-semibold mb-2">Encrypted Uploads</h3>
+        <p class="text-gray-400 text-sm">All file transfers are encrypted end-to-end. Your GL data is never stored beyond the session.</p>
+      </div>
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6 text-center">
+        <div class="text-blue-400 text-3xl mb-4">🚫</div>
+        <h3 class="font-semibold mb-2">Never Used for Training</h3>
+        <p class="text-gray-400 text-sm">Your accounting data is never shared, sold, or used to train AI models. Ever.</p>
+      </div>
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6 text-center">
+        <div class="text-blue-400 text-3xl mb-4">✅</div>
+        <h3 class="font-semibold mb-2">No Integration Required</h3>
+        <p class="text-gray-400 text-sm">No API access, no ERP credentials, no IT setup. Just a file export — nothing more.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="px-8 py-20 max-w-4xl mx-auto">
+    <h2 class="text-3xl font-bold text-center mb-12">Frequently Asked Questions</h2>
+    <div class="space-y-4">
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
+        <h3 class="font-semibold mb-2">Does Cavryon replace my ERP or accounting software?</h3>
+        <p class="text-gray-400 text-sm">No. Cavryon works alongside your existing system. Just export your GL to Excel from QuickBooks, NetSuite, Xero, or Sage — Cavryon analyzes it and returns a flagged workbook. Nothing changes in your ERP.</p>
+      </div>
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
+        <h3 class="font-semibold mb-2">Is my GL data secure?</h3>
+        <p class="text-gray-400 text-sm">Yes. All uploads are encrypted end-to-end. Your data is never stored beyond your session, never shared with third parties, and never used to train AI models.</p>
+      </div>
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
+        <h3 class="font-semibold mb-2">How long does it take to get results?</h3>
+        <p class="text-gray-400 text-sm">Upload your GL export and get back a flagged Excel workbook in under 2 minutes. No setup, no onboarding, no IT involvement required.</p>
+      </div>
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
+        <h3 class="font-semibold mb-2">What accounting systems does it work with?</h3>
+        <p class="text-gray-400 text-sm">Cavryon works with any system that can export to Excel — QuickBooks Online, QuickBooks Desktop, NetSuite, Xero, and Sage Intacct. If you can export a GL detail report, Cavryon can analyze it.</p>
+      </div>
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
+        <h3 class="font-semibold mb-2">Do I need IT or any integration setup?</h3>
+        <p class="text-gray-400 text-sm">No. There is no integration, no API connection, and no IT involvement needed. Export your GL to Excel, upload the file, and get results. That's it.</p>
+      </div>
+
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
+        <h3 class="font-semibold mb-2">What exactly does Cavryon flag?</h3>
+        <p class="text-gray-400 text-sm">Cavryon detects duplicate transactions, vendor-to-account mismatches, missing department or class coding, potential prepaid candidates, unusual month-over-month account activity, and variance drivers. Each flag is color-coded by severity in the returned workbook.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section class="px-8 py-24 text-center">
+
+    <h2 class="text-4xl font-bold mb-5">
+      Stop Finding Problems at 9pm on Close Day
+    </h2>
+
+    <p class="text-gray-400 text-lg mb-8">
+      Join Controllers and finance leaders helping shape the future of month-end close.
+    </p>
+
+    <div class="flex justify-center gap-4 mt-8">
+
+  <a
+    href="#waitlist"
+    class="bg-blue-600 hover:bg-blue-700 px-8 py-4 rounded-lg font-medium"
+  >
+    Scan Your First GL File Free
+  </a>
+
+  <a
+    href="https://calendly.com/y-cavryon"
+    target="_blank"
+    class="border border-gray-600 hover:border-white px-8 py-4 rounded-lg font-medium"
+  >
+    Book a Demo
+  </a>
+
+</div>
+
+  </section>
+
+  <!-- FOOTER -->   
+  <footer class="border-t border-gray-800 px-8 py-8 text-center text-gray-500">
+    <div class="mt-4">
+  <a href="/contact.html" class="text-blue-400 text-sm underline">
+    Contact Us
+  </a>
+</div>
+    Cavryon © 2026    
+  </footer>
+  
+
+  <!-- SCRIPT -->
+  <script>
+    const SCRIPT_URL =
+      "https://script.google.com/macros/s/AKfycbx91eNuAbjR4nqAQfubA7fMk5jmFxFmeHyy8KZSvk_4wWY66CsfWlAzAfDbcqtvN4AOSQ/exec";
+
+    async function handleSubmit(e) {
+      e.preventDefault();
+
+      const emailInput = document.getElementById("email");
+      const roleInput = document.getElementById("role");
+      const submitBtn = document.getElementById("submitBtn");
+      const successMsg = document.getElementById("successMsg");
+
+      const payload = {
+        email: emailInput.value,
+        role: roleInput.value,
+        source: "cavryon_landing_page",
+        submittedAt: new Date().toISOString()
+      };
+
+      submitBtn.innerText = "Submitting...";
+      submitBtn.disabled = true;
+
+      try {
+        await fetch(SCRIPT_URL, {
+          method: "POST",
+          mode: "no-cors",
+          body: JSON.stringify(payload),
+          headers: {
+            "Content-Type": "application/json"
+          }
+        });
+
+        successMsg.classList.remove("hidden");
+        emailInput.value = "";
+        roleInput.value = "";
+
+      } catch (err) {
+        console.error(err);
+        alert("Something went wrong. Please try again.");
+      }
+
+      submitBtn.innerText = "Request Access";
+      submitBtn.disabled = false;
+    }
+  </script>
+
+</body>
+</html>
