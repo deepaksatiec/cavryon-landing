@@ -719,7 +719,7 @@ function parseUploadedFile(file) {
 
     } catch (err) {
       console.error(err);
-      showUploadBanner('Could not read that file. Make sure it\\'s a valid .xlsx, .xls, or .csv file.', true);
+      showUploadBanner("Could not read that file. Make sure it's a valid .xlsx, .xls, or .csv file.", true);
     }
   };
   reader.readAsArrayBuffer(file);
