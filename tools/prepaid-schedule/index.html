@@ -607,14 +607,28 @@ const COLUMN_ALIASES = {
 };
 
 function normalizeHeader(h) {
-  return String(h || '').trim().toLowerCase().replace(/\s+/g, ' ');
+  return String(h || '')
+    .trim()
+    .toLowerCase()
+    .replace(/[$()]/g, '')      // strip currency symbols / parens, e.g. "Amount ($)" -> "amount "
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
 function matchColumn(headers, aliasKey) {
   const aliases = COLUMN_ALIASES[aliasKey];
-  for (let i = 0; i < headers.length; i++) {
-    if (aliases.includes(normalizeHeader(headers[i]))) return i;
+  const normalizedHeaders = headers.map(normalizeHeader);
+
+  // 1. Exact match first
+  for (let i = 0; i < normalizedHeaders.length; i++) {
+    if (aliases.includes(normalizedHeaders[i])) return i;
   }
+
+  // 2. Fallback: substring match (handles things like "amount usd", "total cost", etc.)
+  for (let i = 0; i < normalizedHeaders.length; i++) {
+    if (aliases.some(a => normalizedHeaders[i].includes(a))) return i;
+  }
+
   return -1;
 }
 
