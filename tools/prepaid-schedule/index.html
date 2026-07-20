@@ -674,16 +674,44 @@ function parseUploadedFile(file) {
     try {
       const data = new Uint8Array(e.target.result);
       const wb = XLSX.read(data, { type: 'array', cellDates: true });
-      const firstSheetName = wb.SheetNames[0];
-      const ws = wb.Sheets[firstSheetName];
-      const rows = XLSX.utils.sheet_to_json(ws, { header: 1, raw: true, defval: '' });
+
+      if (!wb.SheetNames || wb.SheetNames.length === 0) {
+        showUploadBanner('That file has no sheets to read.', true);
+        return;
+      }
+
+      // Scan every sheet; use the first one whose header row matches all required columns.
+      let chosenSheetName = null;
+      let headers = null;
+      let rows = null;
+      for (const sheetName of wb.SheetNames) {
+        const ws = wb.Sheets[sheetName];
+        const sheetRows = XLSX.utils.sheet_to_json(ws, { header: 1, raw: true, defval: '' });
+        if (!sheetRows || sheetRows.length < 2) continue;
+        const candidateHeaders = sheetRows[0];
+        const hasAllCols = ['vendor', 'amount', 'start', 'term'].every(key => matchColumn(candidateHeaders, key) !== -1);
+        if (hasAllCols) {
+          chosenSheetName = sheetName;
+          headers = candidateHeaders;
+          rows = sheetRows;
+          break;
+        }
+      }
+
+      // Fall back to the first sheet with data if nothing matched, so the existing missing-columns
+      // error message below can explain exactly what's absent.
+      if (!rows) {
+        chosenSheetName = wb.SheetNames[0];
+        const ws = wb.Sheets[chosenSheetName];
+        rows = XLSX.utils.sheet_to_json(ws, { header: 1, raw: true, defval: '' });
+      }
 
       if (!rows || rows.length < 2) {
         showUploadBanner('That file looks empty — check it has a header row and at least one transaction.', true);
         return;
       }
 
-      const headers = rows[0];
+      headers = headers || rows[0];
       const vendorCol = matchColumn(headers, 'vendor');
       const deptCol = matchColumn(headers, 'dept');
       const amountCol = matchColumn(headers, 'amount');
@@ -697,7 +725,10 @@ function parseUploadedFile(file) {
       if (termCol === -1) missing.push('Term (Months)');
 
       if (missing.length > 0) {
-        showUploadBanner(`Couldn't find these columns: ${missing.join(', ')}. Expected headers like Vendor, Department, Amount, License Start Date, Term (Months).`, true);
+        const multiSheetNote = wb.SheetNames.length > 1
+          ? ` Your file has ${wb.SheetNames.length} tabs (${wb.SheetNames.join(', ')}) — none had a matching header row. If your data is on a different tab, make sure that tab has these headers.`
+          : '';
+        showUploadBanner(`Couldn't find these columns: ${missing.join(', ')}. Expected headers like Vendor, Department, Amount, License Start Date, Term (Months).${multiSheetNote}`, true);
         return;
       }
 
@@ -737,6 +768,7 @@ function parseUploadedFile(file) {
       }
 
       const parts = [`Imported ${transactions.length} transaction${transactions.length === 1 ? '' : 's'}`];
+      if (wb.SheetNames.length > 1) parts.push(`from the "${chosenSheetName}" tab`);
       if (skipped > 0) parts.push(`skipped ${skipped} row${skipped === 1 ? '' : 's'} missing required fields`);
       if (invalid > 0) parts.push(`skipped ${invalid} row${invalid === 1 ? '' : 's'} with an invalid amount or term (amount must be positive; term must be a whole number of months)`);
       const msg = parts.length > 1
