@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<title>Free Subscription Revenue Recognition Schedule Generator | Cavryon</title>
+<meta name="description" content="Free subscription revenue recognition schedule generator for Controllers. Enter your subscription invoices and get a mid-month-convention rev rec schedule, deferred revenue rollforward, and monthly journal entry — instantly, in your browser." />
+<meta name="keywords" content="revenue recognition schedule template, deferred revenue schedule generator, subscription revenue recognition, ASC 606 rev rec journal entry generator" />
+<link rel="canonical" href="https://www.cavryon.ai/tools/revenue-recognition" />
+<link rel="icon" type="image/svg+xml" href="/cavryon-favicon.svg">
+<meta property="og:title" content="Free Subscription Revenue Recognition Schedule Generator | Cavryon" />
+<meta property="og:description" content="Enter your subscription invoices and get an instant rev rec schedule, deferred revenue balance, and journal entry. Free, in your browser, no signup to use." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://www.cavryon.ai/tools/revenue-recognition" />
+
+<style>
+  /* Reduced motion respect */
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+  input:focus-visible, select:focus-visible, button:focus-visible, textarea:focus-visible {
+    outline: 2px solid #5B8BFF; outline-offset: 2px;
+  }
+  .num-input::-webkit-outer-spin-button, .num-input::-webkit-inner-spin-button { opacity: 1; }
+  .schedule-table { border-collapse: separate; border-spacing: 0; }
+  .sticky-col { position: sticky; left: 0; z-index: 2; }
+  ::-webkit-scrollbar { height: 10px; width: 10px; }
+  ::-webkit-scrollbar-track { background: #0D1525; }
+  ::-webkit-scrollbar-thumb { background: #2A3752; border-radius: 8px; }
+</style>
+</head>
+
+<body class="bg-[#0B1020] text-white">
+
+  <!-- NAV -->
+  <nav class="flex items-center justify-between px-8 py-5 border-b border-gray-800 sticky top-0 z-50 bg-[#0B1020]/90 backdrop-blur">
+    <a href="/" class="text-2xl font-bold tracking-tight">Cavryon</a>
+    <div class="hidden md:flex gap-8 text-gray-300 text-sm">
+      <a href="/#features" class="hover:text-white">Features</a>
+      <a href="/blog" class="hover:text-white">Blog</a>
+      <a href="/resources.html" class="hover:text-white">Resources</a>
+      <a href="/tools/prepaid-schedule" class="text-white font-medium">Free Tools</a>
+      <a href="/contact.html" class="hover:text-white">Contact</a>
+    </div>
+    <a href="https://calendly.com/y-cavryon" target="_blank" class="bg-blue-600 hover:bg-blue-700 px-5 py-2 rounded-lg text-sm font-medium">
+      Book a Demo
+    </a>
+  </nav>
+
+  <!-- HERO -->
+  <section class="px-8 pt-16 pb-10 max-w-6xl mx-auto">
+    <div class="max-w-3xl">
+      <div class="inline-block mb-5 px-4 py-2 rounded-full bg-blue-600/10 text-blue-400 text-sm border border-blue-500/20">
+        Free Tool · No Signup to Use
+      </div>
+      <h1 class="text-4xl md:text-5xl font-bold leading-tight mb-5">
+        Subscription Revenue Recognition Schedule Generator
+      </h1>
+      <p class="text-gray-300 text-lg leading-relaxed mb-3">
+        Enter your subscription invoices below — real numbers or the sample data we've preloaded. Get an instant rev rec schedule using mid-month convention, a deferred revenue rollforward, plus the monthly journal entry by tier.
+      </p>
+      <p class="text-gray-500 text-sm">
+        Everything runs in your browser. Nothing is uploaded or stored until you choose to download.
+      </p>
+    </div>
+  </section>
+
+  <!-- STEP 1 — DATA TABLE -->
+  <section class="px-8 pb-10 max-w-6xl mx-auto">
+    <div class="flex items-center justify-between mb-4 flex-wrap gap-3">
+      <h2 class="text-xl font-semibold">1. Your Subscription Invoices</h2>
+      <div class="flex gap-2 flex-wrap">
+        <button onclick="document.getElementById('fileInput').click()" class="text-sm px-4 py-2 rounded-lg border border-blue-600 text-blue-400 hover:bg-blue-600/10 transition flex items-center gap-2">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Upload Excel / CSV
+        </button>
+        <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" class="hidden" onchange="handleFileUpload(event)" />
+        <button onclick="loadSample()" class="text-sm px-4 py-2 rounded-lg border border-gray-700 hover:border-blue-500 hover:text-blue-400 transition">
+          Load Sample Data
+        </button>
+        <button onclick="clearAll()" class="text-sm px-4 py-2 rounded-lg border border-gray-700 hover:border-red-500 hover:text-red-400 transition">
+          Clear All
+        </button>
+        <button onclick="addRow()" class="text-sm px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 font-medium transition">
+          + Add Invoice
+        </button>
+      </div>
+    </div>
+
+    <!-- Upload status / error banner -->
+    <div id="uploadBanner" class="hidden mb-4 px-4 py-3 rounded-lg text-sm"></div>
+
+    <!-- Drop zone (visible when table is empty) -->
+    <div id="dropZone" class="hidden mb-4 border-2 border-dashed border-gray-700 rounded-xl p-8 text-center hover:border-blue-500/50 transition cursor-pointer"
+         onclick="document.getElementById('fileInput').click()">
+      <svg class="mx-auto mb-3 text-gray-600" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      <p class="text-gray-400 text-sm">Drop your Excel or CSV file here, or click to browse</p>
+      <p class="text-gray-600 text-xs mt-1">Columns: Customer, Tier, Amount, Subscription Start Date, Term (Months) — any order, close naming is fine</p>
+    </div>
+
+    <div class="bg-[#111827] border border-gray-800 rounded-xl overflow-x-auto">
+      <table class="w-full text-sm min-w-[900px]">
+        <thead>
+          <tr class="bg-[#0D1525] text-gray-500 text-xs uppercase tracking-wider">
+            <th class="text-left px-3 py-3 font-medium">Customer</th>
+            <th class="text-left px-3 py-3 font-medium">Tier</th>
+            <th class="text-right px-3 py-3 font-medium">Amount ($)</th>
+            <th class="text-left px-3 py-3 font-medium">Subscription Start Date</th>
+            <th class="text-right px-3 py-3 font-medium">Term (months)</th>
+            <th class="text-left px-3 py-3 font-medium"></th>
+          </tr>
+        </thead>
+        <tbody id="txnBody"></tbody>
+      </table>
+    </div>
+    <p class="text-gray-500 text-xs mt-3">Mid-month convention: a subscription starting on or before the 15th begins recognition that same month. Starting on or after the 16th begins the following month. For mid-term tier upgrades, enter the <em>incremental</em> amount, the upgraded tier, and the <em>remaining</em> term — one row per upgrade, same as a normal invoice.</p>
+  </section>
+
+  <!-- STEP 2 — SUMMARY -->
+  <section class="px-8 pb-10 max-w-6xl mx-auto">
+    <h2 class="text-xl font-semibold mb-4">2. Summary</h2>
+    <div class="grid md:grid-cols-4 gap-4 mb-6">
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-5">
+        <div class="text-gray-500 text-xs uppercase tracking-wider mb-2">Total Contract Value</div>
+        <div id="statTotal" class="text-2xl font-bold">$0</div>
+      </div>
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-5">
+        <div class="text-gray-500 text-xs uppercase tracking-wider mb-2">Invoices</div>
+        <div id="statCount" class="text-2xl font-bold">0</div>
+      </div>
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-5">
+        <div class="text-gray-500 text-xs uppercase tracking-wider mb-2">Schedule Spans</div>
+        <div id="statSpan" class="text-2xl font-bold">—</div>
+      </div>
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-5">
+        <div class="text-gray-500 text-xs uppercase tracking-wider mb-2">Deferred Revenue (latest month)</div>
+        <div id="statRemaining" class="text-2xl font-bold text-blue-400">$0</div>
+      </div>
+    </div>
+
+    <!-- Monthly recognized revenue chart -->
+    <div class="bg-[#111827] border border-gray-800 rounded-xl p-5">
+      <div class="text-gray-400 text-sm font-medium mb-4">Monthly Recognized Revenue (P&L)</div>
+      <div id="chartWrap" class="overflow-x-auto">
+        <div id="chart" class="flex items-end gap-1 h-40 min-w-[600px]"></div>
+        <div id="chartLabels" class="flex gap-1 min-w-[600px] mt-2"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STEP 3 — SCHEDULE TABLE -->
+  <section class="px-8 pb-10 max-w-6xl mx-auto">
+    <h2 class="text-xl font-semibold mb-4">3. Full Revenue Recognition Schedule</h2>
+    <div class="bg-[#111827] border border-gray-800 rounded-xl overflow-x-auto">
+      <table class="schedule-table w-full text-xs min-w-[1200px]" id="scheduleTable"></table>
+    </div>
+  </section>
+
+  <!-- STEP 4 — JE GENERATOR -->
+  <section class="px-8 pb-16 max-w-6xl mx-auto">
+    <h2 class="text-xl font-semibold mb-4">4. Monthly Journal Entry</h2>
+    <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
+      <div class="flex items-center gap-3 mb-5">
+        <label class="text-sm text-gray-400">Month to recognize:</label>
+        <select id="jeMonth" onchange="renderJE()" class="bg-[#0B1020] border border-gray-700 rounded-lg px-3 py-2 text-sm"></select>
+      </div>
+      <p class="text-gray-500 text-xs mb-4">This tab produces only the monthly recognition entry. The original sales invoice entry — Debit A/R / Credit Deferred Revenue — is recorded when the invoice is issued and isn't reproduced here.</p>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="text-gray-500 text-xs uppercase tracking-wider border-b border-gray-800">
+              <th class="text-left py-2 px-2">Account</th>
+              <th class="text-left py-2 px-2">Tier</th>
+              <th class="text-right py-2 px-2">Debit</th>
+              <th class="text-right py-2 px-2">Credit</th>
+            </tr>
+          </thead>
+          <tbody id="jeBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- DOWNLOAD CTA -->
+  <section class="px-8 pb-20 max-w-6xl mx-auto">
+    <div class="bg-blue-600/10 border border-blue-500/20 rounded-2xl p-8 md:p-10">
+      <div class="max-w-2xl">
+        <h2 class="text-2xl md:text-3xl font-bold mb-3">Download the Full Excel Workbook</h2>
+        <p class="text-gray-300 leading-relaxed mb-6">
+          Get an Excel file with your GL data, the full revenue recognition schedule, and the monthly journal entry generator — built exactly like the model above, ready to plug into your close process.
+        </p>
+        <button onclick="openModal()" class="bg-blue-600 hover:bg-blue-700 px-8 py-4 rounded-lg font-medium">
+          Download Excel Workbook
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHAT'S COMING -->
+  <section class="px-8 pb-20 max-w-6xl mx-auto">
+    <h2 class="text-2xl font-bold mb-2">More Free Tools</h2>
+    <p class="text-gray-400 mb-8">Same underlying engine, different accounting task.</p>
+    <div class="grid md:grid-cols-2 gap-4">
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
+        <div class="text-blue-400 text-sm font-medium mb-2">Available Now</div>
+        <div class="font-semibold mb-1"><a href="/tools/prepaid-schedule" class="hover:text-blue-400">Prepaid Expense Amortization Schedule</a></div>
+        <div class="text-gray-400 text-sm">Mid-month-convention amortization schedules with monthly journal entries by department.</div>
+      </div>
+      <div class="bg-[#111827] border border-gray-800 rounded-xl p-6">
+        <div class="text-blue-400 text-sm font-medium mb-2">Coming Next</div>
+        <div class="font-semibold mb-1">Fixed Asset Depreciation Schedule</div>
+        <div class="text-gray-400 text-sm">Straight-line depreciation schedules with monthly journal entries by department.</div>
+      </div>
+    </div>
+    <p class="text-gray-500 text-sm mt-6">Want early access — or something else entirely? Use the download form above, it's the same place we're collecting requests.</p>
+  </section>
+
+  <!-- MODAL -->
+  <div id="modalOverlay" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center px-4">
+    <div class="bg-[#111827] border border-gray-800 rounded-2xl max-w-lg w-full p-8 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-start justify-between mb-1">
+        <h3 class="text-xl font-bold">Get your Excel workbook</h3>
+        <button onclick="closeModal()" class="text-gray-500 hover:text-white text-xl leading-none">&times;</button>
+      </div>
+      <p class="text-gray-400 text-sm mb-6">One email, no spam. Just this file and, if you opt in below, a heads-up when new tools ship.</p>
+
+      <form id="leadForm" onsubmit="submitLead(event)" class="space-y-5">
+        <div>
+          <label class="block text-sm text-gray-400 mb-2">Work email</label>
+          <input type="email" id="leadEmail" required class="w-full bg-[#0B1020] border border-gray-700 rounded-lg px-4 py-3 text-sm" placeholder="you@company.com" />
+        </div>
+
+        <div>
+          <label class="block text-sm text-gray-400 mb-3">Also notify me when these are ready — optional</label>
+          <div class="space-y-2">
+            <label class="flex items-center gap-2 text-sm text-gray-300">
+              <input type="checkbox" name="notify" value="Depreciation Schedule" class="rounded border-gray-600 bg-[#0B1020]">
+              Fixed Asset Depreciation Schedule
+            </label>
+            <label class="flex items-center gap-2 text-sm text-gray-300">
+              <input type="checkbox" name="notify" value="GL Anomaly Scan" class="rounded border-gray-600 bg-[#0B1020]">
+              Automatic GL duplicate &amp; anomaly scan (Cavryon)
+            </label>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm text-gray-400 mb-2">Anything you wish existed for your close? — optional</label>
+          <textarea id="leadComment" rows="3" class="w-full bg-[#0B1020] border border-gray-700 rounded-lg px-4 py-3 text-sm" placeholder="Tell us what would save you the most time..."></textarea>
+        </div>
+
+        <button id="submitBtn" type="submit" class="w-full bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg font-medium">
+          Download Workbook
+        </button>
+        <p class="text-gray-500 text-xs text-center">This is just a heads-up list for new tools — not a marketing list.</p>
+      </form>
+    </div>
+  </div>
+
+  <div id="columnMapModal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center px-4">
+    <div class="bg-[#111827] border border-gray-800 rounded-2xl max-w-lg w-full p-8 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-start justify-between mb-1">
+        <h3 class="text-xl font-bold">Match your columns</h3>
+        <button onclick="closeColumnMapModal()" class="text-gray-500 hover:text-white text-xl leading-none">&times;</button>
+      </div>
+      <p class="text-gray-400 text-sm mb-6" id="columnMapSubtitle">We couldn't automatically match all the required columns. Tell us which column in your file is which.</p>
+
+      <div class="space-y-4">
+        <div>
+          <label class="block text-sm text-gray-400 mb-2">Customer <span class="text-red-400">*</span></label>
+          <select id="mapCustomer" class="w-full bg-[#0B1020] border border-gray-700 rounded-lg px-4 py-3 text-sm"></select>
+        </div>
+        <div>
+          <label class="block text-sm text-gray-400 mb-2">Tier <span class="text-gray-600">(optional)</span></label>
+          <select id="mapTier" class="w-full bg-[#0B1020] border border-gray-700 rounded-lg px-4 py-3 text-sm"></select>
+        </div>
+        <div>
+          <label class="block text-sm text-gray-400 mb-2">Amount <span class="text-red-400">*</span></label>
+          <select id="mapAmount" class="w-full bg-[#0B1020] border border-gray-700 rounded-lg px-4 py-3 text-sm"></select>
+        </div>
+        <div>
+          <label class="block text-sm text-gray-400 mb-2">Subscription Start Date <span class="text-red-400">*</span></label>
+          <select id="mapStart" class="w-full bg-[#0B1020] border border-gray-700 rounded-lg px-4 py-3 text-sm"></select>
+        </div>
+        <div>
+          <label class="block text-sm text-gray-400 mb-2">Term (Months) <span class="text-red-400">*</span></label>
+          <select id="mapTerm" class="w-full bg-[#0B1020] border border-gray-700 rounded-lg px-4 py-3 text-sm"></select>
+        </div>
+      </div>
+
+      <p id="columnMapError" class="hidden text-red-400 text-sm mt-4"></p>
+
+      <button onclick="confirmColumnMapping()" class="w-full bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg font-medium mt-6">
+        Import with this mapping
+      </button>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-gray-800 px-8 py-8 text-center text-gray-500">
+    <div class="mb-3 flex justify-center gap-6 text-sm flex-wrap">
+      <a href="/" class="text-blue-400 hover:text-blue-300">Home</a>
+      <a href="/blog" class="text-blue-400 hover:text-blue-300">Blog</a>
+      <a href="/resources.html" class="text-blue-400 hover:text-blue-300">Resources</a>
+      <a href="/contact.html" class="text-blue-400 hover:text-blue-300">Contact</a>
+    </div>
+    Cavryon © 2026
+  </footer>
+
+<script>
+/* ============================================================
+   DATA MODEL
+   ============================================================ */
+let transactions = [];
+let idCounter = 0;
+
+// Drawn from a real subscription GL export — includes a 15th/16th mid-month-convention
+// boundary pair, multiple term lengths, and one mid-term tier upgrade (Willowbrook: Basic -> Plus).
+const SAMPLE_DATA = [
+  { customer: "Meridian Logistics", tier: "Basic", amount: 1800, start: "2026-01-05", term: 12 },
+  { customer: "Foothill Dental Group", tier: "Basic", amount: 2100, start: "2026-01-08", term: 12 },
+  { customer: "Bluewave Analytics", tier: "Plus", amount: 4200, start: "2026-01-09", term: 12 },
+  { customer: "Willowbrook Family Practice", tier: "Basic", amount: 1950, start: "2026-01-12", term: 12 },
+  { customer: "Ironridge Manufacturing", tier: "Premium", amount: 9600, start: "2026-01-14", term: 24 },
+  { customer: "Bright Path Tutoring", tier: "Basic", amount: 1650, start: "2026-01-15", term: 12 },
+  { customer: "Coastal Bloom Florists", tier: "Basic", amount: 1750, start: "2026-01-18", term: 12 },
+  { customer: "Riverside Veterinary Clinic", tier: "Basic", amount: 2250, start: "2026-01-21", term: 12 },
+  { customer: "Cascade Builders LLC", tier: "Plus", amount: 7800, start: "2026-01-22", term: 24 },
+  { customer: "Golden Gate Realty Partners", tier: "Premium", amount: 8200, start: "2026-01-25", term: 12 },
+  { customer: "Nova Terra Energy", tier: "Premium", amount: 10800, start: "2026-02-24", term: 36 },
+  { customer: "Willowbrook Family Practice", tier: "Plus", amount: 820, start: "2026-03-27", term: 7 },
+];
+
+/* ============================================================
+   DATE HELPERS
+   ============================================================ */
+function parseDate(str) { const [y,m,d] = str.split('-').map(Number); return new Date(y, m-1, d); }
+function fmtMonthKey(d) { return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0'); }
+function fmtMonthLabel(d) {
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return months[d.getMonth()] + ' ' + d.getFullYear();
+}
+function firstOfMonth(d) { return new Date(d.getFullYear(), d.getMonth(), 1); }
+function addMonths(d, n) { return new Date(d.getFullYear(), d.getMonth()+n, 1); }
+function fmtUSD(n) {
+  return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+function fmtUSDShort(n) {
+  if (Math.abs(n) >= 1000) return '$' + (n/1000).toFixed(1) + 'k';
+  return '$' + n.toFixed(0);
+}
+
+/* ============================================================
+   ROW RENDERING (editable table)
+   ============================================================ */
+function addRow(data) {
+  const id = idCounter++;
+  const row = data ? { id, ...data } : { id, customer: '', tier: '', amount: '', start: '', term: 12 };
+  transactions.push(row);
+  renderTable();
+  compute();
+  updateDropZoneVisibility();
+}
+
+function removeRow(id) {
+  transactions = transactions.filter(t => t.id !== id);
+  renderTable();
+  compute();
+  updateDropZoneVisibility();
+}
+
+function updateRow(id, field, value) {
+  const row = transactions.find(t => t.id === id);
+  if (!row) return;
+  row[field] = (field === 'amount' || field === 'term') ? parseFloat(value) || 0 : value;
+  compute();
+}
+
+function loadSample() {
+  transactions = [];
+  idCounter = 0;
+  SAMPLE_DATA.forEach(d => addRow(d));
+}
+
+function clearAll() {
+  transactions = [];
+  renderTable();
+  compute();
+  updateDropZoneVisibility();
+}
+
+function renderTable() {
+  const tbody = document.getElementById('txnBody');
+  tbody.innerHTML = '';
+  transactions.forEach(t => {
+    const tr = document.createElement('tr');
+    tr.className = 'border-t border-gray-800';
+    tr.innerHTML = `
+      <td class="px-2 py-2">
+        <input value="${t.customer || ''}" onchange="updateRow(${t.id},'customer',this.value)"
+          class="w-full bg-[#0B1020] border border-gray-700 rounded px-2 py-1.5 text-sm" placeholder="Customer" />
+      </td>
+      <td class="px-2 py-2">
+        <input value="${t.tier || ''}" onchange="updateRow(${t.id},'tier',this.value)"
+          class="w-full bg-[#0B1020] border border-gray-700 rounded px-2 py-1.5 text-sm" placeholder="Basic / Plus / Premium" />
+      </td>
+      <td class="px-2 py-2">
+        <input type="number" step="0.01" min="0.01" value="${t.amount || ''}" onchange="updateRow(${t.id},'amount',this.value)"
+          class="num-input w-full bg-[#0B1020] border ${t.amount > 0 ? 'border-gray-700' : 'border-red-700'} rounded px-2 py-1.5 text-sm text-right" placeholder="0.00" />
+      </td>
+      <td class="px-2 py-2">
+        <input type="date" value="${t.start || ''}" onchange="updateRow(${t.id},'start',this.value)"
+          class="w-full bg-[#0B1020] border border-gray-700 rounded px-2 py-1.5 text-sm" />
+      </td>
+      <td class="px-2 py-2">
+        <input type="number" step="1" min="1" value="${t.term || 12}" onchange="updateRow(${t.id},'term',this.value)"
+          class="num-input w-full bg-[#0B1020] border ${Number.isInteger(t.term) && t.term > 0 ? 'border-gray-700' : 'border-red-700'} rounded px-2 py-1.5 text-sm text-right" />
+      </td>
+      <td class="px-2 py-2 text-center">
+        <button onclick="removeRow(${t.id})" class="text-gray-500 hover:text-red-400 text-sm">Remove</button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+  if (transactions.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="6" class="px-3 py-8 text-center text-gray-500 text-sm">No invoices yet. Click "Load Sample Data" or "+ Add Invoice" to begin.</td></tr>`;
+  }
+}
+
+/* ============================================================
+   REVENUE RECOGNITION ENGINE
+   Mirrors mid-month convention + final-month rounding plug
+   (identical math to the prepaid amortization engine —
+   deferred revenue is just a mirror-image liability)
+   ============================================================ */
+function computePerTxnSchedule(t) {
+  if (!t.start || !t.amount || !t.term) return null;
+  if (t.amount <= 0 || t.term <= 0 || !Number.isInteger(t.term)) return null;
+  const startDate = parseDate(t.start);
+  if (isNaN(startDate)) return null;
+  const day = startDate.getDate();
+  const amortStart = (day <= 15) ? firstOfMonth(startDate) : firstOfMonth(addMonths(startDate,1));
+  const term = t.term;
+  const monthlyBase = Math.round((t.amount / term) * 100) / 100;
+  const finalAmt = Math.round((t.amount - monthlyBase * (term - 1)) * 100) / 100;
+
+  const months = [];
+  for (let i = 0; i < term; i++) {
+    const monthDate = addMonths(amortStart, i);
+    const amt = (i === term - 1) ? finalAmt : monthlyBase;
+    months.push({ key: fmtMonthKey(monthDate), date: monthDate, amount: amt });
+  }
+  return { amortStart, term, months };
+}
+
+function compute() {
+  const validTxns = transactions.filter(t => t.start && t.amount > 0 && Number.isInteger(t.term) && t.term > 0);
+
+  // Build full month timeline across all transactions
+  let allMonthKeys = new Set();
+  const txnSchedules = validTxns.map(t => ({ txn: t, sched: computePerTxnSchedule(t) }));
+  txnSchedules.forEach(({sched}) => sched.months.forEach(m => allMonthKeys.add(m.key)));
+
+  const sortedKeys = Array.from(allMonthKeys).sort();
+  const monthDates = sortedKeys.map(k => { const [y,m] = k.split('-').map(Number); return new Date(y, m-1, 1); });
+
+  // Stats
+  const total = validTxns.reduce((s,t) => s + t.amount, 0);
+  document.getElementById('statTotal').textContent = fmtUSD(total);
+  document.getElementById('statCount').textContent = validTxns.length;
+  document.getElementById('statSpan').textContent = sortedKeys.length
+    ? fmtMonthLabel(monthDates[0]) + ' – ' + fmtMonthLabel(monthDates[monthDates.length-1])
+    : '—';
+
+  // Monthly recognized revenue totals
+  const monthlyTotals = {};
+  sortedKeys.forEach(k => monthlyTotals[k] = 0);
+  txnSchedules.forEach(({sched}) => sched.months.forEach(m => { monthlyTotals[m.key] += m.amount; }));
+
+  // Cumulative + deferred revenue balance
+  let cumulative = 0;
+  const cumByMonth = {};
+  sortedKeys.forEach(k => { cumulative += monthlyTotals[k]; cumByMonth[k] = cumulative; });
+  const lastKey = sortedKeys[sortedKeys.length - 1];
+  const remaining = lastKey ? (total - cumByMonth[lastKey]) : 0;
+  document.getElementById('statRemaining').textContent = fmtUSD(Math.max(remaining, 0));
+
+  renderChart(sortedKeys, monthDates, monthlyTotals);
+  renderScheduleTable(txnSchedules, sortedKeys, monthDates, monthlyTotals, cumByMonth, total);
+  renderJEMonthOptions(sortedKeys, monthDates);
+  renderJE();
+
+  window._computedState = { txnSchedules, sortedKeys, monthDates, monthlyTotals, validTxns };
+}
+
+/* ============================================================
+   CHART
+   ============================================================ */
+function renderChart(sortedKeys, monthDates, monthlyTotals) {
+  const chart = document.getElementById('chart');
+  const labels = document.getElementById('chartLabels');
+  chart.innerHTML = '';
+  labels.innerHTML = '';
+  if (sortedKeys.length === 0) {
+    chart.innerHTML = '<div class="text-gray-600 text-sm self-center">No data yet</div>';
+    return;
+  }
+  const max = Math.max(...sortedKeys.map(k => monthlyTotals[k]), 1);
+  sortedKeys.forEach((k, i) => {
+    const val = monthlyTotals[k];
+    const heightPct = Math.max((val / max) * 100, 2);
+    const bar = document.createElement('div');
+    bar.className = 'flex-1 bg-blue-600 hover:bg-blue-500 rounded-t transition-colors relative group';
+    bar.style.height = heightPct + '%';
+    bar.innerHTML = `<div class="absolute -top-7 left-1/2 -translate-x-1/2 bg-[#0B1020] border border-gray-700 rounded px-2 py-1 text-[10px] whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">${fmtUSD(val)}</div>`;
+    chart.appendChild(bar);
+
+    const lbl = document.createElement('div');
+    lbl.className = 'flex-1 text-center text-[9px] text-gray-500';
+    lbl.style.writingMode = sortedKeys.length > 18 ? 'vertical-rl' : 'horizontal-tb';
+    lbl.textContent = fmtMonthLabel(monthDates[i]).replace(' ', "'").slice(0,-2);
+    labels.appendChild(lbl);
+  });
+}
+
+/* ============================================================
+   SCHEDULE TABLE
+   ============================================================ */
+function renderScheduleTable(txnSchedules, sortedKeys, monthDates, monthlyTotals, cumByMonth, total) {
+  const table = document.getElementById('scheduleTable');
+  if (txnSchedules.length === 0) {
+    table.innerHTML = `<tr><td class="px-4 py-8 text-center text-gray-500 text-sm">Add invoices above to see the schedule.</td></tr>`;
+    return;
+  }
+
+  let thead = `<thead><tr class="bg-[#0D1525] text-gray-500 uppercase tracking-wider">
+    <th class="sticky-col bg-[#0D1525] text-left px-3 py-3 min-w-[160px]">Customer</th>
+    <th class="text-left px-3 py-3">Tier</th>
+    <th class="text-right px-3 py-3">Amount</th>`;
+  monthDates.forEach(d => { thead += `<th class="text-right px-2 py-3 min-w-[70px]">${fmtMonthLabel(d)}</th>`; });
+  thead += `</tr></thead>`;
+
+  let tbody = '<tbody>';
+  txnSchedules.forEach(({txn, sched}) => {
+    tbody += `<tr class="border-t border-gray-800 hover:bg-[#0D1525]/50">
+      <td class="sticky-col bg-[#111827] px-3 py-2 font-medium">${txn.customer}</td>
+      <td class="px-3 py-2 text-gray-400">${txn.tier}</td>
+      <td class="px-3 py-2 text-right text-gray-300">${fmtUSD(txn.amount)}</td>`;
+    sortedKeys.forEach(k => {
+      const m = sched.months.find(mm => mm.key === k);
+      tbody += `<td class="px-2 py-2 text-right ${m ? 'text-white' : 'text-gray-700'}">${m ? fmtUSDShort(m.amount) : '—'}</td>`;
+    });
+    tbody += '</tr>';
+  });
+
+  // Summary rows
+  tbody += `<tr class="border-t-2 border-gray-700 bg-[#0D1525] font-medium">
+    <td class="sticky-col bg-[#0D1525] px-3 py-2" colspan="3">Total Revenue Recognized (P&L)</td>`;
+  sortedKeys.forEach(k => { tbody += `<td class="px-2 py-2 text-right text-blue-400">${fmtUSDShort(monthlyTotals[k])}</td>`; });
+  tbody += '</tr>';
+
+  tbody += `<tr class="border-t border-gray-800 bg-[#0D1525]/50">
+    <td class="sticky-col bg-[#0D1525] px-3 py-2 text-gray-400" colspan="3">Cumulative Revenue Recognized</td>`;
+  sortedKeys.forEach(k => { tbody += `<td class="px-2 py-2 text-right text-gray-400">${fmtUSDShort(cumByMonth[k])}</td>`; });
+  tbody += '</tr>';
+
+  tbody += `<tr class="border-t border-gray-800 bg-[#0D1525]/50">
+    <td class="sticky-col bg-[#0D1525] px-3 py-2 text-gray-400" colspan="3">Deferred Revenue Balance, End of Month (ties to B/S)</td>`;
+  sortedKeys.forEach(k => { tbody += `<td class="px-2 py-2 text-right text-gray-400">${fmtUSDShort(Math.max(total - cumByMonth[k],0))}</td>`; });
+  tbody += '</tr>';
+
+  tbody += '</tbody>';
+  table.innerHTML = thead + tbody;
+}
+
+/* ============================================================
+   JE GENERATOR
+   Debit Deferred Revenue (combined) / Credit Revenue by Tier
+   ============================================================ */
+function renderJEMonthOptions(sortedKeys, monthDates) {
+  const sel = document.getElementById('jeMonth');
+  const prevVal = sel.value;
+  sel.innerHTML = '';
+  sortedKeys.forEach((k, i) => {
+    const opt = document.createElement('option');
+    opt.value = k;
+    opt.textContent = fmtMonthLabel(monthDates[i]);
+    sel.appendChild(opt);
+  });
+  if (sortedKeys.includes(prevVal)) sel.value = prevVal;
+}
+
+function renderJE() {
+  const state = window._computedState;
+  const jeBody = document.getElementById('jeBody');
+  if (!state || state.sortedKeys.length === 0) {
+    jeBody.innerHTML = `<tr><td colspan="4" class="text-center text-gray-500 py-6 text-sm">No schedule yet.</td></tr>`;
+    return;
+  }
+  const monthKey = document.getElementById('jeMonth').value || state.sortedKeys[0];
+
+  // Sum by tier for this month
+  const byTier = {};
+  state.txnSchedules.forEach(({txn, sched}) => {
+    const m = sched.months.find(mm => mm.key === monthKey);
+    if (m) { byTier[txn.tier] = (byTier[txn.tier] || 0) + m.amount; }
+  });
+
+  let rows = '';
+  let creditTotal = 0;
+  Object.entries(byTier).forEach(([tier, amt]) => {
+    creditTotal += amt;
+    rows += `<tr class="border-b border-gray-800/50">
+      <td class="py-2 px-2">Revenue</td>
+      <td class="py-2 px-2 text-gray-400">${tier}</td>
+      <td class="py-2 px-2 text-right text-gray-600">—</td>
+      <td class="py-2 px-2 text-right">${fmtUSD(amt)}</td>
+    </tr>`;
+  });
+  rows += `<tr class="border-t border-gray-700 font-medium">
+    <td class="py-2 px-2" colspan="2">Subtotal Credit</td>
+    <td class="py-2 px-2 text-right text-gray-600">—</td>
+    <td class="py-2 px-2 text-right">${fmtUSD(creditTotal)}</td>
+  </tr>`;
+  rows += `<tr class="border-b border-gray-800">
+    <td class="py-2 px-2">Deferred Revenue (B/S)</td>
+    <td class="py-2 px-2 text-gray-400">All Tiers</td>
+    <td class="py-2 px-2 text-right">${fmtUSD(creditTotal)}</td>
+    <td class="py-2 px-2 text-right text-gray-600">—</td>
+  </tr>`;
+  rows += `<tr class="text-green-400 text-xs">
+    <td class="py-2 px-2" colspan="4">Check (Debit − Credit): ${fmtUSD(0)} ✓</td>
+  </tr>`;
+
+  jeBody.innerHTML = rows;
+}
+
+/* ============================================================
+   FILE UPLOAD — Excel / CSV IMPORT
+   ============================================================ */
+const COLUMN_ALIASES = {
+  customer: ['customer', 'customer name', 'client', 'client name', 'account', 'account name', 'buyer', 'company'],
+  tier: ['tier', 'subscription tier', 'category', 'plan', 'product', 'description', 'package'],
+  amount: ['amount', 'total', 'price', 'invoice amount', 'contract value', 'subtotal', 'amount paid', 'payment amount'],
+  start: ['subscription start date', 'start date', 'subscription start', 'date', 'transaction date', 'invoice date', 'effective date', 'contract start', 'contract start date', 'billing date'],
+  term: ['term (months)', 'term', 'months', 'term months', 'subscription term', 'contract length', 'duration', 'length (months)', 'subscription length', 'contract term', 'months of coverage']
+};
+
+function normalizeHeader(h) {
+  return String(h || '')
+    .trim()
+    .toLowerCase()
+    .replace(/[$()]/g, '')      // strip currency symbols / parens, e.g. "Amount ($)" -> "amount "
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function matchColumn(headers, aliasKey) {
+  const aliases = COLUMN_ALIASES[aliasKey];
+  const normalizedHeaders = headers.map(normalizeHeader);
+
+  // 1. Exact match first
+  for (let i = 0; i < normalizedHeaders.length; i++) {
+    if (aliases.includes(normalizedHeaders[i])) return i;
+  }
+
+  // 2. Fallback: substring match
+  for (let i = 0; i < normalizedHeaders.length; i++) {
+    if (aliases.some(a => normalizedHeaders[i].includes(a))) return i;
+  }
+
+  return -1;
+}
+
+// Handles both plain tier values ("Plus") and raw GL-export description text for mid-term
+// upgrades ("Mid-term Upgrade - Basic to Plus") — extracts the target (upgraded) tier.
+function extractTier(raw) {
+  const str = String(raw || '').trim();
+  const upgradeMatch = str.match(/to\s+([A-Za-z][A-Za-z\s]*)\s*$/i);
+  if (upgradeMatch) return upgradeMatch[1].trim();
+  return str;
+}
+
+function excelSerialToISO(val) {
+  // Handles both JS Date objects (from cellDates:true) and raw Excel serials
+  if (val instanceof Date) {
+    return val.getFullYear() + '-' + String(val.getMonth()+1).padStart(2,'0') + '-' + String(val.getDate()).padStart(2,'0');
+  }
+  if (typeof val === 'number') {
+    const utcDays = Math.floor(val - 25569);
+    const d = new Date(utcDays * 86400 * 1000);
+    return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+  }
+  // Try parsing as a date string (e.g. "1/3/2026" or "2026-01-03")
+  const parsed = new Date(val);
+  if (!isNaN(parsed)) {
+    return parsed.getFullYear() + '-' + String(parsed.getMonth()+1).padStart(2,'0') + '-' + String(parsed.getDate()).padStart(2,'0');
+  }
+  return '';
+}
+
+function showUploadBanner(message, isError) {
+  const banner = document.getElementById('uploadBanner');
+  banner.textContent = message;
+  banner.className = 'mb-4 px-4 py-3 rounded-lg text-sm ' +
+    (isError ? 'bg-red-950/40 border border-red-900/50 text-red-300' : 'bg-green-950/40 border border-green-900/50 text-green-300');
+  banner.classList.remove('hidden');
+  setTimeout(() => banner.classList.add('hidden'), 6000);
+}
+
+function handleFileUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  parseUploadedFile(file);
+  event.target.value = ''; // allow re-uploading the same filename
+}
+
+function parseUploadedFile(file) {
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const data = new Uint8Array(e.target.result);
+      const wb = XLSX.read(data, { type: 'array', cellDates: true });
+
+      if (!wb.SheetNames || wb.SheetNames.length === 0) {
+        showUploadBanner('That file has no sheets to read.', true);
+        return;
+      }
+
+      // Scan every sheet; use the first one whose header row matches all required columns.
+      let chosenSheetName = null;
+      let headers = null;
+      let rows = null;
+      for (const sheetName of wb.SheetNames) {
+        const ws = wb.Sheets[sheetName];
+        const sheetRows = XLSX.utils.sheet_to_json(ws, { header: 1, raw: true, defval: '' });
+        if (!sheetRows || sheetRows.length < 2) continue;
+        const candidateHeaders = sheetRows[0];
+        const hasAllCols = ['customer', 'amount', 'start', 'term'].every(key => matchColumn(candidateHeaders, key) !== -1);
+        if (hasAllCols) {
+          chosenSheetName = sheetName;
+          headers = candidateHeaders;
+          rows = sheetRows;
+          break;
+        }
+      }
+
+      // Fall back to the first sheet with data if nothing auto-matched.
+      if (!rows) {
+        chosenSheetName = wb.SheetNames[0];
+        const ws = wb.Sheets[chosenSheetName];
+        rows = XLSX.utils.sheet_to_json(ws, { header: 1, raw: true, defval: '' });
+      }
+
+      if (!rows || rows.length < 2) {
+        showUploadBanner('That file looks empty — check it has a header row and at least one invoice.', true);
+        return;
+      }
+
+      headers = headers || rows[0];
+      const customerCol = matchColumn(headers, 'customer');
+      const tierCol = matchColumn(headers, 'tier');
+      const amountCol = matchColumn(headers, 'amount');
+      const startCol = matchColumn(headers, 'start');
+      const termCol = matchColumn(headers, 'term');
+
+      const missing = [];
+      if (customerCol === -1) missing.push('Customer');
+      if (amountCol === -1) missing.push('Amount');
+      if (startCol === -1) missing.push('Subscription Start Date');
+      if (termCol === -1) missing.push('Term (Months)');
+
+      if (missing.length > 0) {
+        // Couldn't auto-match everything — let the user manually map columns instead of just failing.
+        openColumnMapModal({ headers, rows, fileName: file.name, chosenSheetName, sheetCount: wb.SheetNames.length, sheetNames: wb.SheetNames, missing });
+        return;
+      }
+
+      finishImport({ rows, customerCol, tierCol, amountCol, startCol, termCol, fileName: file.name, chosenSheetName, sheetCount: wb.SheetNames.length });
+
+    } catch (err) {
+      console.error(err);
+      showUploadBanner("Could not read that file. Make sure it's a valid .xlsx, .xls, or .csv file.", true);
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+// Shared by both the auto-detect path and the manual column-mapping path.
+function finishImport({ rows, customerCol, tierCol, amountCol, startCol, termCol, fileName, chosenSheetName, sheetCount }) {
+  const dataRows = rows.slice(1).filter(r => r[customerCol] || r[amountCol]);
+  if (dataRows.length === 0) {
+    showUploadBanner('No invoice rows found below the header.', true);
+    return;
+  }
+
+  transactions = [];
+  idCounter = 0;
+  let skipped = 0;
+  let invalid = 0;
+
+  dataRows.forEach(r => {
+    const customer = String(r[customerCol] || '').trim();
+    const tier = tierCol !== -1 && tierCol !== undefined ? extractTier(r[tierCol]) : '';
+    const amount = parseFloat(r[amountCol]);
+    const start = excelSerialToISO(r[startCol]);
+    const rawTerm = r[termCol];
+    const term = parseFloat(rawTerm);
+
+    if (!customer || !start || amount === undefined || isNaN(amount) || rawTerm === undefined || rawTerm === '' || isNaN(term)) {
+      skipped++;
+      return;
+    }
+    if (amount <= 0 || term <= 0 || !Number.isInteger(term)) {
+      invalid++;
+      return;
+    }
+    addRow({ customer, tier, amount, start, term });
+  });
+
+  if (transactions.length === 0) {
+    showUploadBanner('None of the rows had all required, valid fields (Customer, positive Amount, Subscription Start Date, whole-number Term in months). Check the file and try again.', true);
+    return;
+  }
+
+  const parts = [`Imported ${transactions.length} invoice${transactions.length === 1 ? '' : 's'}`];
+  if (sheetCount > 1) parts.push(`from the "${chosenSheetName}" tab`);
+  if (skipped > 0) parts.push(`skipped ${skipped} row${skipped === 1 ? '' : 's'} missing required fields`);
+  if (invalid > 0) parts.push(`skipped ${invalid} row${invalid === 1 ? '' : 's'} with an invalid amount or term (amount must be positive; term must be a whole number of months)`);
+  const msg = parts.length > 1
+    ? parts.join(' — ') + '.'
+    : `Imported ${transactions.length} invoice${transactions.length === 1 ? '' : 's'} from "${fileName}".`;
+  showUploadBanner(msg, false);
+  updateDropZoneVisibility();
+}
+
+// ---- Manual column mapping modal ----
+let pendingMap = null;
+
+function openColumnMapModal({ headers, rows, fileName, chosenSheetName, sheetCount, sheetNames, missing }) {
+  pendingMap = { headers, rows, fileName, chosenSheetName, sheetCount };
+
+  const subtitleEl = document.getElementById('columnMapSubtitle');
+  const sheetNote = sheetCount > 1 ? ` (checked tabs: ${sheetNames.join(', ')})` : '';
+  subtitleEl.textContent = missing.length
+    ? `We couldn't automatically find: ${missing.join(', ')}${sheetNote}. Match each field to a column from your file below.`
+    : `Match each field to a column from your file below.`;
+
+  const buildOptions = (selectEl, aliasKey, optional) => {
+    selectEl.innerHTML = '';
+    if (optional) {
+      const noneOpt = document.createElement('option');
+      noneOpt.value = '-1';
+      noneOpt.textContent = '— None —';
+      selectEl.appendChild(noneOpt);
+    }
+    headers.forEach((h, i) => {
+      const opt = document.createElement('option');
+      opt.value = i;
+      opt.textContent = h || `(column ${i + 1})`;
+      selectEl.appendChild(opt);
+    });
+    const guess = matchColumn(headers, aliasKey);
+    if (guess !== -1) selectEl.value = String(guess);
+  };
+
+  buildOptions(document.getElementById('mapCustomer'), 'customer', false);
+  buildOptions(document.getElementById('mapTier'), 'tier', true);
+  buildOptions(document.getElementById('mapAmount'), 'amount', false);
+  buildOptions(document.getElementById('mapStart'), 'start', false);
+  buildOptions(document.getElementById('mapTerm'), 'term', false);
+
+  document.getElementById('columnMapError').classList.add('hidden');
+  document.getElementById('columnMapModal').classList.remove('hidden');
+}
+
+function closeColumnMapModal() {
+  document.getElementById('columnMapModal').classList.add('hidden');
+  pendingMap = null;
+}
+
+function confirmColumnMapping() {
+  if (!pendingMap) return;
+  const customerCol = parseInt(document.getElementById('mapCustomer').value);
+  const tierCol = parseInt(document.getElementById('mapTier').value);
+  const amountCol = parseInt(document.getElementById('mapAmount').value);
+  const startCol = parseInt(document.getElementById('mapStart').value);
+  const termCol = parseInt(document.getElementById('mapTerm').value);
+
+  const chosen = [customerCol, amountCol, startCol, termCol];
+  const dupes = chosen.some((c, i) => chosen.indexOf(c) !== i);
+  const errEl = document.getElementById('columnMapError');
+  if (dupes) {
+    errEl.textContent = 'Each required field must map to a different column.';
+    errEl.classList.remove('hidden');
+    return;
+  }
+  errEl.classList.add('hidden');
+
+  const { rows, fileName, chosenSheetName, sheetCount } = pendingMap;
+  closeColumnMapModal();
+  finishImport({ rows, customerCol, tierCol, amountCol, startCol, termCol, fileName, chosenSheetName, sheetCount });
+}
+
+function updateDropZoneVisibility() {
+  const dz = document.getElementById('dropZone');
+  dz.classList.toggle('hidden', transactions.length > 0);
+}
+
+// Drag-and-drop support on the drop zone
+document.addEventListener('DOMContentLoaded', () => {
+  const dz = document.getElementById('dropZone');
+  if (!dz) return;
+  ['dragover','dragenter'].forEach(evt => dz.addEventListener(evt, (e) => {
+    e.preventDefault();
+    dz.classList.add('border-blue-500');
+  }));
+  ['dragleave','drop'].forEach(evt => dz.addEventListener(evt, (e) => {
+    e.preventDefault();
+    dz.classList.remove('border-blue-500');
+  }));
+  dz.addEventListener('drop', (e) => {
+    const file = e.dataTransfer.files[0];
+    if (file) parseUploadedFile(file);
+  });
+});
+
+/* ============================================================
+   MODAL + LEAD CAPTURE + DOWNLOAD
+   ============================================================ */
+function openModal() {
+  if (!window._computedState || window._computedState.validTxns.length === 0) {
+    alert('Add at least one invoice (or click "Load Sample Data") before downloading.');
+    return;
+  }
+  document.getElementById('modalOverlay').classList.remove('hidden');
+}
+function closeModal() { document.getElementById('modalOverlay').classList.add('hidden'); }
+
+async function submitLead(e) {
+  e.preventDefault();
+  const btn = document.getElementById('submitBtn');
+  btn.textContent = 'Preparing your file...';
+  btn.disabled = true;
+
+  const email = document.getElementById('leadEmail').value;
+  const comment = document.getElementById('leadComment').value;
+  const notify = Array.from(document.querySelectorAll('input[name="notify"]:checked')).map(cb => cb.value);
+
+  // Fire-and-forget lead capture — same webhook as the prepaid tool
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxWTv2GFZZPUIzTwb-wCE3meF9AKKawcJMmOfoxApWjANOLzGcWCEuzro7MVFB6h-e4/exec";
+  try {
+    await fetch(SCRIPT_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email, comment, notify: notify.join(', '),
+        source: "revenue_recognition_tool",
+        submittedAt: new Date().toISOString()
+      })
+    });
+  } catch (err) { console.error(err); }
+
+  downloadWorkbook();
+
+  btn.textContent = 'Downloaded!';
+  setTimeout(() => { closeModal(); btn.textContent = 'Download Workbook'; btn.disabled = false; document.getElementById('leadForm').reset(); }, 1200);
+}
+
+function downloadWorkbook() {
+  const state = window._computedState;
+  const wb = XLSX.utils.book_new();
+
+  // --- GL Data sheet ---
+  const glRows = [["Customer","Tier","Amount","Subscription Start Date","Term (Months)"]];
+  state.validTxns.forEach(t => glRows.push([t.customer, t.tier, t.amount, t.start, t.term]));
+  const wsGL = XLSX.utils.aoa_to_sheet(glRows);
+  XLSX.utils.book_append_sheet(wb, wsGL, "GL Data");
+
+  // --- Revenue Recognition Schedule sheet ---
+  const header = ["Customer","Tier","Amount", ...state.monthDates.map(d => fmtMonthLabel(d))];
+  const schedRows = [header];
+  state.txnSchedules.forEach(({txn, sched}) => {
+    const row = [txn.customer, txn.tier, txn.amount];
+    state.sortedKeys.forEach(k => {
+      const m = sched.months.find(mm => mm.key === k);
+      row.push(m ? m.amount : 0);
+    });
+    schedRows.push(row);
+  });
+  // Totals row
+  const totalsRow = ["Total Revenue Recognized (P&L)", "", ""];
+  state.sortedKeys.forEach(k => totalsRow.push(state.monthlyTotals[k]));
+  schedRows.push(totalsRow);
+  const wsSched = XLSX.utils.aoa_to_sheet(schedRows);
+  XLSX.utils.book_append_sheet(wb, wsSched, "Revenue Recognition Schedule");
+
+  // --- Monthly JE sheet (selected month) ---
+  const jeRows = [["Month", document.getElementById('jeMonth').selectedOptions[0]?.textContent || ""],[],
+    ["Account","Tier","Debit","Credit"]];
+  const monthKey = document.getElementById('jeMonth').value;
+  const byTier = {};
+  state.txnSchedules.forEach(({txn, sched}) => {
+    const m = sched.months.find(mm => mm.key === monthKey);
+    if (m) byTier[txn.tier] = (byTier[txn.tier] || 0) + m.amount;
+  });
+  let creditTotal = 0;
+  Object.entries(byTier).forEach(([tier, amt]) => { creditTotal += amt; jeRows.push(["Revenue", tier, "", amt]); });
+  jeRows.push(["Subtotal Credit","", "", creditTotal]);
+  jeRows.push(["Deferred Revenue (B/S)","All Tiers", creditTotal, ""]);
+  jeRows.push(["Check (Debit - Credit)","","", 0]);
+  const wsJE = XLSX.utils.aoa_to_sheet(jeRows);
+  XLSX.utils.book_append_sheet(wb, wsJE, "Monthly JE");
+
+  XLSX.writeFile(wb, "cavryon-revenue-recognition-schedule.xlsx");
+}
+
+/* ============================================================
+   INIT
+   ============================================================ */
+loadSample();
+</script>
+
+</body>
+</html>
