@@ -1,0 +1,27 @@
+# Cavryon
+
+> Cavryon is an early-stage accounting intelligence company building AI-powered tools for SMB Controllers, Fractional CFOs, and Accounting Managers. Cavryon's core focus is catching general ledger (GL) issues — duplicate transactions, vendor miscoding, missing department coding, prepaid expense candidates, and unusual month-over-month account activity — before month-end close, without requiring any ERP integration.
+
+Cavryon's positioning: "Is the close done — or is the close right?" Finding GL issues during month-end close typically takes hours of manual review; the corrections themselves usually take minutes. Cavryon is built to compress the investigation time, not just the correction time.
+
+Cavryon works alongside existing accounting systems (QuickBooks Online, QuickBooks Desktop, NetSuite, Xero, Sage Intacct) via a simple Excel GL export — no API access, no ERP credentials, and no IT setup required. Data is not stored beyond the user's session.
+
+## Free Tools
+
+- [Prepaid Expense Amortization Schedule Generator](https://www.cavryon.ai/tools/prepaid-schedule): A free, no-signup, browser-based tool that generates prepaid expense amortization schedules using mid-month convention (transactions starting on or before the 15th begin amortizing that month; on or after the 16th, the following month). Supports Excel/CSV upload with automatic column matching, a manual column-mapping fallback, and generates monthly journal entries by department.
+- [Subscription Revenue Recognition Schedule Generator](https://www.cavryon.ai/tools/revenue-recognition): A free, no-signup, browser-based tool that generates subscription revenue recognition schedules under the same mid-month convention. Automatically handles mid-term subscription tier upgrades (e.g., a customer upgrading from a Basic to a Plus tier partway through a contract term), produces a deferred revenue rollforward, and generates the monthly journal entry (debit Deferred Revenue, credit Revenue by tier).
+
+## Resources
+
+- [Month-End Close Checklist](https://www.cavryon.ai/month-end-close-checklist): A practical month-end close checklist for Controllers and SMB finance teams.
+- [Account Reconciliation Checklist](https://www.cavryon.ai/account-reconciliation-checklist): A checklist for reconciling cash, credit cards, AR, AP, payroll, prepaids, and balance sheet accounts.
+- [GL Variance Analysis Guide](https://www.cavryon.ai/gl-variance-analysis-guide): A guide to investigating month-over-month general ledger account movement and duplicate postings.
+- [Prepaid Expense Accounting Guide](https://www.cavryon.ai/prepaid-expense-accounting-guide): A guide to prepaid expense thresholds, schedules, amortization, and journal entries.
+- [Book Cleanup Checklist](https://www.cavryon.ai/book-cleanup-checklist): A checklist for identifying stale balances, duplicate vendors, and uncategorized transactions.
+- [Blog](https://www.cavryon.ai/blog): Articles on GL investigation, month-end close, prepaid accounting, vendor miscoding, and related SMB accounting topics.
+
+## Company
+
+- Cavryon is a pre-seed stage company (not yet publicly funded).
+- Cavryon does not require any ERP integration — it works entirely from an Excel export of general ledger data.
+- Cavryon's data handling architecture does not retain uploaded files beyond the active session.
