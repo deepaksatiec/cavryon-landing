@@ -12,8 +12,8 @@
   <DefaultLocale>en-US</DefaultLocale>
   <DisplayName DefaultValue="Cavryon Deferred Revenue" />
   <Description DefaultValue="Generate a tested, repeatable deferred revenue schedule directly in Excel. Mapped once, trusted every close." />
-  <IconUrl DefaultValue="https://www.cavryon.ai/excel-addin/assets/icon-32.png" />
-  <HighResolutionIconUrl DefaultValue="https://www.cavryon.ai/excel-addin/assets/icon-80.png" />
+  <IconUrl DefaultValue="https://www.cavryon.ai/tools/excel-addin/assets/icon-32.png" />
+  <HighResolutionIconUrl DefaultValue="https://www.cavryon.ai/tools/excel-addin/assets/icon-80.png" />
   <SupportUrl DefaultValue="https://www.cavryon.ai/contact.html" />
 
   <AppDomains>
@@ -25,7 +25,7 @@
   </Hosts>
 
   <DefaultSettings>
-    <SourceLocation DefaultValue="https://www.cavryon.ai/excel-addin/taskpane.html" />
+    <SourceLocation DefaultValue="https://www.cavryon.ai/tools/excel-addin/taskpane.html" />
   </DefaultSettings>
 
   <Permissions>ReadWriteDocument</Permissions>
@@ -74,13 +74,13 @@
 
     <Resources>
       <bt:Images>
-        <bt:Image id="Icon.16x16" DefaultValue="https://www.cavryon.ai/excel-addin/assets/icon-16.png" />
-        <bt:Image id="Icon.32x32" DefaultValue="https://www.cavryon.ai/excel-addin/assets/icon-32.png" />
-        <bt:Image id="Icon.80x80" DefaultValue="https://www.cavryon.ai/excel-addin/assets/icon-80.png" />
+        <bt:Image id="Icon.16x16" DefaultValue="https://www.cavryon.ai/tools/excel-addin/assets/icon-16.png" />
+        <bt:Image id="Icon.32x32" DefaultValue="https://www.cavryon.ai/tools/excel-addin/assets/icon-32.png" />
+        <bt:Image id="Icon.80x80" DefaultValue="https://www.cavryon.ai/tools/excel-addin/assets/icon-80.png" />
       </bt:Images>
       <bt:Urls>
-        <bt:Url id="Commands.Url" DefaultValue="https://www.cavryon.ai/excel-addin/taskpane.html" />
-        <bt:Url id="Taskpane.Url" DefaultValue="https://www.cavryon.ai/excel-addin/taskpane.html" />
+        <bt:Url id="Commands.Url" DefaultValue="https://www.cavryon.ai/tools/excel-addin/taskpane.html" />
+        <bt:Url id="Taskpane.Url" DefaultValue="https://www.cavryon.ai/tools/excel-addin/taskpane.html" />
         <bt:Url id="GetStarted.LearnMoreUrl" DefaultValue="https://www.cavryon.ai" />
       </bt:Urls>
       <bt:ShortStrings>
