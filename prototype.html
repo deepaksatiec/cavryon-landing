@@ -3,64 +3,764 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Company X Prototype | Cavryon</title>
-  <meta name="description" content="Try Cavryon's fictional Company X variance investigation prototype. No financial data upload required.">
-  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Prepaid Review Prototype | Cavryon</title>
+  <meta name="description" content="Explore Cavryon's fictional two-close-cycle prepaid review workflow. No company financial data is required.">
   <link rel="icon" type="image/svg+xml" href="/cavryon-favicon.svg">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <style>
-    .tab.active { color:#fff; border-color:#3b82f6; background:rgba(59,130,246,.08); }
-    .row-selected { background:rgba(59,130,246,.12) !important; outline:1px solid rgba(96,165,250,.45); }
-    .pulse-ring { animation:pulse 1.8s infinite; } @keyframes pulse{50%{box-shadow:0 0 0 8px rgba(37,99,235,0)}}
+    :root {
+      --bg: #07101f;
+      --panel: #0e192b;
+      --panel-2: #121f34;
+      --line: #24324a;
+      --muted: #8fa0b8;
+      --text: #f8fafc;
+      --blue: #4d82ff;
+      --blue-2: #2463eb;
+      --green: #3dd598;
+      --amber: #f6b94a;
+      --red: #fb7185;
+      --shadow: 0 22px 65px rgba(0,0,0,.25);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background: radial-gradient(circle at 75% 0%, rgba(36,99,235,.16), transparent 30%), var(--bg);
+    }
+    button, input, textarea, select { font: inherit; }
+    button, .button { cursor: pointer; }
+    button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible, a:focus-visible { outline: 2px solid #8ab0ff; outline-offset: 2px; }
+    a { color: inherit; text-decoration: none; }
+    .shell { max-width: 1520px; margin: 0 auto; padding: 0 24px; }
+    .topbar { position: sticky; top: 0; z-index: 20; border-bottom: 1px solid rgba(255,255,255,.08); background: rgba(7,16,31,.92); backdrop-filter: blur(16px); }
+    .topbar-inner { min-height: 68px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+    .brand { font-weight: 760; font-size: 21px; letter-spacing: -.03em; }
+    .brand-context { color: var(--muted); font-size: 13px; margin-left: 12px; }
+    .back-link { color: var(--muted); font-size: 13px; }
+    .back-link:hover { color: var(--text); }
+    .notice { border-bottom: 1px solid rgba(77,130,255,.22); background: rgba(77,130,255,.08); color: #bed0ff; text-align: center; padding: 9px 16px; font-size: 13px; }
+    .hero { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; padding-top: 32px; padding-bottom: 24px; }
+    .eyebrow { color: #8eb1ff; font-size: 12px; font-weight: 720; letter-spacing: .12em; text-transform: uppercase; margin: 0 0 9px; }
+    h1 { font-size: clamp(27px, 3vw, 39px); line-height: 1.08; letter-spacing: -.035em; margin: 0; }
+    .hero-copy { max-width: 780px; color: var(--muted); margin: 10px 0 0; line-height: 1.55; }
+    .status-row { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+    .pill { display: inline-flex; align-items: center; gap: 7px; padding: 7px 11px; border: 1px solid var(--line); border-radius: 999px; color: #c5d0df; background: rgba(255,255,255,.025); font-size: 12px; white-space: nowrap; }
+    .pill::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--green); }
+    .pill.pending::before { background: var(--amber); }
+    .period-switcher { display: grid; grid-template-columns: 1fr 1fr; max-width: 650px; border: 1px solid var(--line); border-radius: 14px; padding: 5px; background: rgba(14,25,43,.72); margin-bottom: 20px; }
+    .period-btn { border: 0; border-radius: 10px; padding: 12px 16px; background: transparent; color: var(--muted); font-weight: 650; }
+    .period-btn.active { color: white; background: var(--panel-2); box-shadow: 0 3px 18px rgba(0,0,0,.22); }
+    .workspace { display: grid; grid-template-columns: minmax(0, 1fr) 410px; gap: 18px; align-items: start; padding-bottom: 44px; }
+    .card { border: 1px solid var(--line); background: rgba(14,25,43,.94); border-radius: 17px; box-shadow: var(--shadow); overflow: hidden; }
+    .card-head { padding: 16px 18px; border-bottom: 1px solid var(--line); background: rgba(18,31,52,.82); display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+    .card-head h2 { font-size: 15px; margin: 0; }
+    .subtext { color: var(--muted); font-size: 12px; margin: 4px 0 0; }
+    .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .btn { border: 1px solid #34445e; border-radius: 9px; color: #dce5f2; background: #111d30; padding: 9px 13px; font-size: 12px; font-weight: 680; }
+    .btn:hover { border-color: #59729b; }
+    .btn.primary { border-color: var(--blue-2); background: var(--blue-2); color: white; }
+    .btn.primary:hover { background: #3573f2; }
+    .btn.danger { border-color: rgba(251,113,133,.38); color: #fda4af; background: rgba(251,113,133,.08); }
+    .btn:disabled { opacity: .52; cursor: not-allowed; }
+    .content { padding: 18px; }
+    .summary-grid { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 10px; margin-bottom: 17px; }
+    .metric { border: 1px solid rgba(255,255,255,.06); background: #091425; border-radius: 11px; padding: 13px; }
+    .metric-label { color: #7789a3; font-size: 10px; letter-spacing: .05em; text-transform: uppercase; }
+    .metric-value { margin-top: 7px; font-size: 18px; font-weight: 740; }
+    .metric-value.amber { color: #ffd27f; }
+    .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; }
+    table { width: 100%; border-collapse: collapse; min-width: 690px; }
+    th { color: #7f91aa; font-size: 10px; text-transform: uppercase; letter-spacing: .05em; font-weight: 650; text-align: left; padding: 11px 12px; background: #0a1526; }
+    td { padding: 13px 12px; border-top: 1px solid rgba(36,50,74,.72); font-size: 13px; color: #d9e1ec; }
+    td.num, th.num { text-align: right; }
+    tbody tr { transition: background .15s ease; }
+    tbody tr.selectable:hover { background: rgba(77,130,255,.055); }
+    tbody tr.selected { background: rgba(77,130,255,.105); box-shadow: inset 3px 0 0 var(--blue); }
+    .finding { display: inline-flex; padding: 4px 7px; border-radius: 6px; color: #ffd27f; background: rgba(246,185,74,.1); border: 1px solid rgba(246,185,74,.23); font-size: 10px; font-weight: 720; white-space: nowrap; }
+    .hint { color: #7d8fa9; font-size: 12px; margin: 11px 2px 0; }
+    .drawer { position: sticky; top: 88px; }
+    .drawer-tabs { display: grid; grid-template-columns: repeat(4, 1fr); border-bottom: 1px solid var(--line); }
+    .drawer-tab { border: 0; border-bottom: 2px solid transparent; padding: 13px 5px; color: #7d8fa9; background: transparent; font-size: 11px; font-weight: 650; }
+    .drawer-tab.active { color: #dce8ff; border-bottom-color: var(--blue); background: rgba(77,130,255,.05); }
+    .drawer-body { padding: 18px; min-height: 630px; }
+    .panel[hidden] { display: none; }
+    .panel h3 { margin: 0 0 5px; font-size: 17px; }
+    .panel-intro { color: var(--muted); font-size: 12px; line-height: 1.5; margin: 0 0 17px; }
+    .callout { border: 1px solid rgba(77,130,255,.25); background: rgba(77,130,255,.065); border-radius: 11px; padding: 13px; margin-bottom: 14px; }
+    .callout.amber { border-color: rgba(246,185,74,.3); background: rgba(246,185,74,.07); }
+    .callout.red { border-color: rgba(251,113,133,.31); background: rgba(251,113,133,.07); }
+    .callout.green { border-color: rgba(61,213,152,.28); background: rgba(61,213,152,.065); }
+    .callout-title { font-size: 12px; font-weight: 720; color: #aec5ff; }
+    .callout.amber .callout-title { color: #ffd27f; }
+    .callout.red .callout-title { color: #fda4af; }
+    .callout.green .callout-title { color: #78e6bb; }
+    .callout p { color: #aebbd0; font-size: 12px; line-height: 1.5; margin: 6px 0 0; }
+    .detail-list { margin: 0 0 16px; }
+    .detail-row { display: grid; grid-template-columns: 118px minmax(0,1fr); gap: 10px; border-bottom: 1px solid rgba(36,50,74,.7); padding: 10px 0; font-size: 12px; }
+    .detail-row dt { color: #73859f; }
+    .detail-row dd { margin: 0; color: #dde5ef; text-align: right; overflow-wrap: anywhere; }
+    label { display: block; color: #91a1b8; font-size: 11px; margin: 0 0 6px; }
+    .field { margin-bottom: 12px; }
+    input, textarea, select { width: 100%; color: #edf3fb; background: #081323; border: 1px solid #30405a; border-radius: 8px; padding: 10px 11px; font-size: 12px; }
+    textarea { resize: vertical; min-height: 82px; line-height: 1.45; }
+    .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .full-btn { width: 100%; margin-top: 5px; padding: 11px 14px; }
+    .mini-table { width: 100%; min-width: 0; border: 1px solid var(--line); border-radius: 9px; overflow: hidden; display: table; }
+    .mini-table th, .mini-table td { padding: 9px 8px; font-size: 11px; }
+    .mini-table th { font-size: 9px; }
+    .recon { display: grid; grid-template-columns: 1fr auto; gap: 7px 12px; margin-top: 12px; font-size: 12px; }
+    .recon span:nth-child(odd) { color: #8ea0b9; }
+    .recon span:nth-child(even) { text-align: right; }
+    .recon .check { color: #78e6bb; border-top: 1px solid var(--line); padding-top: 8px; }
+    .timeline { position: relative; margin-left: 7px; }
+    .timeline-item { position: relative; padding: 0 0 18px 22px; border-left: 1px solid #354562; }
+    .timeline-item:last-child { border-left-color: transparent; padding-bottom: 0; }
+    .timeline-item::before { content: ""; position: absolute; left: -5px; top: 2px; width: 9px; height: 9px; border-radius: 50%; background: var(--blue); box-shadow: 0 0 0 4px rgba(77,130,255,.1); }
+    .timeline-title { font-size: 12px; font-weight: 700; }
+    .timeline-copy { margin-top: 4px; color: var(--muted); font-size: 11px; line-height: 1.45; }
+    .empty-state { color: #8395ad; font-size: 12px; text-align: center; padding: 40px 10px; line-height: 1.6; }
+    .bottom-bar { position: sticky; bottom: 0; z-index: 15; border-top: 1px solid rgba(255,255,255,.09); background: rgba(7,16,31,.93); backdrop-filter: blur(14px); }
+    .bottom-inner { min-height: 66px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .progress-copy { color: #9bacbf; font-size: 12px; }
+    .progress-copy strong { color: white; }
+    .dialog-backdrop { position: fixed; inset: 0; display: grid; place-items: center; padding: 20px; background: rgba(0,0,0,.7); backdrop-filter: blur(5px); z-index: 60; }
+    .dialog-backdrop[hidden] { display: none; }
+    .dialog { width: min(680px, 100%); max-height: 90vh; overflow-y: auto; border: 1px solid var(--line); border-radius: 16px; background: #0d192b; box-shadow: var(--shadow); }
+    .dialog-head { display: flex; align-items: start; justify-content: space-between; padding: 18px; border-bottom: 1px solid var(--line); }
+    .dialog-head h2 { font-size: 18px; margin: 0; }
+    .icon-btn { border: 0; background: transparent; color: #8b9cb3; font-size: 24px; line-height: 1; }
+    .dialog-body { padding: 18px; }
+    .dialog-actions { display: flex; justify-content: flex-end; gap: 8px; padding: 0 18px 18px; }
+    .toast { position: fixed; right: 22px; bottom: 84px; z-index: 80; max-width: 370px; border: 1px solid rgba(61,213,152,.35); border-radius: 11px; background: #0d261f; color: #bdf4dc; padding: 12px 14px; font-size: 12px; box-shadow: var(--shadow); }
+    .toast[hidden] { display: none; }
+    @media (max-width: 1060px) { .workspace { grid-template-columns: 1fr; } .drawer { position: static; } .drawer-body { min-height: 540px; } }
+    @media (max-width: 720px) {
+      .shell { padding: 0 15px; }
+      .brand-context { display: none; }
+      .hero { align-items: start; flex-direction: column; }
+      .status-row { justify-content: flex-start; }
+      .period-switcher { max-width: none; }
+      .summary-grid { grid-template-columns: 1fr 1fr; }
+      .drawer-tabs { overflow-x: auto; grid-template-columns: repeat(4, minmax(90px,1fr)); }
+      .field-grid { grid-template-columns: 1fr; }
+      .bottom-inner { padding: 10px 0; align-items: stretch; flex-direction: column; }
+      .bottom-inner .actions { width: 100%; }
+      .bottom-inner .btn { flex: 1; }
+    }
+    @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; transition: none !important; } }
   </style>
 </head>
-<body class="bg-[#080D1A] text-white antialiased min-h-screen">
-  <header class="border-b border-white/10 bg-[#0C1322]">
-    <div class="max-w-[1500px] mx-auto px-5 py-3 flex items-center justify-between gap-4">
-      <div class="flex items-center gap-4"><a href="/" class="text-xl font-bold">Cavryon</a><span class="hidden sm:inline text-slate-600">/</span><span class="hidden sm:inline text-sm text-slate-300">Company X prototype</span></div>
-      <a href="/" class="text-sm text-slate-400 hover:text-white">← Back to website</a>
+<body>
+  <header class="topbar">
+    <div class="shell topbar-inner">
+      <div><a href="/" class="brand">Cavryon</a><span class="brand-context">/ Prepaid review prototype</span></div>
+      <a href="/" class="back-link">← Back to website</a>
     </div>
   </header>
-  <div class="bg-blue-500/10 border-b border-blue-500/20 px-5 py-2.5 text-center text-sm text-blue-200">Interactive prototype using fictional Company X data. No financial data is uploaded or stored.</div>
+  <div class="notice">Fictional Company X data · Runs in your browser · No financial data is uploaded or stored</div>
 
-  <main class="max-w-[1500px] mx-auto p-4 md:p-6">
-    <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
-      <div><p class="text-sm text-slate-400">May 2026 close · Account 6210</p><h1 class="text-2xl md:text-3xl font-bold mt-1">Marketing Expense Investigation</h1></div>
-      <div class="flex items-center gap-2 text-xs"><span class="rounded-full bg-emerald-500/10 text-emerald-300 px-3 py-1.5">Workbook connected locally</span><span id="statusPill" class="rounded-full bg-slate-700 text-slate-300 px-3 py-1.5">Open</span></div>
+  <main class="shell">
+    <section class="hero">
+      <div>
+        <p class="eyebrow">Two-close-cycle demonstration</p>
+        <h1>Review once. Reuse with control.</h1>
+        <p class="hero-copy">Excel can calculate a prepaid schedule. This prototype shows how Cavryon connects the evidence, Controller decision, approval conditions, and next-close reuse.</p>
+      </div>
+      <div class="status-row">
+        <span class="pill">Local sample workbook</span>
+        <span id="caseStatusPill" class="pill pending">Investigation open</span>
+      </div>
+    </section>
+
+    <div class="period-switcher" aria-label="Close period">
+      <button class="period-btn active" data-period="august" type="button">August 2026 · Make the decision</button>
+      <button class="period-btn" data-period="september" type="button">September 2026 · Reuse the decision</button>
     </div>
 
-    <div class="grid lg:grid-cols-[1fr_390px] gap-5">
-      <section class="rounded-2xl border border-slate-700 bg-[#101827] overflow-hidden">
-        <div class="px-5 py-3 border-b border-slate-700 bg-[#172033] flex flex-wrap items-center justify-between gap-3"><div><p class="text-xs text-slate-400">Company X</p><p class="text-sm font-medium">Marketing Expense Analysis.xlsx</p></div><button type="button" id="analyzeBtn" class="pulse-ring rounded-lg bg-blue-600 hover:bg-blue-500 px-4 py-2 text-sm font-semibold">Analyze account</button></div>
-        <div class="p-5">
-          <div class="grid sm:grid-cols-4 gap-3 mb-6"><div class="rounded-lg bg-slate-900 p-3"><p class="text-xs text-slate-500">Current period</p><p class="text-lg font-semibold">$291,420</p></div><div class="rounded-lg bg-slate-900 p-3"><p class="text-xs text-slate-500">Prior period</p><p class="text-lg font-semibold">$205,300</p></div><div class="rounded-lg bg-amber-500/10 p-3"><p class="text-xs text-amber-300">Variance</p><p class="text-lg font-semibold text-amber-300">+$86,120</p></div><div class="rounded-lg bg-amber-500/10 p-3"><p class="text-xs text-amber-300">Change</p><p class="text-lg font-semibold text-amber-300">+42.0%</p></div></div>
-          <div class="overflow-x-auto"><table class="w-full min-w-[700px] text-sm"><thead class="text-xs text-slate-500 border-b border-slate-700"><tr><th class="text-left py-3 px-2">Date</th><th class="text-left px-2">Vendor</th><th class="text-left px-2">Description</th><th class="text-left px-2">Invoice</th><th class="text-right px-2">Amount</th><th class="text-left px-2">Finding</th></tr></thead><tbody id="txnBody" class="divide-y divide-slate-800"><tr data-finding="seasonal" class="hover:bg-slate-800/50 cursor-pointer"><td class="py-4 px-2">05/03</td><td class="px-2">Brightline Media</td><td class="px-2">Annual campaign</td><td class="px-2">BL-2026-51</td><td class="text-right px-2">$42,000</td><td class="px-2"><span class="hidden finding rounded bg-amber-500/10 text-amber-300 px-2 py-1 text-xs">Unusual amount</span></td></tr><tr data-finding="duplicate" class="hover:bg-slate-800/50 cursor-pointer"><td class="py-4 px-2">05/11</td><td class="px-2">Northstar Events</td><td class="px-2">Launch event</td><td class="px-2">NS-8842</td><td class="text-right px-2">$18,500</td><td class="px-2"><span class="hidden finding rounded bg-red-500/10 text-red-300 px-2 py-1 text-xs">Possible duplicate</span></td></tr><tr data-finding="duplicate" class="hover:bg-slate-800/50 cursor-pointer"><td class="py-4 px-2">05/12</td><td class="px-2">Northstar Events</td><td class="px-2">Launch event</td><td class="px-2">NS-8842</td><td class="text-right px-2">$18,500</td><td class="px-2"><span class="hidden finding rounded bg-red-500/10 text-red-300 px-2 py-1 text-xs">Possible duplicate</span></td></tr><tr data-finding="newvendor" class="hover:bg-slate-800/50 cursor-pointer"><td class="py-4 px-2">05/18</td><td class="px-2">Studio Alder</td><td class="px-2">Creative production</td><td class="px-2">SA-1048</td><td class="text-right px-2">$12,800</td><td class="px-2"><span class="hidden finding rounded bg-blue-500/10 text-blue-300 px-2 py-1 text-xs">New vendor</span></td></tr><tr class="hover:bg-slate-800/50"><td class="py-4 px-2">05/27</td><td class="px-2">Searchworks</td><td class="px-2">Paid search</td><td class="px-2">SW-0526</td><td class="text-right px-2">$9,200</td><td class="px-2 text-slate-600">—</td></tr></tbody></table></div>
-          <p class="mt-4 text-xs text-slate-500">Click a flagged transaction after analyzing to attach it as evidence.</p>
+    <section class="workspace">
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <h2 id="workbookTitle">Company X · August close review</h2>
+            <p id="workbookSubtitle" class="subtext">Insurance Expense · Account 6420 · Selected transaction data only</p>
+          </div>
+          <div class="actions">
+            <button id="pasteBtn" class="btn" type="button">Paste selected rows</button>
+            <button id="fileBtn" class="btn" type="button">Import Excel/CSV</button>
+            <input id="fileInput" type="file" accept=".xlsx,.xls,.csv" hidden>
+            <button id="sampleBtn" class="btn" type="button">Reset sample</button>
+          </div>
         </div>
-      </section>
+        <div class="content">
+          <div class="summary-grid">
+            <div class="metric"><div class="metric-label">Current period</div><div id="currentPeriod" class="metric-value">$46,880</div></div>
+            <div class="metric"><div class="metric-label">Prior period</div><div id="priorPeriod" class="metric-value">$33,940</div></div>
+            <div class="metric"><div class="metric-label">Variance</div><div id="variance" class="metric-value amber">+$12,940</div></div>
+            <div class="metric"><div class="metric-label">Review focus</div><div id="reviewFocus" class="metric-value">1 item</div></div>
+          </div>
 
-      <aside class="rounded-2xl border border-slate-700 bg-[#101827] overflow-hidden h-fit">
-        <div class="grid grid-cols-3 border-b border-slate-700"><button type="button" class="tab active px-2 py-3 text-xs border-b-2 border-transparent" data-tab="findings">Findings</button><button type="button" class="tab px-2 py-3 text-xs text-slate-400 border-b-2 border-transparent" data-tab="history">Prior history</button><button type="button" class="tab px-2 py-3 text-xs text-slate-400 border-b-2 border-transparent" data-tab="decision">Decision</button></div>
-        <div class="p-5 min-h-[520px]">
-          <div id="findings" class="panel"><div id="beforeAnalysis"><h2 class="font-semibold mb-2">Ready to analyze</h2><p class="text-sm text-slate-400">Cavryon will review the account movement and highlight the transactions that need attention.</p><div class="mt-5 rounded-lg border border-slate-700 p-4 text-xs text-slate-400"><p class="text-emerald-300 font-medium mb-2">Data boundary</p>Transaction detail remains in this fictional workbook. The decision record is created only when you send it for review.</div></div><div id="afterAnalysis" class="hidden"><h2 class="font-semibold mb-1">3 findings explain 85% of movement</h2><p class="text-xs text-slate-500 mb-4">Select a transaction in the workbook to add evidence.</p><div class="space-y-3"><button type="button" data-select="duplicate" class="finding-card text-left w-full rounded-lg border border-red-500/30 bg-red-500/5 p-4"><span class="flex justify-between"><span class="text-xs text-red-300">HIGH</span><span class="text-xs text-slate-500">$18,500</span></span><span class="block font-medium text-sm mt-2">Possible duplicate invoice</span><span class="block text-xs text-slate-400 mt-1">Same vendor, invoice number, and amount posted on consecutive days.</span></button><button type="button" data-select="seasonal" class="finding-card text-left w-full rounded-lg border border-amber-500/30 bg-amber-500/5 p-4"><span class="flex justify-between"><span class="text-xs text-amber-300">REVIEW</span><span class="text-xs text-slate-500">$42,000</span></span><span class="block font-medium text-sm mt-2">Unusual annual campaign cost</span><span class="block text-xs text-slate-400 mt-1">4.6× this account's median transaction.</span></button><button type="button" data-select="newvendor" class="finding-card text-left w-full rounded-lg border border-blue-500/30 bg-blue-500/5 p-4"><span class="flex justify-between"><span class="text-xs text-blue-300">INFO</span><span class="text-xs text-slate-500">$12,800</span></span><span class="block font-medium text-sm mt-2">New vendor</span><span class="block text-xs text-slate-400 mt-1">Studio Alder has no prior activity in this account.</span></button></div><button type="button" id="historyBtn" class="w-full mt-5 rounded-lg border border-slate-600 hover:border-blue-400 px-4 py-2.5 text-sm">Review related history →</button></div></div>
-          <div id="history" class="panel hidden"><h2 class="font-semibold mb-1">1 related approved decision</h2><p class="text-xs text-slate-500 mb-5">Matched by account, vendor pattern, and description.</p><div class="rounded-xl border border-blue-500/30 bg-blue-500/5 p-4"><div class="flex justify-between text-xs"><span class="text-blue-300">APRIL 2026</span><span class="text-emerald-300">Approved</span></div><h3 class="font-medium mt-3">Annual campaign launch</h3><p class="text-sm text-slate-400 mt-2">Brightline campaign spend was confirmed as expected seasonality under the approved FY26 marketing plan.</p><div class="mt-4 pt-3 border-t border-blue-500/20 text-xs text-slate-400"><span class="text-slate-500">Reviewed by</span> Morgan Chen, Controller</div></div><p class="mt-4 text-xs text-slate-500">Historical precedent is context—not an automatic accounting conclusion.</p><button type="button" id="decisionBtn" class="w-full mt-5 rounded-lg bg-blue-600 hover:bg-blue-500 px-4 py-2.5 text-sm font-semibold">Draft decision record →</button></div>
-          <div id="decision" class="panel hidden"><h2 class="font-semibold mb-4">Investigation decision</h2><label class="block text-xs text-slate-400 mb-1">Question</label><textarea class="w-full h-16 rounded-lg border border-slate-700 bg-slate-900 p-3 text-sm mb-4">Why did Marketing Expense increase 42% in May?</textarea><label class="block text-xs text-slate-400 mb-1">Draft conclusion</label><textarea id="conclusion" class="w-full h-32 rounded-lg border border-slate-700 bg-slate-900 p-3 text-sm mb-4">Marketing Expense increased $86,120 primarily due to the annual Brightline campaign. A duplicate Northstar Events invoice of $18,500 requires reversal. The remaining movement is consistent with approved seasonal spending.</textarea><div class="grid grid-cols-2 gap-3 mb-4"><div><label class="block text-xs text-slate-400 mb-1">Owner</label><select class="w-full rounded-lg border border-slate-700 bg-slate-900 p-2.5 text-sm"><option>Jordan Lee</option></select></div><div><label class="block text-xs text-slate-400 mb-1">Reviewer</label><select class="w-full rounded-lg border border-slate-700 bg-slate-900 p-2.5 text-sm"><option>Morgan Chen</option></select></div></div><div id="evidenceCount" class="text-xs text-slate-400 mb-4">Evidence attached: 0 transactions + 1 prior decision</div><button type="button" id="reviewBtn" class="w-full rounded-lg bg-blue-600 hover:bg-blue-500 px-4 py-3 text-sm font-semibold">Send for Controller review</button><div id="completeMsg" class="hidden mt-4 rounded-lg bg-emerald-500/10 border border-emerald-500/30 p-4 text-sm text-emerald-200">Decision record is ready for review. Detailed transaction data remains in the workbook.</div></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Date</th><th>Vendor</th><th>Description</th><th>Invoice</th><th class="num">Amount</th><th>Review</th></tr></thead>
+              <tbody id="transactionBody"></tbody>
+            </table>
+          </div>
+          <p id="tableHint" class="hint">Select the flagged Travelers transaction to open the investigation.</p>
+        </div>
+      </div>
+
+      <aside class="card drawer">
+        <div class="drawer-tabs" role="tablist" aria-label="Investigation sections">
+          <button class="drawer-tab active" type="button" data-tab="investigation">Investigate</button>
+          <button class="drawer-tab" type="button" data-tab="schedule">Schedule</button>
+          <button class="drawer-tab" type="button" data-tab="decision">Decision</button>
+          <button class="drawer-tab" type="button" data-tab="memory">Memory</button>
+        </div>
+        <div class="drawer-body">
+          <section id="investigation" class="panel">
+            <h3>Potential prepaid expense</h3>
+            <p class="panel-intro">Cavryon found an annual insurance payment inside Insurance Expense. Confirm the facts before deciding the treatment.</p>
+            <div id="investigationCallout" class="callout amber">
+              <div class="callout-title">Review required</div>
+              <p>The amount is material and the description indicates benefits extending beyond August.</p>
+            </div>
+            <dl class="detail-list">
+              <div class="detail-row"><dt>Case ID</dt><dd>CAV-2026-008</dd></div>
+              <div class="detail-row"><dt>Vendor</dt><dd id="detailVendor">Travelers Insurance</dd></div>
+              <div class="detail-row"><dt>Transaction</dt><dd id="detailAmount">$12,000.00</dd></div>
+              <div class="detail-row"><dt>Evidence</dt><dd id="detailEvidence">Travelers policy.pdf</dd></div>
+              <div class="detail-row"><dt>Prior treatment</dt><dd id="detailPrior">None found</dd></div>
+            </dl>
+            <div class="field-grid">
+              <div class="field"><label for="coverageStart">Coverage start</label><input id="coverageStart" type="date" value="2026-08-01"></div>
+              <div class="field"><label for="coverageEnd">Coverage end</label><input id="coverageEnd" type="date" value="2027-07-31"></div>
+            </div>
+            <div class="field"><label for="proposedTreatment">Proposed treatment</label><select id="proposedTreatment"><option>Capitalize as prepaid asset</option><option>Expense immediately</option><option>Request additional evidence</option></select></div>
+            <button id="buildScheduleBtn" class="btn primary full-btn" type="button">Build reviewable schedule →</button>
+          </section>
+
+          <section id="schedule" class="panel" hidden>
+            <h3>Editable amortization schedule</h3>
+            <p class="panel-intro">The formula is visible and editable. Cavryon prepares the work; the Controller owns the treatment.</p>
+            <div class="field-grid">
+              <div class="field"><label for="scheduleAmount">Prepaid amount</label><input id="scheduleAmount" type="number" min="0" step="0.01" value="12000"></div>
+              <div class="field"><label for="scheduleMonths">Amortization months</label><input id="scheduleMonths" type="number" min="1" max="60" step="1" value="12"></div>
+            </div>
+            <table class="mini-table">
+              <thead><tr><th>Period</th><th class="num">Expense</th><th class="num">Ending prepaid</th></tr></thead>
+              <tbody id="schedulePreview"></tbody>
+            </table>
+            <div class="recon">
+              <span>Schedule ending balance</span><span id="scheduleBalance">$11,000.00</span>
+              <span>GL prepaid balance</span><span id="glBalance">$11,000.00</span>
+              <span class="check">Difference</span><span id="reconDifference" class="check">$0.00 ✓</span>
+            </div>
+            <button id="reviewDecisionBtn" class="btn primary full-btn" type="button">Review accounting decision →</button>
+          </section>
+
+          <section id="decision" class="panel" hidden>
+            <h3>Controller decision</h3>
+            <p class="panel-intro">Approval includes the reasoning and the conditions under which this treatment may be reused.</p>
+            <div class="field"><label for="decisionRationale">Accounting rationale</label><textarea id="decisionRationale">Insurance coverage benefits twelve monthly periods. Capitalize the payment and recognize expense ratably over the policy term.</textarea></div>
+            <div class="field-grid">
+              <div class="field"><label for="decisionOwner">Prepared by</label><input id="decisionOwner" value="Jordan Lee"></div>
+              <div class="field"><label for="decisionReviewer">Controller reviewer</label><input id="decisionReviewer" value="Morgan Chen"></div>
+            </div>
+            <div class="field"><label for="reuseConditions">Reuse permitted when</label><textarea id="reuseConditions">Same vendor, policy type, and comparable 12-month coverage terms.</textarea></div>
+            <div class="field"><label for="reviewTriggers">Require reapproval when</label><textarea id="reviewTriggers">Amount, service dates, cancellation, credit, or policy terms change.</textarea></div>
+            <button id="approveBtn" class="btn primary full-btn" type="button">Approve decision CAV-2026-008</button>
+            <div id="approvalNotice" class="callout green" hidden style="margin-top:12px;margin-bottom:0">
+              <div class="callout-title">Decision approved</div>
+              <p>The rationale, evidence, reviewer, and reuse conditions are now part of the decision record.</p>
+            </div>
+          </section>
+
+          <section id="memory" class="panel" hidden>
+            <h3>Decision Memory</h3>
+            <p class="panel-intro">Cavryon shows the exact approved case and makes changed facts visible before any treatment is reused.</p>
+            <div id="memoryEmpty" class="empty-state">Approve the August decision to create reusable accounting memory.</div>
+            <div id="memoryRecord" hidden>
+              <div class="callout green">
+                <div class="callout-title">CAV-2026-008 · Approved</div>
+                <p id="memorySummary">Travelers Insurance · $12,000 · 12-month prepaid treatment</p>
+              </div>
+              <div class="timeline">
+                <div class="timeline-item"><div class="timeline-title">Source evidence reviewed</div><div class="timeline-copy">Transaction and policy coverage were connected to the case.</div></div>
+                <div class="timeline-item"><div class="timeline-title">Treatment approved</div><div id="memoryApprovalCopy" class="timeline-copy">Morgan Chen approved capitalization and straight-line amortization.</div></div>
+                <div class="timeline-item"><div class="timeline-title">Reuse authority recorded</div><div class="timeline-copy">Matching policy terms may reuse the decision; material changes require reapproval.</div></div>
+              </div>
+              <button id="goSeptemberBtn" class="btn primary full-btn" type="button">Open September close →</button>
+            </div>
+          </section>
         </div>
       </aside>
-    </div>
+    </section>
   </main>
 
+  <div class="bottom-bar">
+    <div class="shell bottom-inner">
+      <div id="progressCopy" class="progress-copy"><strong>Step 1 of 4:</strong> Confirm the flagged transaction and supporting facts.</div>
+      <div class="actions">
+        <button id="downloadBtn" class="btn" type="button">Download Excel workpaper</button>
+        <button id="nextActionBtn" class="btn primary" type="button">Build schedule</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="pasteDialog" class="dialog-backdrop" hidden role="dialog" aria-modal="true" aria-labelledby="pasteTitle">
+    <div class="dialog">
+      <div class="dialog-head"><div><h2 id="pasteTitle">Paste selected transactions</h2><p class="subtext">Copy only the rows you want to review. Your data remains in this browser session.</p></div><button class="icon-btn" data-close-dialog type="button" aria-label="Close">×</button></div>
+      <div class="dialog-body">
+        <label for="pasteArea">Expected columns: Date, Vendor, Description, Invoice, Amount</label>
+        <textarea id="pasteArea" style="min-height:220px">Date	Vendor	Description	Invoice	Amount
+08/03/2026	Pacific Office Supply	Monthly supplies	POS-8031	940
+08/04/2026	Travelers Insurance	Annual business policy Aug 2026-Jul 2027	TRV-8841	12000
+08/09/2026	City Utilities	August utilities	UTIL-0809	1880</textarea>
+        <p id="pasteError" class="subtext" style="color:#fda4af" hidden></p>
+      </div>
+      <div class="dialog-actions"><button class="btn" data-close-dialog type="button">Cancel</button><button id="importPasteBtn" class="btn primary" type="button">Use these rows</button></div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" hidden></div>
+
   <script>
-    const tabs=[...document.querySelectorAll('.tab')], panels=[...document.querySelectorAll('.panel')];
-    let analyzed=false, evidence=new Set();
-    function openTab(id){tabs.forEach(t=>t.classList.toggle('active',t.dataset.tab===id));panels.forEach(p=>p.classList.toggle('hidden',p.id!==id));}
-    tabs.forEach(t=>t.addEventListener('click',()=>openTab(t.dataset.tab)));
-    document.getElementById('analyzeBtn').addEventListener('click',()=>{analyzed=true;document.querySelectorAll('.finding').forEach(x=>x.classList.remove('hidden'));document.getElementById('beforeAnalysis').classList.add('hidden');document.getElementById('afterAnalysis').classList.remove('hidden');document.getElementById('analyzeBtn').textContent='Analysis complete';document.getElementById('analyzeBtn').classList.remove('pulse-ring','bg-blue-600');document.getElementById('analyzeBtn').classList.add('bg-emerald-600');});
-    function selectFinding(kind){if(!analyzed)return;document.querySelectorAll(`[data-finding="${kind}"]`).forEach(row=>{row.classList.add('row-selected');evidence.add(row);});document.getElementById('evidenceCount').textContent=`Evidence attached: ${evidence.size} transaction${evidence.size===1?'':'s'} + 1 prior decision`;}
-    document.querySelectorAll('[data-select]').forEach(x=>x.addEventListener('click',()=>selectFinding(x.dataset.select)));
-    document.querySelectorAll('[data-finding]').forEach(row=>row.addEventListener('click',()=>selectFinding(row.dataset.finding)));
-    document.getElementById('historyBtn').addEventListener('click',()=>openTab('history'));
-    document.getElementById('decisionBtn').addEventListener('click',()=>openTab('decision'));
-    document.getElementById('reviewBtn').addEventListener('click',()=>{document.getElementById('statusPill').textContent='Ready for review';document.getElementById('statusPill').className='rounded-full bg-amber-500/10 text-amber-300 px-3 py-1.5';document.getElementById('completeMsg').classList.remove('hidden');document.getElementById('reviewBtn').textContent='Sent for review';document.getElementById('reviewBtn').disabled=true;});
+    const sampleTransactions = [
+      { date: '08/03/2026', vendor: 'Pacific Office Supply', description: 'Monthly supplies', invoice: 'POS-8031', amount: 940, flagged: false },
+      { date: '08/04/2026', vendor: 'Travelers Insurance', description: 'Annual business policy Aug 2026–Jul 2027', invoice: 'TRV-8841', amount: 12000, flagged: true },
+      { date: '08/09/2026', vendor: 'City Utilities', description: 'August utilities', invoice: 'UTIL-0809', amount: 1880, flagged: false },
+      { date: '08/12/2026', vendor: 'Summit Benefits', description: 'Employee benefits administration', invoice: 'SB-2219', amount: 2120, flagged: false },
+      { date: '08/21/2026', vendor: 'SafeGuard Brokers', description: 'Insurance brokerage fee', invoice: 'SG-1102', amount: 790, flagged: false }
+    ];
+
+    const state = {
+      period: 'august',
+      transactions: structuredClone(sampleTransactions),
+      selectedIndex: 1,
+      amount: 12000,
+      months: 12,
+      approved: false,
+      creditApplied: false,
+      revisionApproved: false,
+      rationale: 'Insurance coverage benefits twelve monthly periods. Capitalize the payment and recognize expense ratably over the policy term.',
+      owner: 'Jordan Lee',
+      reviewer: 'Morgan Chen',
+      reuseConditions: 'Same vendor, policy type, and comparable 12-month coverage terms.',
+      reviewTriggers: 'Amount, service dates, cancellation, credit, or policy terms change.'
+    };
+
+    const $ = (id) => document.getElementById(id);
+    const money = (value) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(value || 0));
+    const escapeHtml = (value) => String(value ?? '').replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
+    const augustPanelTemplates = ['investigation', 'schedule', 'decision', 'memory'].reduce((templates, id) => {
+      templates[id] = $(id).innerHTML;
+      return templates;
+    }, {});
+    let toastTimer;
+
+    function showToast(message) {
+      clearTimeout(toastTimer);
+      $('toast').textContent = message;
+      $('toast').hidden = false;
+      toastTimer = setTimeout(() => { $('toast').hidden = true; }, 3300);
+    }
+
+    function openTab(tabId) {
+      document.querySelectorAll('.drawer-tab').forEach(button => button.classList.toggle('active', button.dataset.tab === tabId));
+      document.querySelectorAll('.panel').forEach(panel => { panel.hidden = panel.id !== tabId; });
+      syncBottomBar(tabId);
+    }
+
+    function syncBottomBar(tabId) {
+      const next = $('nextActionBtn');
+      if (state.period === 'september') {
+        $('progressCopy').innerHTML = state.creditApplied
+          ? '<strong>September exception:</strong> Compare the changed facts and approve the revised treatment.'
+          : '<strong>Next-close reuse:</strong> Confirm the scheduled release or introduce the credit exception.';
+        next.textContent = state.creditApplied ? (state.revisionApproved ? 'Revision approved' : 'Approve revision') : 'Apply credit exception';
+        next.disabled = state.creditApplied && state.revisionApproved;
+        return;
+      }
+      next.disabled = false;
+      if (tabId === 'investigation') {
+        $('progressCopy').innerHTML = '<strong>Step 1 of 4:</strong> Confirm the flagged transaction and supporting facts.';
+        next.textContent = 'Build schedule';
+      } else if (tabId === 'schedule') {
+        $('progressCopy').innerHTML = '<strong>Step 2 of 4:</strong> Review the calculation and GL tie-out.';
+        next.textContent = 'Review decision';
+      } else if (tabId === 'decision') {
+        $('progressCopy').innerHTML = '<strong>Step 3 of 4:</strong> Record the rationale, approval, and reuse boundaries.';
+        next.textContent = state.approved ? 'View Decision Memory' : 'Approve decision';
+      } else {
+        $('progressCopy').innerHTML = '<strong>Step 4 of 4:</strong> Carry the approved decision into the next close.';
+        next.textContent = 'Open September close';
+      }
+    }
+
+    function selectedTransaction() { return state.transactions[state.selectedIndex] || state.transactions[0]; }
+
+    function renderTransactions() {
+      const body = $('transactionBody');
+      body.innerHTML = state.transactions.map((t, index) => {
+        const selected = index === state.selectedIndex ? 'selected' : '';
+        const review = t.flagged ? '<span class="finding">POSSIBLE PREPAID</span>' : '<span style="color:#5f718b">—</span>';
+        return `<tr class="selectable ${selected}" data-index="${index}"><td>${escapeHtml(t.date)}</td><td>${escapeHtml(t.vendor)}</td><td>${escapeHtml(t.description)}</td><td>${escapeHtml(t.invoice)}</td><td class="num">${money(t.amount)}</td><td>${review}</td></tr>`;
+      }).join('');
+      body.querySelectorAll('tr').forEach(row => row.addEventListener('click', () => {
+        state.selectedIndex = Number(row.dataset.index);
+        const transaction = selectedTransaction();
+        state.amount = Number(transaction.amount) || 0;
+        $('scheduleAmount').value = state.amount;
+        renderTransactions();
+        renderInvestigation();
+        renderSchedule();
+        openTab('investigation');
+      }));
+    }
+
+    function renderInvestigation() {
+      const transaction = selectedTransaction();
+      $('detailVendor').textContent = transaction.vendor;
+      $('detailAmount').textContent = money(transaction.amount);
+      $('detailEvidence').textContent = transaction.flagged ? 'Travelers policy.pdf' : 'Supporting document requested';
+      $('detailPrior').textContent = state.approved ? 'CAV-2026-008 approved' : 'None found';
+      $('scheduleAmount').value = state.amount;
+      const reviewCount = state.transactions.filter(t => t.flagged).length;
+      $('reviewFocus').textContent = `${reviewCount} item${reviewCount === 1 ? '' : 's'}`;
+    }
+
+    function generateSchedule(amount = state.amount, months = state.months, creditApplied = false) {
+      const safeMonths = Math.max(1, Number.parseInt(months, 10) || 1);
+      const safeAmount = Math.max(0, Number(amount) || 0);
+      const rows = [];
+      if (creditApplied) {
+        const augustExpense = Math.round((safeAmount / safeMonths) * 100) / 100;
+        const revisedTotal = safeAmount - 1200;
+        const remaining = Math.max(revisedTotal - augustExpense, 0);
+        const remainingMonths = Math.max(safeMonths - 1, 1);
+        const revisedMonthly = Math.round((remaining / remainingMonths) * 100) / 100;
+        let balance = remaining;
+        rows.push({ period: 'Aug 2026', expense: augustExpense, balance: safeAmount - augustExpense, note: 'Approved original schedule' });
+        for (let i = 0; i < remainingMonths; i++) {
+          const date = new Date(2026, 8 + i, 1);
+          const expense = i === remainingMonths - 1 ? Math.round(balance * 100) / 100 : revisedMonthly;
+          balance = Math.max(0, Math.round((balance - expense) * 100) / 100);
+          rows.push({ period: date.toLocaleString('en-US', { month: 'short', year: 'numeric' }), expense, balance, note: i === 0 ? 'Revised after credit' : '' });
+        }
+        return rows;
+      }
+      const base = Math.round((safeAmount / safeMonths) * 100) / 100;
+      let balance = safeAmount;
+      for (let i = 0; i < safeMonths; i++) {
+        const date = new Date(2026, 7 + i, 1);
+        const expense = i === safeMonths - 1 ? Math.round(balance * 100) / 100 : base;
+        balance = Math.max(0, Math.round((balance - expense) * 100) / 100);
+        rows.push({ period: date.toLocaleString('en-US', { month: 'short', year: 'numeric' }), expense, balance, note: '' });
+      }
+      return rows;
+    }
+
+    function renderSchedule() {
+      state.amount = Math.max(0, Number($('scheduleAmount').value) || 0);
+      state.months = Math.max(1, Number.parseInt($('scheduleMonths').value, 10) || 1);
+      const rows = generateSchedule(state.amount, state.months, state.creditApplied);
+      const visible = rows.slice(0, 4);
+      $('schedulePreview').innerHTML = visible.map(row => `<tr><td>${escapeHtml(row.period)}</td><td class="num">${money(row.expense)}</td><td class="num">${money(row.balance)}</td></tr>`).join('') + (rows.length > 4 ? `<tr><td colspan="3" style="text-align:center;color:#72839c">… ${rows.length - 4} additional periods</td></tr>` : '');
+      const closeIndex = state.period === 'september' ? 1 : 0;
+      const closeRow = rows[Math.min(closeIndex, rows.length - 1)] || { balance: 0 };
+      $('scheduleBalance').textContent = money(closeRow.balance);
+      $('glBalance').textContent = money(closeRow.balance);
+      $('reconDifference').textContent = '$0.00 ✓';
+    }
+
+    function approveAugust() {
+      state.rationale = $('decisionRationale').value;
+      state.owner = $('decisionOwner').value;
+      state.reviewer = $('decisionReviewer').value;
+      state.reuseConditions = $('reuseConditions').value;
+      state.reviewTriggers = $('reviewTriggers').value;
+      state.approved = true;
+      $('approvalNotice').hidden = false;
+      $('approveBtn').textContent = 'Approved by Controller';
+      $('approveBtn').disabled = true;
+      $('caseStatusPill').textContent = 'Decision approved';
+      $('caseStatusPill').classList.remove('pending');
+      $('memoryEmpty').hidden = true;
+      $('memoryRecord').hidden = false;
+      $('memorySummary').textContent = `${selectedTransaction().vendor} · ${money(state.amount)} · ${state.months}-month prepaid treatment`;
+      $('memoryApprovalCopy').textContent = `${$('decisionReviewer').value || 'Controller'} approved capitalization and straight-line amortization.`;
+      showToast('Decision CAV-2026-008 approved and added to Decision Memory.');
+      openTab('memory');
+    }
+
+    function renderSeptember() {
+      if ($('decisionRationale')) {
+        state.rationale = $('decisionRationale').value;
+        state.owner = $('decisionOwner').value;
+        state.reviewer = $('decisionReviewer').value;
+        state.reuseConditions = $('reuseConditions').value;
+        state.reviewTriggers = $('reviewTriggers').value;
+      }
+      state.period = 'september';
+      document.querySelectorAll('.period-btn').forEach(button => button.classList.toggle('active', button.dataset.period === 'september'));
+      $('workbookTitle').textContent = 'Company X · September close review';
+      $('workbookSubtitle').textContent = 'Prepaid Insurance · Account 1410 · Prior decision connected';
+      $('currentPeriod').textContent = state.creditApplied ? '$8,909' : '$10,000';
+      $('priorPeriod').textContent = '$11,000';
+      $('variance').textContent = state.creditApplied ? '−$2,091' : '−$1,000';
+      $('reviewFocus').textContent = state.creditApplied ? '1 exception' : '0 exceptions';
+      $('tableHint').textContent = state.creditApplied ? 'The $1,200 credit changes an approved fact, so Cavryon requires a new Controller decision.' : 'The September release is supported by the approved August decision. Apply the credit exception to test the control.';
+      $('transactionBody').innerHTML = state.creditApplied ? `
+        <tr class="selected"><td>09/15/2026</td><td>Travelers Insurance</td><td>Policy credit</td><td>TRV-CR-104</td><td class="num">−$1,200.00</td><td><span class="finding">REAPPROVAL</span></td></tr>
+        <tr><td>09/30/2026</td><td>Company X</td><td>September amortization</td><td>JE-2026-09</td><td class="num">${money(generateSchedule(state.amount, state.months, true)[1]?.expense || 0)}</td><td><span style="color:#78e6bb;font-size:11px">RECALCULATED</span></td></tr>` : `
+        <tr class="selected"><td>09/30/2026</td><td>Company X</td><td>September insurance amortization</td><td>JE-2026-09</td><td class="num">${money(generateSchedule(state.amount, state.months, false)[1]?.expense || 0)}</td><td><span style="color:#78e6bb;font-size:11px">SUPPORTED</span></td></tr>`;
+      renderSeptemberDrawer();
+    }
+
+    function renderSeptemberDrawer() {
+      const investigation = $('investigation');
+      const schedule = $('schedule');
+      const decision = $('decision');
+      const memory = $('memory');
+      const normalMonthly = generateSchedule(state.amount, state.months, false)[1]?.expense || 0;
+      const revisedRows = generateSchedule(state.amount, state.months, true);
+      const revisedMonthly = revisedRows[1]?.expense || 0;
+
+      investigation.innerHTML = state.creditApplied ? `
+        <h3>Changed facts detected</h3><p class="panel-intro">Cavryon connected the credit to CAV-2026-008, but the approved treatment cannot be reused silently.</p>
+        <div class="callout red"><div class="callout-title">Controller reapproval required</div><p>A $1,200 policy credit changes total consideration and the remaining amortization.</p></div>
+        <dl class="detail-list"><div class="detail-row"><dt>Prior case</dt><dd>CAV-2026-008</dd></div><div class="detail-row"><dt>Same</dt><dd>Vendor · policy · account</dd></div><div class="detail-row"><dt>Changed</dt><dd>Amount · remaining schedule</dd></div><div class="detail-row"><dt>Original total</dt><dd>${money(state.amount)}</dd></div><div class="detail-row"><dt>Revised total</dt><dd>${money(state.amount - 1200)}</dd></div></dl>
+        <button class="btn primary full-btn" type="button" onclick="openTab('schedule')">Review recalculated schedule →</button>` : `
+        <h3>Approved decision found</h3><p class="panel-intro">September activity matches the conditions approved in CAV-2026-008.</p>
+        <div class="callout green"><div class="callout-title">Reuse permitted</div><p>Same vendor, policy, service period, and monthly treatment. The exact August decision remains attached.</p></div>
+        <dl class="detail-list"><div class="detail-row"><dt>Prior case</dt><dd>CAV-2026-008</dd></div><div class="detail-row"><dt>Approved by</dt><dd>${escapeHtml(state.reviewer || 'Morgan Chen')}</dd></div><div class="detail-row"><dt>September expense</dt><dd>${money(normalMonthly)}</dd></div><div class="detail-row"><dt>Ending prepaid</dt><dd>${money(state.amount - normalMonthly * 2)}</dd></div><div class="detail-row"><dt>GL difference</dt><dd style="color:#78e6bb">$0.00 ✓</dd></div></dl>
+        <button class="btn danger full-btn" type="button" onclick="applyCredit()">Introduce $1,200 policy credit</button>`;
+
+      schedule.innerHTML = `
+        <h3>${state.creditApplied ? 'Recalculated schedule' : 'September scheduled release'}</h3>
+        <p class="panel-intro">${state.creditApplied ? 'The original decision is retained, while the credit creates a reviewable revision.' : 'The approved August schedule carries forward without rebuilding the workpaper.'}</p>
+        <table class="mini-table"><thead><tr><th>Measure</th><th class="num">Before</th><th class="num">After</th></tr></thead><tbody>
+          <tr><td>Total policy value</td><td class="num">${money(state.amount)}</td><td class="num">${money(state.creditApplied ? state.amount - 1200 : state.amount)}</td></tr>
+          <tr><td>September expense</td><td class="num">${money(normalMonthly)}</td><td class="num">${money(state.creditApplied ? revisedMonthly : normalMonthly)}</td></tr>
+          <tr><td>September ending prepaid</td><td class="num">${money(state.amount - normalMonthly * 2)}</td><td class="num">${money(state.creditApplied ? revisedRows[1]?.balance || 0 : state.amount - normalMonthly * 2)}</td></tr>
+        </tbody></table>
+        <div class="recon"><span>Revised schedule balance</span><span>${money(state.creditApplied ? revisedRows[1]?.balance || 0 : state.amount - normalMonthly * 2)}</span><span>GL prepaid balance</span><span>${money(state.creditApplied ? revisedRows[1]?.balance || 0 : state.amount - normalMonthly * 2)}</span><span class="check">Difference</span><span class="check">$0.00 ✓</span></div>
+        <button class="btn primary full-btn" type="button" onclick="openTab('decision')">${state.creditApplied ? 'Review revision decision' : 'View approval basis'} →</button>`;
+
+      decision.innerHTML = state.creditApplied ? `
+        <h3>Revision approval</h3><p class="panel-intro">The changed facts fall outside the original reuse authority, so Cavryon creates a controlled revision.</p>
+        <div class="field"><label>Revision rationale</label><textarea id="revisionRationale">Apply the $1,200 policy credit against the remaining prepaid balance and amortize the revised balance over the remaining policy term.</textarea></div>
+        <div class="field-grid"><div class="field"><label>Prior decision</label><input value="CAV-2026-008" readonly></div><div class="field"><label>Revision</label><input value="CAV-2026-008-R1" readonly></div></div>
+        <div class="callout amber"><div class="callout-title">Why approval is required</div><p>The amount changed, which is an explicit reapproval trigger in the original decision.</p></div>
+        <button id="approveRevisionBtn" class="btn primary full-btn" type="button" onclick="approveRevision()">Approve revised treatment</button>` : `
+        <h3>Approval basis</h3><p class="panel-intro">September uses the approved August treatment without asking the team to reconstruct the reasoning.</p>
+        <div class="callout green"><div class="callout-title">Within reuse authority</div><p>${escapeHtml(state.reuseConditions)}</p></div>
+        <dl class="detail-list"><div class="detail-row"><dt>Decision</dt><dd>CAV-2026-008</dd></div><div class="detail-row"><dt>Reviewer</dt><dd>${escapeHtml(state.reviewer || 'Morgan Chen')}</dd></div><div class="detail-row"><dt>Status</dt><dd style="color:#78e6bb">Approved and reusable</dd></div></dl>
+        <button class="btn danger full-btn" type="button" onclick="applyCredit()">Test an exception</button>`;
+
+      memory.innerHTML = `
+        <h3>Decision history</h3><p class="panel-intro">The original judgment remains intact, and any exception is recorded as a linked revision.</p>
+        <div class="timeline"><div class="timeline-item"><div class="timeline-title">CAV-2026-008 approved</div><div class="timeline-copy">${escapeHtml(state.rationale)}</div></div><div class="timeline-item"><div class="timeline-title">September decision matched</div><div class="timeline-copy">Cavryon compared the vendor, policy, dates, and treatment with the approved case.</div></div>${state.creditApplied ? `<div class="timeline-item"><div class="timeline-title">CAV-2026-008-R1 ${state.revisionApproved ? 'approved' : 'pending'}</div><div class="timeline-copy">The policy credit changed an approved fact and triggered ${state.revisionApproved ? 'a documented revision' : 'Controller reapproval'}.</div></div>` : ''}</div>`;
+
+      $('caseStatusPill').textContent = state.creditApplied ? (state.revisionApproved ? 'Revision approved' : 'Reapproval required') : 'Prior decision reused';
+      $('caseStatusPill').classList.toggle('pending', state.creditApplied && !state.revisionApproved);
+      openTab('investigation');
+    }
+
+    function applyCredit() {
+      state.creditApplied = true;
+      state.revisionApproved = false;
+      renderSeptember();
+      showToast('A material change was detected. The original decision is preserved and reapproval is required.');
+    }
+
+    function approveRevision() {
+      state.revisionApproved = true;
+      renderSeptember();
+      openTab('memory');
+      showToast('Revision CAV-2026-008-R1 approved and linked to the original decision.');
+    }
+
+    function bindAugustPanelControls() {
+      $('buildScheduleBtn').addEventListener('click', () => { renderSchedule(); openTab('schedule'); });
+      $('reviewDecisionBtn').addEventListener('click', () => openTab('decision'));
+      $('approveBtn').addEventListener('click', approveAugust);
+      $('goSeptemberBtn').addEventListener('click', renderSeptember);
+      $('scheduleAmount').addEventListener('input', renderSchedule);
+      $('scheduleMonths').addEventListener('input', renderSchedule);
+    }
+
+    function restoreAugustPanels() {
+      Object.entries(augustPanelTemplates).forEach(([id, html]) => { $(id).innerHTML = html; });
+      $('scheduleAmount').value = state.amount;
+      $('scheduleMonths').value = state.months;
+      $('decisionRationale').value = state.rationale;
+      $('decisionOwner').value = state.owner;
+      $('decisionReviewer').value = state.reviewer;
+      $('reuseConditions').value = state.reuseConditions;
+      $('reviewTriggers').value = state.reviewTriggers;
+      if (state.approved) {
+        $('approvalNotice').hidden = false;
+        $('approveBtn').textContent = 'Approved by Controller';
+        $('approveBtn').disabled = true;
+        $('memoryEmpty').hidden = true;
+        $('memoryRecord').hidden = false;
+        $('memorySummary').textContent = `${selectedTransaction().vendor} · ${money(state.amount)} · ${state.months}-month prepaid treatment`;
+        $('memoryApprovalCopy').textContent = `${state.reviewer || 'Controller'} approved capitalization and straight-line amortization.`;
+      }
+      bindAugustPanelControls();
+    }
+
+    function renderAugust() {
+      if (!$('detailVendor')) restoreAugustPanels();
+      state.period = 'august';
+      state.creditApplied = false;
+      state.revisionApproved = false;
+      document.querySelectorAll('.period-btn').forEach(button => button.classList.toggle('active', button.dataset.period === 'august'));
+      $('workbookTitle').textContent = 'Company X · August close review';
+      $('workbookSubtitle').textContent = 'Insurance Expense · Account 6420 · Selected transaction data only';
+      $('currentPeriod').textContent = '$46,880';
+      $('priorPeriod').textContent = '$33,940';
+      $('variance').textContent = '+$12,940';
+      $('tableHint').textContent = 'Select the flagged Travelers transaction to open the investigation.';
+      renderTransactions();
+      renderInvestigation();
+      renderSchedule();
+      $('caseStatusPill').textContent = state.approved ? 'Decision approved' : 'Investigation open';
+      $('caseStatusPill').classList.toggle('pending', !state.approved);
+      openTab(state.approved ? 'memory' : 'investigation');
+    }
+
+    function parsePastedRows(text) {
+      const lines = text.trim().split(/\r?\n/).filter(Boolean);
+      if (lines.length < 2) throw new Error('Include a header row and at least one transaction.');
+      const delimiter = lines[0].includes('\t') ? '\t' : ',';
+      const headers = lines[0].split(delimiter).map(h => h.trim().toLowerCase());
+      const find = aliases => headers.findIndex(h => aliases.some(a => h.includes(a)));
+      const indexes = { date: find(['date']), vendor: find(['vendor','payee','supplier']), description: find(['description','memo']), invoice: find(['invoice','reference']), amount: find(['amount','total','value']) };
+      if (indexes.vendor < 0 || indexes.amount < 0) throw new Error('Vendor and Amount columns are required.');
+      return lines.slice(1).map(line => {
+        const values = line.split(delimiter).map(v => v.trim().replace(/^"|"$/g, ''));
+        const rawAmount = (values[indexes.amount] || '').replace(/[$,]/g, '').replace(/^\((.*)\)$/, '-$1');
+        const amount = Number.parseFloat(rawAmount);
+        const description = indexes.description >= 0 ? values[indexes.description] : '';
+        const vendor = values[indexes.vendor] || 'Unknown vendor';
+        const flagged = /annual|insurance|policy|subscription|license|prepaid/i.test(`${vendor} ${description}`) || amount >= 5000;
+        return { date: indexes.date >= 0 ? values[indexes.date] : '', vendor, description, invoice: indexes.invoice >= 0 ? values[indexes.invoice] : '', amount: Number.isFinite(amount) ? amount : 0, flagged };
+      }).filter(row => row.vendor && row.amount);
+    }
+
+    function loadImportedTransactions(rows) {
+      if (!rows.length) throw new Error('No valid transaction rows were found.');
+      state.transactions = rows;
+      const flaggedIndex = rows.findIndex(row => row.flagged);
+      state.selectedIndex = flaggedIndex >= 0 ? flaggedIndex : 0;
+      state.transactions[state.selectedIndex].flagged = true;
+      state.amount = Number(selectedTransaction().amount) || 0;
+      if (!$('detailVendor')) restoreAugustPanels();
+      $('scheduleAmount').value = state.amount;
+      state.approved = false;
+      $('approveBtn').disabled = false;
+      $('approveBtn').textContent = 'Approve decision CAV-2026-008';
+      $('approvalNotice').hidden = true;
+      $('memoryEmpty').hidden = false;
+      $('memoryRecord').hidden = true;
+      renderAugust();
+      showToast(`${rows.length} selected transaction${rows.length === 1 ? '' : 's'} loaded locally.`);
+    }
+
+    async function handleFile(file) {
+      if (!file) return;
+      try {
+        const data = await file.arrayBuffer();
+        const workbook = XLSX.read(data, { type: 'array', cellDates: true });
+        const sheet = workbook.Sheets[workbook.SheetNames[0]];
+        const json = XLSX.utils.sheet_to_json(sheet, { defval: '' });
+        if (!json.length) throw new Error('The first sheet does not contain transaction rows.');
+        const normalize = key => key.toLowerCase().replace(/[^a-z0-9]/g, '');
+        const keys = Object.keys(json[0]);
+        const matchKey = aliases => keys.find(key => aliases.some(alias => normalize(key).includes(alias)));
+        const dateKey = matchKey(['date']);
+        const vendorKey = matchKey(['vendor','payee','supplier']);
+        const descKey = matchKey(['description','memo']);
+        const invoiceKey = matchKey(['invoice','reference']);
+        const amountKey = matchKey(['amount','total','value']);
+        if (!vendorKey || !amountKey) throw new Error('The first sheet needs Vendor and Amount columns.');
+        const rows = json.map(row => {
+          const vendor = String(row[vendorKey] || '').trim();
+          const description = String(descKey ? row[descKey] : '').trim();
+          const amount = Number(row[amountKey]);
+          const rawDate = dateKey ? row[dateKey] : '';
+          const date = rawDate instanceof Date ? rawDate.toLocaleDateString('en-US') : String(rawDate || '');
+          return { date, vendor, description, invoice: String(invoiceKey ? row[invoiceKey] : ''), amount, flagged: /annual|insurance|policy|subscription|license|prepaid/i.test(`${vendor} ${description}`) || amount >= 5000 };
+        }).filter(row => row.vendor && Number.isFinite(row.amount));
+        loadImportedTransactions(rows);
+      } catch (error) {
+        showToast(error.message || 'The file could not be read.');
+      } finally {
+        $('fileInput').value = '';
+      }
+    }
+
+    function downloadWorkbook() {
+      if (!window.XLSX) { showToast('Workbook generation is unavailable. Check your internet connection and try again.'); return; }
+      const schedule = generateSchedule(state.amount, state.months, state.creditApplied);
+      const wb = XLSX.utils.book_new();
+      const source = state.period === 'august' ? state.transactions.map(t => ({ Date: t.date, Vendor: t.vendor, Description: t.description, Invoice: t.invoice, Amount: t.amount, Review: t.flagged ? 'Possible prepaid' : '' })) : [
+        { Date: '09/15/2026', Vendor: 'Travelers Insurance', Description: state.creditApplied ? 'Policy credit' : 'September amortization', Invoice: state.creditApplied ? 'TRV-CR-104' : 'JE-2026-09', Amount: state.creditApplied ? -1200 : schedule[1]?.expense || 0, Review: state.creditApplied ? 'Reapproval required' : 'Supported by CAV-2026-008' }
+      ];
+      const decision = [
+        ['Field','Value'], ['Case ID','CAV-2026-008'], ['Status', state.approved ? 'Approved' : 'Pending'], ['Vendor', selectedTransaction()?.vendor || 'Travelers Insurance'], ['Original amount', state.amount], ['Coverage','August 2026–July 2027'], ['Treatment','Capitalize as prepaid asset'], ['Rationale',state.rationale], ['Prepared by',state.owner], ['Controller reviewer',state.reviewer], ['Reuse conditions',state.reuseConditions], ['Reapproval triggers',state.reviewTriggers]
+      ];
+      if (state.creditApplied) decision.push(['Linked revision','CAV-2026-008-R1'], ['Revision status', state.revisionApproved ? 'Approved' : 'Pending'], ['Changed fact','$1,200 policy credit']);
+      const scheduleRows = [['Period','Recognized expense','Ending prepaid','Note'], ...schedule.map(row => [row.period,row.expense,row.balance,row.note])];
+      const nextClose = [['Control','Result'],['Prior decision','CAV-2026-008'],['Similarity','Same vendor, policy, and account'],['Changed facts',state.creditApplied ? '$1,200 policy credit' : 'None'],['Reuse result',state.creditApplied ? (state.revisionApproved ? 'Revised treatment approved' : 'Reapproval required') : 'Reuse permitted'],['GL difference',0]];
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(source), 'Selected Transactions');
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(scheduleRows), 'Amortization Schedule');
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(decision), 'Decision Record');
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(nextClose), 'Next Close Review');
+      XLSX.writeFile(wb, 'Cavryon_CAV-2026-008_Workpaper.xlsx');
+      showToast('Review-ready Excel workpaper downloaded.');
+    }
+
+    document.querySelectorAll('.drawer-tab').forEach(button => button.addEventListener('click', () => openTab(button.dataset.tab)));
+    document.querySelectorAll('.period-btn').forEach(button => button.addEventListener('click', () => {
+      if (button.dataset.period === 'september') {
+        if (!state.approved) { showToast('Approve the August decision first so September has controlled history to reuse.'); openTab('decision'); return; }
+        renderSeptember();
+      } else renderAugust();
+    }));
+    bindAugustPanelControls();
+    $('nextActionBtn').addEventListener('click', () => {
+      if (state.period === 'september') { if (!state.creditApplied) applyCredit(); else if (!state.revisionApproved) approveRevision(); return; }
+      const active = document.querySelector('.drawer-tab.active')?.dataset.tab;
+      if (active === 'investigation') { renderSchedule(); openTab('schedule'); }
+      else if (active === 'schedule') openTab('decision');
+      else if (active === 'decision') state.approved ? openTab('memory') : approveAugust();
+      else renderSeptember();
+    });
+    $('downloadBtn').addEventListener('click', downloadWorkbook);
+    $('pasteBtn').addEventListener('click', () => { $('pasteDialog').hidden = false; });
+    document.querySelectorAll('[data-close-dialog]').forEach(button => button.addEventListener('click', () => { $('pasteDialog').hidden = true; }));
+    $('importPasteBtn').addEventListener('click', () => {
+      try { loadImportedTransactions(parsePastedRows($('pasteArea').value)); $('pasteError').hidden = true; $('pasteDialog').hidden = true; }
+      catch (error) { $('pasteError').textContent = error.message; $('pasteError').hidden = false; }
+    });
+    $('fileBtn').addEventListener('click', () => $('fileInput').click());
+    $('fileInput').addEventListener('change', event => handleFile(event.target.files[0]));
+    $('sampleBtn').addEventListener('click', () => {
+      state.transactions = structuredClone(sampleTransactions); state.selectedIndex = 1; state.amount = 12000; state.months = 12; state.approved = false; state.creditApplied = false; state.revisionApproved = false;
+      if (!$('detailVendor')) restoreAugustPanels();
+      $('scheduleAmount').value = 12000; $('scheduleMonths').value = 12; $('approveBtn').disabled = false; $('approveBtn').textContent = 'Approve decision CAV-2026-008'; $('approvalNotice').hidden = true; $('memoryEmpty').hidden = false; $('memoryRecord').hidden = true; renderAugust(); showToast('Fictional Company X sample restored.');
+    });
+    $('pasteDialog').addEventListener('click', event => { if (event.target === $('pasteDialog')) $('pasteDialog').hidden = true; });
+    document.addEventListener('keydown', event => { if (event.key === 'Escape') $('pasteDialog').hidden = true; });
+
+    renderAugust();
   </script>
 </body>
 </html>
