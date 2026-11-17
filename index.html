@@ -11,7 +11,7 @@
   <meta property="og:description" content="Make important financial decisions with confidence—and preserve why they were approved.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://www.cavryon.ai/">
-  <meta name="theme-color" content="#07101f">
+  <meta name="theme-color" content="#f7f8fb">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -343,6 +343,172 @@
       .ai-box { padding: 28px 22px; }
       .cta-box { padding: 54px 20px; }
       .footer-inner { padding: 28px 0; flex-direction: column; align-items: flex-start; }
+    }
+
+    /* Premium light visual direction */
+    body {
+      color: #10182b;
+      background:
+        radial-gradient(circle at 82% 1%, rgba(52, 103, 246, .12), transparent 28%),
+        radial-gradient(circle at 8% 34%, rgba(54, 187, 151, .07), transparent 24%),
+        #f7f8fb;
+    }
+    .nav {
+      border-bottom-color: rgba(15, 23, 42, .08);
+      background: rgba(255, 255, 255, .86);
+      box-shadow: 0 1px 0 rgba(15, 23, 42, .02);
+    }
+    .brand { color: #111a2e; }
+    .nav-links { color: #59677b; }
+    .nav-links a:hover { color: #111a2e; }
+    .btn-secondary {
+      border-color: rgba(15, 23, 42, .15);
+      color: #18233a;
+      background: rgba(255, 255, 255, .8);
+    }
+    .btn-secondary:hover {
+      border-color: rgba(47, 108, 245, .4);
+      color: #174db7;
+      background: #fff;
+    }
+    .menu-button {
+      border-color: rgba(15, 23, 42, .14);
+      color: #111a2e;
+      background: white;
+    }
+    .mobile-menu a { color: #4f5e73; }
+    .hero { position: relative; overflow: hidden; }
+    .hero::after {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      width: 560px;
+      height: 560px;
+      right: -300px;
+      top: -260px;
+      border: 1px solid rgba(47, 108, 245, .11);
+      border-radius: 50%;
+      box-shadow: 0 0 0 70px rgba(47,108,245,.025), 0 0 0 140px rgba(47,108,245,.018);
+    }
+    h1, h2, h3 { color: #111a2e; }
+    .lead { color: #45536a; }
+    .muted { color: #68778c; }
+    .hero-badge {
+      border-color: rgba(47, 108, 245, .18);
+      color: #2459c5;
+      background: rgba(47, 108, 245, .07);
+    }
+    .trust-line { color: #7a8798; }
+    .eyebrow { color: #2f63d5; }
+    .decision-shell {
+      color: #f5f7fb;
+      border-color: rgba(18, 35, 60, .7);
+      background: linear-gradient(155deg, #172943, #091527);
+      box-shadow: 0 34px 80px rgba(30, 55, 95, .22);
+    }
+    .decision-shell h1, .decision-shell h2, .decision-shell h3 { color: #f5f7fb; }
+    .proof-strip {
+      border-block-color: rgba(15, 23, 42, .08);
+      background: rgba(255, 255, 255, .72);
+    }
+    .proof-inner p { color: #718096; }
+    .proof-item { color: #354258; }
+    .source-map,
+    .use-case,
+    .step,
+    .scenario-card,
+    .timeline-card {
+      border-color: rgba(15, 23, 42, .1);
+      background: rgba(255, 255, 255, .9);
+      box-shadow: 0 16px 45px rgba(37, 54, 84, .055);
+    }
+    .source {
+      border-color: rgba(15, 23, 42, .09);
+      color: #344158;
+      background: #f7f9fc;
+    }
+    .source span { color: #8290a3; }
+    .flow-line { color: #6f8fd7; }
+    .decision-home {
+      border-color: rgba(47, 108, 245, .2);
+      background: #eef4ff;
+    }
+    .decision-home strong { color: #214caa; }
+    .decision-home p { color: #6079ad; }
+    .workflow { border-color: rgba(15, 23, 42, .1); box-shadow: 0 20px 55px rgba(37,54,84,.05); }
+    .step { border-right-color: rgba(15, 23, 42, .08); box-shadow: none; }
+    .step-number { color: #4e71c3; }
+    .step p, .use-case p { color: #66758a; }
+    .scenario-section {
+      border-block-color: rgba(15, 23, 42, .08);
+      background: #eef3fb;
+    }
+    .scenario-tab {
+      border-color: rgba(15, 23, 42, .1);
+      color: #657389;
+      background: rgba(255, 255, 255, .72);
+    }
+    .scenario-tab.active {
+      border-color: rgba(47, 108, 245, .3);
+      color: #174db7;
+      background: white;
+      box-shadow: 0 8px 24px rgba(37,54,84,.07);
+    }
+    .scenario-card { color: #111a2e; }
+    .scenario-head span { color: #748297; }
+    .scenario-bars .bar { background: #e8edf5; }
+    .bar-meta { color: #5b687b; }
+    .scenario-recommendation { background: #fff8eb; }
+    .scenario-recommendation p { color: #59677a; }
+    .use-icon { color: #2f63d5; background: #edf3ff; }
+    .use-case:hover {
+      border-color: rgba(47, 108, 245, .28);
+      box-shadow: 0 20px 50px rgba(37,54,84,.09);
+    }
+    .memory-section {
+      border-block-color: rgba(15, 23, 42, .08);
+      background: linear-gradient(180deg, #f0f5ff, #f9fbff);
+    }
+    .check { color: #435169; }
+    .timeline::before { background: rgba(15, 23, 42, .12); }
+    .timeline-card strong { color: #172138; }
+    .timeline-card p { color: #65748a; }
+    .comparison {
+      border-color: rgba(15, 23, 42, .1);
+      background: white;
+      box-shadow: 0 18px 50px rgba(37,54,84,.055);
+    }
+    .comparison th, .comparison td { border-bottom-color: rgba(15, 23, 42, .08); }
+    .comparison th { color: #65748a; background: #f5f7fb; }
+    .comparison td:first-child { color: #718096; }
+    .comparison td:last-child { color: #18233a; }
+    .ai-box {
+      border-color: rgba(40, 164, 129, .18);
+      background: linear-gradient(135deg, #ecfaf5, #eef4ff);
+      box-shadow: 0 20px 60px rgba(37,54,84,.05);
+    }
+    .ai-point {
+      border-color: rgba(15, 23, 42, .09);
+      color: #4c5b70;
+      background: rgba(255, 255, 255, .72);
+    }
+    .cta-box {
+      border-color: rgba(47, 108, 245, .17);
+      background:
+        radial-gradient(circle at 50% 0%, rgba(47,108,245,.12), transparent 45%),
+        white;
+      box-shadow: 0 25px 70px rgba(37,54,84,.07);
+    }
+    footer {
+      border-top-color: rgba(15, 23, 42, .08);
+      background: white;
+    }
+    .footer-inner { color: #718096; }
+    .footer-inner strong { color: #19243a !important; }
+    .footer-links a:hover { color: #174db7; }
+    @media (max-width: 940px) {
+      .mobile-menu { border-top: 1px solid rgba(15,23,42,.07); }
+      .step { border-bottom-color: rgba(15,23,42,.08); }
     }
   </style>
 </head>
