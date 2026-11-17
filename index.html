@@ -746,6 +746,102 @@
       .chip-policy { right: 1%; bottom: 5%; }
       .use-case-wide, .use-case-tall { grid-column: 1 / -1; }
     }
+
+    /* Make the motto and controlled reuse visible above the fold */
+    .motto-line {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin: 24px 0 0;
+    }
+    .motto-line span {
+      display: inline-flex;
+      align-items: center;
+      min-height: 31px;
+      padding: 0 11px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .015em;
+    }
+    .motto-line span:first-child {
+      color: #2256bd;
+      background: #eaf1ff;
+    }
+    .motto-line span:last-child {
+      color: #137a61;
+      background: #e7f8f2;
+    }
+    .decision-state-switcher {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5px;
+      margin-bottom: 20px;
+      padding: 4px;
+      border: 1px solid rgba(255,255,255,.09);
+      border-radius: 11px;
+      background: rgba(0,0,0,.16);
+    }
+    .decision-state-btn {
+      min-height: 36px;
+      border: 0;
+      border-radius: 8px;
+      color: #8294ae;
+      background: transparent;
+      font-size: 10px;
+      font-weight: 800;
+      transition: color .2s ease, background .2s ease, transform .2s ease;
+    }
+    .decision-state-btn:hover { color: white; }
+    .decision-state-btn.active {
+      color: #eef4ff;
+      background: rgba(91,140,255,.18);
+      box-shadow: inset 0 0 0 1px rgba(91,140,255,.18);
+    }
+    .decision-transition.switching { animation: decisionSwap .34s ease; }
+    @keyframes decisionSwap {
+      0% { opacity: .35; transform: translateY(6px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    .status-banner.reapproval {
+      border-color: rgba(251,113,133,.32);
+      background: rgba(251,113,133,.1);
+    }
+    .status-banner.reapproval strong { color: #fda4af; }
+    .status-banner.reapproval .status-icon {
+      color: #fb7185;
+      background: rgba(251,113,133,.12);
+    }
+    .condition.changed {
+      background: rgba(251,113,133,.075);
+    }
+    .condition.changed svg { color: #fb8b9e; }
+    .condition.changed strong { color: #fda4af; }
+    .lineage-mini {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      margin-top: 13px;
+      padding: 9px 8px;
+      border: 1px dashed rgba(91,140,255,.24);
+      border-radius: 10px;
+      color: #91a5c3;
+      background: rgba(91,140,255,.055);
+      font-size: 8px;
+      font-weight: 750;
+    }
+    .lineage-mini[hidden] { display: none; }
+    .lineage-mini b { color: #5b8cff; font-size: 11px; }
+    #decision-memory {
+      padding-top: 96px;
+      padding-bottom: 96px;
+    }
+    @media (max-width: 640px) {
+      .motto-line { margin-top: 20px; }
+      .decision-state-btn { font-size: 9px; }
+      .lineage-mini { gap: 4px; font-size: 7px; }
+    }
   </style>
 </head>
 <body>
@@ -787,7 +883,7 @@
         <div>
           <div class="hero-badge"><span></span> Governed financial decisions for growing businesses</div>
           <h1>Make important financial decisions with <span class="headline-accent">confidence.</span></h1>
-          <p class="lead hero-copy">Cavryon assembles the facts behind a financial decision, evaluates its future impact, records why it was approved, and monitors whether the underlying assumptions remain valid.</p>
+          <p class="lead hero-copy">Cavryon assembles the facts behind a financial decision, evaluates its future impact, records why it was approved, and monitors whether the underlying assumptions remain valid.</p><p class="motto-line"><span>Decide with context.</span><span>Reuse with control.</span></p>
           <div class="hero-actions">
             <a class="btn btn-primary" href="https://calendly.com/y-cavryon" target="_blank" rel="noopener">
               Request a decision review
@@ -807,30 +903,37 @@
           <div class="decision-shell" aria-label="Cavryon planned expenditure decision example">
           <div class="app-top">
             <div class="app-title"><span class="app-dot"></span> Cavryon Decision Workspace</div>
-            <div class="case-id">CAV-2026-014</div>
+            <div class="case-id" id="decisionCaseId">CAV-2026-014</div>
           </div>
           <div class="app-body">
-            <p class="decision-label">Planned expenditure</p>
-            <p class="decision-title">Purchase $30,000 of inventory</p>
-            <div class="status-banner">
-              <div>
-                <strong>Conditionally affordable</strong>
-                <p>The purchase remains above the approved cash reserve if expected receipts arrive on schedule.</p>
+            <div class="decision-state-switcher" role="tablist" aria-label="Decision lifecycle">
+              <button type="button" class="decision-state-btn active" data-decision-state="make">1 · Make decision</button>
+              <button type="button" class="decision-state-btn" data-decision-state="review">2 · Next review</button>
+            </div>
+            <div class="decision-transition" id="decisionTransition">
+              <p class="decision-label" id="decisionLabel">Planned expenditure</p>
+              <p class="decision-title" id="decisionTitle">Purchase $30,000 of inventory</p>
+              <div class="status-banner" id="decisionStatusBanner">
+                <div>
+                  <strong id="decisionStatus">Conditionally affordable</strong>
+                  <p id="decisionSummary">The purchase remains above the approved cash reserve if expected receipts arrive on schedule.</p>
+                </div>
+                <div class="status-icon" id="decisionStatusIcon" aria-hidden="true">!</div>
               </div>
-              <div class="status-icon" aria-hidden="true">!</div>
-            </div>
-            <div class="metrics">
-              <div class="metric"><span>Proposed spend</span><strong>$30,000</strong></div>
-              <div class="metric"><span>Projected cash</span><strong>$31,800</strong></div>
-              <div class="metric"><span>Minimum reserve</span><strong>$25,000</strong></div>
-            </div>
-            <div class="condition">
-              <svg viewBox="0 0 24 24" fill="none"><path d="M12 8v4m0 4h.01M10.3 3.8 2.6 17.1A2 2 0 0 0 4.3 20h15.4a2 2 0 0 0 1.7-2.9L13.7 3.8a2 2 0 0 0-3.4 0Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-              <div><strong>Critical condition</strong><p>At least $42,000 of expected receipts must arrive before January 15.</p></div>
-            </div>
-            <div class="app-actions">
-              <button type="button">Review assumptions</button>
-              <button type="button">Approve decision</button>
+              <div class="metrics">
+                <div class="metric"><span id="metricOneLabel">Proposed spend</span><strong id="metricOneValue">$30,000</strong></div>
+                <div class="metric"><span id="metricTwoLabel">Projected cash</span><strong id="metricTwoValue">$31,800</strong></div>
+                <div class="metric"><span id="metricThreeLabel">Minimum reserve</span><strong id="metricThreeValue">$25,000</strong></div>
+              </div>
+              <div class="condition" id="decisionCondition">
+                <svg viewBox="0 0 24 24" fill="none"><path d="M12 8v4m0 4h.01M10.3 3.8 2.6 17.1A2 2 0 0 0 4.3 20h15.4a2 2 0 0 0 1.7-2.9L13.7 3.8a2 2 0 0 0-3.4 0Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+                <div><strong id="conditionLabel">Critical condition</strong><p id="conditionCopy">At least $42,000 of expected receipts must arrive before January 15.</p></div>
+              </div>
+              <div class="lineage-mini" id="lineageMini" hidden><span>CAV-2026-014</span><b>→</b><span>Changed facts</span><b>→</b><span>CAV-2026-014-R1</span></div>
+              <div class="app-actions">
+                <button type="button" id="secondaryDecisionAction">Review assumptions</button>
+                <button type="button" id="primaryDecisionAction">Approve decision</button>
+              </div>
             </div>
           </div>
         </div>
@@ -841,11 +944,42 @@
     <div class="proof-strip">
       <div class="container proof-inner">
         <p>Cavryon connects the complete decision—not just another calculation.</p>
-        <div class="proof-item"><span>01</span>Transparent scenarios</div>
-        <div class="proof-item"><span>02</span>Human approval</div>
-        <div class="proof-item"><span>03</span>Future monitoring</div>
+        <div class="proof-item"><span>01</span>Context assembled</div>
+        <div class="proof-item"><span>02</span>Decision approved</div>
+        <div class="proof-item"><span>03</span>Reuse governed</div>
       </div>
     </div>
+
+<section class="section memory-section reveal" id="decision-memory">
+      <div class="container memory-grid">
+        <div>
+          <p class="eyebrow">Decision Memory</p>
+          <h2>A calculation answers today. Cavryon preserves why.</h2>
+          <p class="lead">Cavryon records the facts, assumptions, evidence, recommendation, approval authority, and conditions under which a decision may be reused.</p>
+          <div class="check-list">
+            <div class="check"><span>✓</span><div>Retrieve the exact prior approved decision.</div></div>
+            <div class="check"><span>✓</span><div>Compare current facts with original assumptions.</div></div>
+            <div class="check"><span>✓</span><div>Reuse only within approved boundaries.</div></div>
+            <div class="check"><span>✓</span><div>Route material changes back for review.</div></div>
+          </div>
+          <a class="btn btn-secondary" href="/prototype">Explore the two-close-cycle demo</a>
+        </div>
+        <div class="timeline" aria-label="Decision Memory example">
+          <div class="timeline-card">
+            <div class="timeline-marker">D1</div>
+            <div><strong>Inventory decision approved</strong><p>$30,000 purchase approved with expected-receipt timing and a $25,000 minimum cash reserve recorded as reuse conditions.</p></div>
+          </div>
+          <div class="timeline-card">
+            <div class="timeline-marker">R1</div>
+            <div><strong>Prior decision retrieved</strong><p>Original amount, receipt timing, operating forecast, reserve policy, evidence, and approval are compared with current facts.</p></div>
+          </div>
+          <div class="timeline-card warning">
+            <div class="timeline-marker">!</div>
+            <div><strong>Changed facts require reapproval</strong><p>Supplier cost rises 12% and expected receipts move by 21 days, creating linked revision CAV-2026-014-R1.</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
 
     <section class="section reveal" id="product">
       <div class="container problem-grid">
@@ -958,36 +1092,7 @@
       </div>
     </section>
 
-    <section class="section memory-section reveal" id="decision-memory">
-      <div class="container memory-grid">
-        <div>
-          <p class="eyebrow">Decision Memory</p>
-          <h2>A calculation answers today. Cavryon preserves why.</h2>
-          <p class="lead">Cavryon records the facts, assumptions, evidence, recommendation, approval authority, and conditions under which a decision may be reused.</p>
-          <div class="check-list">
-            <div class="check"><span>✓</span><div>Retrieve the exact prior approved decision.</div></div>
-            <div class="check"><span>✓</span><div>Compare current facts with original assumptions.</div></div>
-            <div class="check"><span>✓</span><div>Reuse only within approved boundaries.</div></div>
-            <div class="check"><span>✓</span><div>Route material changes back for review.</div></div>
-          </div>
-          <a class="btn btn-secondary" href="/prototype">Explore the two-close-cycle demo</a>
-        </div>
-        <div class="timeline" aria-label="Decision Memory example">
-          <div class="timeline-card">
-            <div class="timeline-marker">AUG</div>
-            <div><strong>Accounting treatment approved</strong><p>$12,000 annual insurance policy approved as a prepaid expense with defined reuse conditions.</p></div>
-          </div>
-          <div class="timeline-card">
-            <div class="timeline-marker">SEP</div>
-            <div><strong>Prior decision retrieved</strong><p>Vendor, policy, dates, amount, evidence, and approved treatment compared with current facts.</p></div>
-          </div>
-          <div class="timeline-card warning">
-            <div class="timeline-marker">!</div>
-            <div><strong>Changed fact detected</strong><p>A $1,200 policy credit changes an approved assumption and triggers a linked revision.</p></div>
-          </div>
-        </div>
-      </div>
-    </section>
+    
 
     <section class="section">
       <div class="container">
@@ -1049,6 +1154,66 @@
   </footer>
 
   <script>
+
+
+    const decisionStates = {
+      make: {
+        caseId: 'CAV-2026-014',
+        label: 'Planned expenditure',
+        title: 'Purchase $30,000 of inventory',
+        status: 'Conditionally affordable',
+        summary: 'The purchase remains above the approved cash reserve if expected receipts arrive on schedule.',
+        metrics: [['Proposed spend', '$30,000'], ['Projected cash', '$31,800'], ['Minimum reserve', '$25,000']],
+        conditionLabel: 'Critical condition',
+        conditionCopy: 'At least $42,000 of expected receipts must arrive before January 15.',
+        secondary: 'Review assumptions',
+        primary: 'Approve decision',
+        revision: false
+      },
+      review: {
+        caseId: 'CAV-2026-014-R1',
+        label: 'Future review · changed facts detected',
+        title: 'Revisit the approved inventory decision',
+        status: 'Reapproval required',
+        summary: 'The original approval is no longer valid because two material assumptions changed.',
+        metrics: [['Approved amount', '$30,000'], ['Revised cost', '$33,600'], ['Minimum reserve', '$25,000']],
+        conditionLabel: 'Changed facts',
+        conditionCopy: 'Supplier cost increased 12% and expected receipts were delayed by 21 days.',
+        secondary: 'View original decision',
+        primary: 'Review revision',
+        revision: true
+      }
+    };
+    document.querySelectorAll('.decision-state-btn').forEach(button => {
+      button.addEventListener('click', () => {
+        const state = decisionStates[button.dataset.decisionState];
+        document.querySelectorAll('.decision-state-btn').forEach(item => item.classList.remove('active'));
+        button.classList.add('active');
+        const transition = document.getElementById('decisionTransition');
+        transition.classList.remove('switching');
+        void transition.offsetWidth;
+        transition.classList.add('switching');
+        document.getElementById('decisionCaseId').textContent = state.caseId;
+        document.getElementById('decisionLabel').textContent = state.label;
+        document.getElementById('decisionTitle').textContent = state.title;
+        document.getElementById('decisionStatus').textContent = state.status;
+        document.getElementById('decisionSummary').textContent = state.summary;
+        document.getElementById('metricOneLabel').textContent = state.metrics[0][0];
+        document.getElementById('metricOneValue').textContent = state.metrics[0][1];
+        document.getElementById('metricTwoLabel').textContent = state.metrics[1][0];
+        document.getElementById('metricTwoValue').textContent = state.metrics[1][1];
+        document.getElementById('metricThreeLabel').textContent = state.metrics[2][0];
+        document.getElementById('metricThreeValue').textContent = state.metrics[2][1];
+        document.getElementById('conditionLabel').textContent = state.conditionLabel;
+        document.getElementById('conditionCopy').textContent = state.conditionCopy;
+        document.getElementById('secondaryDecisionAction').textContent = state.secondary;
+        document.getElementById('primaryDecisionAction').textContent = state.primary;
+        document.getElementById('decisionStatusBanner').classList.toggle('reapproval', state.revision);
+        document.getElementById('decisionCondition').classList.toggle('changed', state.revision);
+        document.getElementById('decisionStatusIcon').textContent = state.revision ? '↻' : '!';
+        document.getElementById('lineageMini').hidden = !state.revision;
+      });
+    });
 
     const revealObserver = new IntersectionObserver(entries => {
       entries.forEach(entry => {
