@@ -235,7 +235,7 @@
       const headers = raw[0].map(value => value.toLowerCase().trim());
       const dateIndex = findColumn(headers,['date','posted','transaction date']);
       const descIndex = findColumn(headers,['description','details','merchant','name','memo','payee']);
-      const amountIndex = findColumn(headers,['amount']);
+      const amountIndex = headers.findIndex(header => (header === 'amount' || header === 'transaction amount') && !header.includes('debit') && !header.includes('credit'));
       const debitIndex = findColumn(headers,['debit','withdrawal','money out']);
       const creditIndex = findColumn(headers,['credit','deposit','money in']);
       const balanceIndex = findColumn(headers,['balance','running balance']);
