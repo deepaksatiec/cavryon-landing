@@ -28,6 +28,7 @@
     .format-note{margin-top:15px;color:#8a97a7;font-size:9px}.error{margin-top:13px;padding:13px;border:1px solid #efc7ce;border-radius:11px;color:#923343;background:var(--red-soft);font-size:10px;line-height:1.5}
     .direction-card{margin-top:16px;padding:25px;border:1px solid #cbdafa;border-radius:18px;background:#fff;box-shadow:var(--shadow)}
     .direction-card h2{margin:0 0 7px;font-size:20px;letter-spacing:-.035em}.direction-card>p{max-width:760px;margin:0;color:var(--muted);font-size:10px;line-height:1.65}
+    .import-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:17px}.import-stat{padding:15px;border:1px solid var(--line);border-radius:12px;background:#f8fafc}.import-stat span{display:block;margin-bottom:6px;color:#8290a1;font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.06em}.import-stat strong{display:block;font-size:17px;letter-spacing:-.035em}
     .sample-transactions{margin:17px 0;overflow:hidden;border:1px solid var(--line);border-radius:12px}.sample-row{display:grid;grid-template-columns:90px 1fr 120px;gap:12px;padding:11px 14px;border-bottom:1px solid var(--line);font-size:9px}.sample-row:last-child{border-bottom:0}.sample-row.header{color:#7e8b9b;background:#f7f9fc;font-size:8px;font-weight:800;text-transform:uppercase}.sample-row span:last-child{text-align:right;font-weight:800}
     .direction-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}.direction-choice{padding:16px;border:1px solid #cad5e3;border-radius:13px;background:#fff;text-align:left}.direction-choice:hover{border-color:var(--blue);background:var(--blue-soft)}.direction-choice strong{display:block;margin-bottom:4px;font-size:11px}.direction-choice span{color:var(--muted);font-size:9px;line-height:1.45}
     .limitations{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}.limit{padding:17px;border:1px solid var(--line);border-radius:14px;background:#fff}.limit strong{display:block;margin-bottom:5px;font-size:11px}.limit p{margin:0;color:var(--muted);font-size:9px;line-height:1.6}
@@ -45,7 +46,7 @@
     .decision-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:18px}.decision-card{padding:16px;border:1px solid #d8e3f8;border-radius:13px;background:rgba(255,255,255,.8)}.decision-card small{display:block;margin-bottom:7px;color:#7d8ea7;font-size:8px;text-transform:uppercase;font-weight:800}.decision-card strong{display:block;font-size:11px;line-height:1.5}.decision-card p{margin:7px 0 0;color:var(--muted);font-size:8px;line-height:1.5}.decision-actions{display:flex;gap:9px;margin-top:16px;flex-wrap:wrap}
     .disclaimer{margin-top:16px;padding:15px;border:1px solid var(--line);border-radius:13px;color:#7c8999;background:#fff;font-size:8px;line-height:1.7}
     @media(max-width:900px){.kpis{grid-template-columns:repeat(2,1fr)}.grid-two{grid-template-columns:1fr}.signals,.decision-cards{grid-template-columns:1fr}.limitations{grid-template-columns:1fr}}
-    @media(max-width:600px){.direction-actions{grid-template-columns:1fr}.sample-row{grid-template-columns:72px 1fr 80px;padding-inline:10px}.topbar{padding:0 16px}.top-pill{display:none}.page{padding:36px 16px 60px}.upload-card{padding:8px}.dropzone{min-height:300px;padding:25px 16px}.kpis{grid-template-columns:1fr}.health-banner{grid-template-columns:auto 1fr}.health-label{grid-column:1/-1;width:max-content}.dash-head{display:block}.file-chip{display:inline-block;margin-top:12px}.chart{gap:7px}.section-card{padding:17px}}
+    @media(max-width:600px){.import-summary{grid-template-columns:1fr}.direction-actions{grid-template-columns:1fr}.sample-row{grid-template-columns:72px 1fr 80px;padding-inline:10px}.topbar{padding:0 16px}.top-pill{display:none}.page{padding:36px 16px 60px}.upload-card{padding:8px}.dropzone{min-height:300px;padding:25px 16px}.kpis{grid-template-columns:1fr}.health-banner{grid-template-columns:auto 1fr}.health-label{grid-column:1/-1;width:max-content}.dash-head{display:block}.file-chip{display:inline-block;margin-top:12px}.chart{gap:7px}.section-card{padding:17px}}
   </style>
 </head>
 <body>
@@ -79,7 +80,12 @@
       <div class="direction-card" id="directionCard" hidden>
         <p class="eyebrow">One confirmation needed</p>
         <h2>What does a positive amount mean in this export?</h2>
-        <p>The file has one Amount column but does not identify debits and credits. Banks use opposite sign conventions, so Cavryon will not guess. Review these sample rows and select the correct interpretation.</p>
+        <p>The file has one Amount column but does not identify debits and credits. Banks use opposite sign conventions, so Cavryon will not guess. Review the statement summary and sample rows, then select the correct interpretation.</p>
+        <div class="import-summary">
+          <div class="import-stat"><span>Total listed amount</span><strong id="importTotal">—</strong></div>
+          <div class="import-stat"><span>Transactions found</span><strong id="importCount">—</strong></div>
+          <div class="import-stat"><span>Statement period</span><strong id="importPeriod">—</strong></div>
+        </div>
         <div class="sample-transactions" id="sampleTransactions"></div>
         <div class="direction-actions">
           <button class="direction-choice" data-direction="in"><strong>Positive amount = money in</strong><span>Deposits are positive; payments and withdrawals are negative.</span></button>
@@ -389,6 +395,12 @@
     function showDirectionConfirmation(transactions,fileName) {
       pendingImport = {transactions,fileName};
       const samples = transactions.slice(0,5);
+      const totalListed = transactions.reduce((sum,item) => sum + Math.abs(item.amount),0);
+      const firstDate = transactions[0].date;
+      const lastDate = transactions[transactions.length - 1].date;
+      document.getElementById('importTotal').textContent = formatMoney(totalListed);
+      document.getElementById('importCount').textContent = transactions.length.toLocaleString('en-US');
+      document.getElementById('importPeriod').textContent = firstDate.toLocaleDateString('en-US',{month:'short',day:'numeric'}) + ' – ' + lastDate.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
       document.getElementById('sampleTransactions').innerHTML =
         '<div class="sample-row header"><span>Date</span><span>Description</span><span>Amount</span></div>' +
         samples.map(item => '<div class="sample-row"><span>'+item.date.toLocaleDateString('en-US',{month:'short',day:'numeric'})+'</span><span>'+escapeHTML(item.description)+'</span><span>'+formatMoney(item.amount)+'</span></div>').join('');
