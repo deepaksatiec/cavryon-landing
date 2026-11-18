@@ -196,14 +196,39 @@
       reader.readAsText(file);
     }
 
+    function detectDelimiter(text) {
+      const candidates = [',',';','\t','|'];
+      const lines = text.split(/\r?\n/).filter(line => line.trim()).slice(0,20);
+      let best = ',', bestScore = -1;
+      candidates.forEach(delimiter => {
+        const counts = lines.map(line => {
+          let count = 0, quoted = false;
+          for (let i = 0; i < line.length; i++) {
+            if (line[i] === '"') quoted = !quoted;
+            else if (line[i] === delimiter && !quoted) count++;
+          }
+          return count;
+        });
+        const useful = counts.filter(count => count > 0);
+        if (!useful.length) return;
+        const frequency = {};
+        useful.forEach(count => frequency[count] = (frequency[count] || 0) + 1);
+        const consistency = Math.max(...Object.values(frequency));
+        const score = consistency * 10 + Math.max(...useful);
+        if (score > bestScore) { bestScore = score; best = delimiter; }
+      });
+      return best;
+    }
+
     function parseCSV(text) {
+      const delimiter = detectDelimiter(text);
       const rows = [];
       let row = [], cell = '', quoted = false;
       for (let i = 0; i < text.length; i++) {
         const char = text[i], next = text[i + 1];
         if (char === '"' && quoted && next === '"') { cell += '"'; i++; }
         else if (char === '"') quoted = !quoted;
-        else if (char === ',' && !quoted) { row.push(cell.trim()); cell = ''; }
+        else if (char === delimiter && !quoted) { row.push(cell.trim()); cell = ''; }
         else if ((char === '\n' || char === '\r') && !quoted) {
           if (char === '\r' && next === '\n') i++;
           row.push(cell.trim()); cell = '';
@@ -215,47 +240,124 @@
       return rows;
     }
 
+    function normalizedHeaders(row) {
+      return row.map(value => String(value || '').toLowerCase().replace(/^\uFEFF/,'').trim());
+    }
+
+    function findHeaderRow(rows) {
+      let bestIndex = -1, bestScore = -1;
+      rows.slice(0,30).forEach((row,index) => {
+        const headers = normalizedHeaders(row);
+        const hasDate = headers.some(header => /(^|\s)(date|posted|posting)(\s|$)/.test(header));
+        const hasDescription = headers.some(header => /(description|details|merchant|payee|memo|narrative)/.test(header));
+        const hasMoney = headers.some(header => /(amount|debit|credit|withdrawal|deposit|money out|money in)/.test(header));
+        const score = (hasDate ? 4 : 0) + (hasDescription ? 3 : 0) + (hasMoney ? 3 : 0) + Math.min(row.length,8) / 10;
+        if (score > bestScore) { bestScore = score; bestIndex = index; }
+      });
+      return bestScore >= 9 ? bestIndex : -1;
+    }
+
     function findColumn(headers, candidates) {
       return headers.findIndex(header => candidates.some(candidate => header.includes(candidate)));
     }
 
     function moneyNumber(value) {
       if (value === undefined || value === null || value === '') return 0;
-      let clean = String(value).replace(/[$,\s]/g,'');
-      const negative = clean.startsWith('(') && clean.endsWith(')');
-      clean = clean.replace(/[()]/g,'');
+      let clean = String(value).trim().toUpperCase();
+      const negative = (clean.startsWith('(') && clean.endsWith(')')) || clean.endsWith('-') || /\bDR\b/.test(clean);
+      clean = clean.replace(/\b(CR|DR|USD)\b/g,'').replace(/[$,£€\s()+-]/g,'');
       const number = Number(clean);
-      return Number.isFinite(number) ? (negative ? -number : number) : 0;
+      return Number.isFinite(number) ? (negative ? -Math.abs(number) : number) : 0;
+    }
+
+    function parseDateValue(value) {
+      if (value === undefined || value === null) return null;
+      const text = String(value).trim().replace(/^["']|["']$/g,'');
+      if (!text) return null;
+
+      if (/^\d{5}(\.\d+)?$/.test(text)) {
+        const serial = Number(text);
+        if (serial > 20000 && serial < 80000) {
+          const excelEpoch = new Date(Date.UTC(1899,11,30));
+          const date = new Date(excelEpoch.getTime() + serial * 86400000);
+          return new Date(date.getUTCFullYear(),date.getUTCMonth(),date.getUTCDate());
+        }
+      }
+
+      let match = text.match(/^(\d{4})[-\/.](\d{1,2})[-\/.](\d{1,2})/);
+      if (match) return validLocalDate(Number(match[1]),Number(match[2]),Number(match[3]));
+
+      match = text.match(/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{2}|\d{4})$/);
+      if (match) {
+        let year = Number(match[3]);
+        if (year < 100) year += year >= 70 ? 1900 : 2000;
+        return validLocalDate(year,Number(match[1]),Number(match[2]));
+      }
+
+      const parsed = new Date(text);
+      return Number.isNaN(parsed.getTime()) ? null : parsed;
+    }
+
+    function validLocalDate(year,month,day) {
+      const date = new Date(year,month-1,day);
+      return date.getFullYear() === year && date.getMonth() === month-1 && date.getDate() === day ? date : null;
     }
 
     function analyzeCSV(text, fileName) {
       errorBox.hidden = true;
-      const raw = parseCSV(String(text).replace(/^\uFEFF/,''));
-      if (raw.length < 2) return showError('The CSV does not contain enough rows to analyze.');
-      const headers = raw[0].map(value => value.toLowerCase().trim());
-      const dateIndex = findColumn(headers,['date','posted','transaction date']);
-      const descIndex = findColumn(headers,['description','details','merchant','name','memo','payee']);
-      const amountIndex = headers.findIndex(header => (header === 'amount' || header === 'transaction amount') && !header.includes('debit') && !header.includes('credit'));
-      const debitIndex = findColumn(headers,['debit','withdrawal','money out']);
-      const creditIndex = findColumn(headers,['credit','deposit','money in']);
-      const balanceIndex = findColumn(headers,['balance','running balance']);
+      const cleanedText = String(text).replace(/^\uFEFF/,'').replace(/\u0000/g,'');
+      const raw = parseCSV(cleanedText);
+      if (raw.length < 2) return showError('The file does not contain enough rows to analyze. Please export the transaction history as CSV.');
 
-      if (dateIndex < 0 || descIndex < 0 || (amountIndex < 0 && debitIndex < 0 && creditIndex < 0)) {
-        return showError('Could not identify the required columns. Include Date, Description, and Amount—or Date, Description, Debit, and Credit.');
+      const headerIndex = findHeaderRow(raw);
+      if (headerIndex < 0) {
+        return showError('Could not locate the transaction header row. The CSV needs columns for date, description, and amount—or debit and credit.');
       }
 
-      const transactions = raw.slice(1).map(row => {
-        const date = new Date(row[dateIndex]);
-        let amount = amountIndex >= 0 ? moneyNumber(row[amountIndex]) : moneyNumber(row[creditIndex]) - Math.abs(moneyNumber(row[debitIndex]));
+      const headers = normalizedHeaders(raw[headerIndex]);
+      const dateIndex = findColumn(headers,['date','posted','posting date','transaction date','effective date']);
+      const descIndex = findColumn(headers,['description','transaction description','details','merchant','name','memo','payee','narrative']);
+      const amountIndex = headers.findIndex(header => ['amount','transaction amount','net amount'].includes(header) || (header.includes('amount') && !/(debit|credit|balance)/.test(header)));
+      const debitIndex = findColumn(headers,['debit','withdrawal','money out','paid out']);
+      const creditIndex = findColumn(headers,['credit','deposit','money in','paid in']);
+      const balanceIndex = findColumn(headers,['balance','running balance','available balance']);
+      const typeIndex = findColumn(headers,['type','transaction type','debit/credit']);
+
+      if (dateIndex < 0 || descIndex < 0 || (amountIndex < 0 && debitIndex < 0 && creditIndex < 0)) {
+        return showError('Columns were detected, but the required mapping is incomplete. Found: ' + headers.filter(Boolean).slice(0,8).join(', ') + '. Required: date, description, and amount—or debit and credit.');
+      }
+
+      let invalidDates = 0, zeroAmounts = 0;
+      const transactions = raw.slice(headerIndex + 1).map(row => {
+        const date = parseDateValue(row[dateIndex]);
+        if (!date) invalidDates++;
+        let amount;
+        if (amountIndex >= 0) {
+          amount = moneyNumber(row[amountIndex]);
+          const type = typeIndex >= 0 ? String(row[typeIndex] || '').toLowerCase() : '';
+          if (/(debit|withdrawal|payment|purchase|money out)/.test(type)) amount = -Math.abs(amount);
+          if (/(credit|deposit|money in)/.test(type)) amount = Math.abs(amount);
+        } else {
+          const credit = creditIndex >= 0 ? Math.abs(moneyNumber(row[creditIndex])) : 0;
+          const debit = debitIndex >= 0 ? Math.abs(moneyNumber(row[debitIndex])) : 0;
+          amount = credit - debit;
+        }
+        if (!amount) zeroAmounts++;
         return {
           date,
           description: row[descIndex] || 'Unlabeled transaction',
           amount,
           balance: balanceIndex >= 0 && row[balanceIndex] !== '' ? moneyNumber(row[balanceIndex]) : null
         };
-      }).filter(item => !Number.isNaN(item.date.getTime()) && item.amount !== 0);
+      }).filter(item => item.date && item.amount !== 0);
 
-      if (!transactions.length) return showError('No dated, non-zero transactions were found. Check the date and amount formats in the CSV.');
+      if (!transactions.length) {
+        const detail = invalidDates > zeroAmounts
+          ? 'The transaction dates could not be recognized.'
+          : 'The transaction amounts could not be recognized or were all zero.';
+        return showError(detail + ' Detected columns: ' + headers.filter(Boolean).slice(0,8).join(', ') + '. If possible, export directly from the bank rather than opening and resaving the CSV.');
+      }
+
       transactions.sort((a,b) => a.date - b.date);
       renderDashboard(transactions, fileName);
     }
