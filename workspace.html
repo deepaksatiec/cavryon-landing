@@ -28,7 +28,7 @@
     .sample-heading{display:flex;align-items:center;justify-content:space-between;gap:15px;margin:26px 0 12px}.sample-heading h3{margin:0;font-size:1rem}.sample-heading span{color:var(--muted);font-size:.78rem}.sample-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.sample{padding:19px;border:1px solid var(--line);border-radius:15px;background:#fff;text-align:left}.sample:hover{border-color:#aebfdf;box-shadow:var(--shadow)}.sample small{display:block;margin-bottom:7px;color:var(--blue);font-size:.72rem;font-weight:800;text-transform:uppercase}.sample strong{display:block;font-size:.95rem}.sample p{margin:8px 0 0;color:var(--muted);font-size:.78rem;line-height:1.55}
     .source-toolbar{display:grid;grid-template-columns:220px 1fr auto;gap:11px;align-items:end;margin-bottom:14px}.upload-box{min-height:180px;display:grid;place-items:center;padding:28px;border:2px dashed #c7d4e6;border-radius:16px;background:#f8faff;text-align:center}.upload-box h3{margin:0 0 7px;font-size:1rem}.upload-box p{max-width:560px;margin:0;color:var(--muted);font-size:.82rem;line-height:1.6}.upload-box .btn{margin-top:16px}
     .mapping{margin-top:14px;padding:22px}.mapping-head{display:flex;justify-content:space-between;gap:20px;margin-bottom:18px}.mapping-head h3{margin:0 0 5px;font-size:1rem}.mapping-head p{margin:0;color:var(--muted);font-size:.8rem}.file-chip{padding:7px 9px;border-radius:999px;color:#53657c;background:#e9eef5;font-size:.72rem;font-weight:800}
-    .mapping-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:11px}.preview-table{margin-top:16px;overflow:auto;border:1px solid var(--line);border-radius:12px}.preview-row{min-width:700px;display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--line)}.preview-row:last-child{border-bottom:0}.preview-row span{padding:11px 13px;font-size:.78rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.preview-row.headrow{color:#718096;background:#f7f9fc;font-weight:800}
+    .mapping-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:11px}.preview-table{margin-top:16px;overflow:auto;border:1px solid var(--line);border-radius:12px}.preview-table table{width:100%;min-width:720px;border-collapse:collapse}.preview-table th,.preview-table td{padding:11px 13px;border-bottom:1px solid var(--line);text-align:left;font-size:.78rem;white-space:nowrap}.preview-table tr:last-child td{border-bottom:0}.preview-table th{color:#718096;background:#f7f9fc;font-weight:800}.required-tag{margin-left:5px;color:var(--red);font-size:.7rem}
     .source-list{display:grid;gap:10px;margin-top:14px}.source-item{display:grid;grid-template-columns:42px 1fr auto;align-items:center;gap:12px;padding:16px}.source-icon{width:40px;height:40px;display:grid;place-items:center;border-radius:12px;color:var(--blue);background:var(--blue-soft);font-weight:800}.source-item strong{display:block;font-size:.9rem}.source-item p{margin:4px 0 0;color:var(--muted);font-size:.76rem}.source-badge{padding:7px 9px;border-radius:999px;color:var(--green);background:var(--green-soft);font-size:.72rem;font-weight:800}
     .context-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.metric{padding:20px}.metric span{display:block;margin-bottom:9px;color:#7d8b9d;font-size:.74rem;font-weight:800;text-transform:uppercase}.metric strong{display:block;font-size:1.55rem;letter-spacing:-.04em}.metric p{margin:7px 0 0;color:var(--muted);font-size:.76rem;line-height:1.5}
     .fact-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:13px}.fact-card{padding:21px}.fact-card h3{margin:0 0 15px;font-size:.95rem}.fact-line{display:flex;justify-content:space-between;gap:20px;padding:10px 0;border-bottom:1px solid #edf1f5;font-size:.8rem}.fact-line:last-child{border-bottom:0}.fact-line span{color:var(--muted)}.fact-kind{color:var(--blue)!important;font-weight:800}
@@ -98,12 +98,7 @@
         </div>
         <div class="card mapping" id="mappingCard" hidden>
           <div class="mapping-head"><div><h3>Map this file to common business facts</h3><p>Save the meaning of each field instead of hard-coding the source platform.</p></div><span class="file-chip" id="mappingFile">file.csv</span></div>
-          <div class="mapping-grid">
-            <div class="field"><label for="mapDate">Date</label><select id="mapDate"></select></div>
-            <div class="field"><label for="mapDescription">Description or entity</label><select id="mapDescription"></select></div>
-            <div class="field"><label for="mapAmount">Amount or value</label><select id="mapAmount"></select></div>
-            <div class="field"><label for="mapCategory">Category, optional</label><select id="mapCategory"></select></div>
-          </div>
+          <div class="mapping-grid" id="dynamicMapping"></div>
           <div class="preview-table" id="previewTable"></div>
           <div class="btn-row"><button class="btn btn-primary" id="importSource">Import mapped source</button></div>
         </div>
@@ -186,6 +181,81 @@
       mayrake:[['2026-10-01','Facebook advertising','114.00','Marketing'],['2026-10-01','International transaction fee','3.00','Fees'],['2026-10-02','USPS','31.00','Shipping'],['2026-10-05','Inventory supplier','840.00','Inventory']],
       safari:[['2026-10-01','Tuition receipts','18500.00','Revenue'],['2026-10-03','Payroll provider','9200.00','Payroll'],['2026-10-04','Classroom supplies','780.00','Supplies'],['2026-10-06','Local advertising','950.00','Marketing']]
     };
+    const mappingSchemas={
+      'Bank account':[
+        {key:'date',label:'Transaction date',terms:['date','posted','transaction date'],required:true},
+        {key:'description',label:'Description or merchant',terms:['description','merchant','details','memo','payee'],required:true},
+        {key:'amount',label:'Transaction amount',terms:['amount','transaction amount'],required:true,numeric:true},
+        {key:'direction',label:'Money in or out',terms:['type','debit credit','direction']},
+        {key:'balance',label:'Running balance',terms:['balance','running balance'],numeric:true},
+        {key:'category',label:'Category',terms:['category','classification']}
+      ],
+      'Credit card':[
+        {key:'date',label:'Transaction date',terms:['date','transaction date','posted date'],required:true},
+        {key:'description',label:'Merchant or description',terms:['merchant','description','details'],required:true},
+        {key:'amount',label:'Charge amount',terms:['amount','charge','transaction amount'],required:true,numeric:true},
+        {key:'direction',label:'Charge or credit',terms:['type','debit credit','credit debit']},
+        {key:'category',label:'Expense category',terms:['category','expense category']}
+      ],
+      'Revenue or sales':[
+        {key:'date',label:'Sale date',terms:['date','created at','order date'],required:true},
+        {key:'transactionId',label:'Order or transaction ID',terms:['order id','order','name','transaction id'],required:true},
+        {key:'grossRevenue',label:'Gross revenue',terms:['gross sales','gross revenue','total'],numeric:true},
+        {key:'discounts',label:'Discounts',terms:['discounts','discount'],numeric:true},
+        {key:'refunds',label:'Refunds or returns',terms:['refunds','returns','refund'],numeric:true},
+        {key:'netRevenue',label:'Net revenue',terms:['net sales','net revenue','net total'],required:true,numeric:true},
+        {key:'customer',label:'Customer',terms:['customer','customer id','email']},
+        {key:'product',label:'Product or service',terms:['product','lineitem name','service','sku']},
+        {key:'quantity',label:'Quantity',terms:['quantity','qty'],numeric:true}
+      ],
+      'Marketing':[
+        {key:'date',label:'Performance date',terms:['date','day'],required:true},
+        {key:'channel',label:'Channel',terms:['channel','platform','publisher']},
+        {key:'campaign',label:'Campaign',terms:['campaign','campaign name'],required:true},
+        {key:'spend',label:'Amount spent',terms:['amount spent','spend','cost'],required:true,numeric:true},
+        {key:'clicks',label:'Clicks',terms:['clicks','link clicks'],numeric:true},
+        {key:'conversions',label:'Conversions or purchases',terms:['conversions','purchases','results'],numeric:true},
+        {key:'attributedRevenue',label:'Attributed revenue',terms:['purchase conversion value','revenue','conversion value'],numeric:true}
+      ],
+      'Payroll':[
+        {key:'date',label:'Pay date',terms:['pay date','date','period end'],required:true},
+        {key:'employee',label:'Employee or role',terms:['employee','employee name','role'],required:true},
+        {key:'grossPay',label:'Gross pay',terms:['gross pay','gross wages','gross'],required:true,numeric:true},
+        {key:'taxesBenefits',label:'Taxes and benefits',terms:['taxes','benefits','employer taxes'],numeric:true},
+        {key:'netPay',label:'Net pay',terms:['net pay','net wages'],numeric:true},
+        {key:'department',label:'Department or team',terms:['department','team','location']}
+      ],
+      'Inventory':[
+        {key:'date',label:'Snapshot date',terms:['date','snapshot date'],required:true},
+        {key:'item',label:'Item or product',terms:['product','item','title','name'],required:true},
+        {key:'sku',label:'SKU',terms:['sku','variant sku']},
+        {key:'quantity',label:'Quantity available',terms:['quantity','available','on hand'],required:true,numeric:true},
+        {key:'unitCost',label:'Unit cost',terms:['unit cost','cost per item','cost'],numeric:true},
+        {key:'sellingPrice',label:'Selling price',terms:['price','selling price'],numeric:true},
+        {key:'inventoryValue',label:'Inventory value',terms:['inventory value','stock value'],numeric:true},
+        {key:'reorderPoint',label:'Reorder point',terms:['reorder point','minimum quantity'],numeric:true}
+      ],
+      'Customers or enrollment':[
+        {key:'date',label:'Observation date',terms:['date','enrollment date','created at'],required:true},
+        {key:'customerId',label:'Customer or enrollment ID',terms:['customer id','student id','id','email'],required:true},
+        {key:'status',label:'Status',terms:['status','enrollment status']},
+        {key:'group',label:'Service or capacity group',terms:['program','classroom','service','group']},
+        {key:'value',label:'Revenue or value',terms:['revenue','tuition','amount','value'],numeric:true}
+      ],
+      'Operational capacity':[
+        {key:'date',label:'Observation date',terms:['date','period'],required:true},
+        {key:'unit',label:'Capacity unit',terms:['unit','classroom','team','location'],required:true},
+        {key:'capacity',label:'Total capacity',terms:['capacity','available capacity'],required:true,numeric:true},
+        {key:'utilization',label:'Used capacity',terms:['utilization','used','occupied','enrolled'],numeric:true},
+        {key:'cost',label:'Operating cost',terms:['cost','expense'],numeric:true}
+      ],
+      'Other':[
+        {key:'date',label:'Date',terms:['date'],required:true},
+        {key:'description',label:'Description',terms:['description','name','details'],required:true},
+        {key:'value',label:'Primary value',terms:['amount','value','total'],required:true,numeric:true},
+        {key:'category',label:'Category',terms:['category','type']}
+      ]
+    };
 
     function showPanel(name){
       document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.id==='panel-'+name));
@@ -213,8 +283,8 @@
       const cfg=kind==='mayrake'?{name:'Mayrake',type:'E-commerce or retail',reserve:35000,owner:'Business Owner'}:{name:'Safari Kid',type:'Childcare or education',reserve:50000,owner:'Center Owner'};
       document.getElementById('businessName').value=cfg.name;document.getElementById('businessType').value=cfg.type;document.getElementById('reserve').value=cfg.reserve;document.getElementById('owner').value=cfg.owner;
       state.workspace={name:cfg.name,type:cfg.type,currency:'USD',reserve:cfg.reserve,owner:cfg.owner};document.getElementById('sideName').textContent=cfg.name;document.getElementById('sideType').textContent=cfg.type;document.getElementById('checkSetup').textContent='✓';
-      loadRows(sampleRows[kind],kind==='mayrake'?'sample_expenses.csv':'sample_operations.csv');
-      document.getElementById('sourceType').value=kind==='mayrake'?'Credit card':'Other';document.getElementById('profileName').value=kind==='mayrake'?'Sample expense export':'Sample operating export';showPanel('sources');
+      document.getElementById('sourceType').value=kind==='mayrake'?'Credit card':'Other';document.getElementById('profileName').value=kind==='mayrake'?'Sample expense export':'Sample operating export';
+      loadRows(sampleRows[kind],kind==='mayrake'?'sample_expenses.csv':'sample_operations.csv',['Date','Description','Amount','Category']);showPanel('sources');
     }));
 
     const fileInput=document.getElementById('sourceFile');
@@ -229,26 +299,55 @@
     }
     function loadRows(rows,fileName,headers){
       state.rows=rows;state.headers=headers||['Date','Description','Amount','Category'];document.getElementById('mappingFile').textContent=fileName;document.getElementById('mappingCard').hidden=false;
-      ['mapDate','mapDescription','mapAmount','mapCategory'].forEach((id,index)=>{const select=document.getElementById(id);select.innerHTML='<option value="">Not mapped</option>'+state.headers.map((h,i)=>'<option value="'+i+'" '+(i===index?'selected':'')+'>'+escapeHTML(h)+'</option>').join('')});
-      renderPreview();document.getElementById('mappingCard').scrollIntoView({behavior:'smooth',block:'center'})
+      renderMappingFields();document.getElementById('mappingCard').scrollIntoView({behavior:'smooth',block:'center'})
+    }
+    function currentSchema(){
+      return mappingSchemas[document.getElementById('sourceType').value]||mappingSchemas.Other;
+    }
+    function guessColumn(field){
+      const normalized=state.headers.map(header=>String(header).toLowerCase().trim());
+      for(const term of field.terms){const exact=normalized.findIndex(header=>header===term);if(exact>=0)return exact}
+      for(const term of field.terms){const partial=normalized.findIndex(header=>header.includes(term));if(partial>=0)return partial}
+      return '';
+    }
+    function renderMappingFields(){
+      const schema=currentSchema();
+      document.getElementById('dynamicMapping').innerHTML=schema.map(field=>{
+        const guessed=guessColumn(field);
+        const options='<option value="">Not mapped</option>'+state.headers.map((header,index)=>'<option value="'+index+'" '+(String(guessed)===String(index)?'selected':'')+'>'+escapeHTML(header)+'</option>').join('');
+        return '<div class="field"><label>'+escapeHTML(field.label)+(field.required?'<span class="required-tag">Required</span>':'')+'</label><select class="fact-map" data-fact="'+field.key+'" data-label="'+escapeHTML(field.label)+'" data-numeric="'+(field.numeric?'true':'false')+'" data-required="'+(field.required?'true':'false')+'">'+options+'</select></div>';
+      }).join('');
+      document.querySelectorAll('.fact-map').forEach(select=>select.addEventListener('change',renderPreview));
+      renderPreview();
+    }
+    function selectedMappings(){
+      return Array.from(document.querySelectorAll('.fact-map')).filter(select=>select.value!=='').map(select=>({key:select.dataset.fact,label:select.dataset.label,index:Number(select.value),numeric:select.dataset.numeric==='true',required:select.dataset.required==='true'}));
     }
     function renderPreview(){
-      const cols=[Number(document.getElementById('mapDate').value||0),Number(document.getElementById('mapDescription').value||1),Number(document.getElementById('mapAmount').value||2),Number(document.getElementById('mapCategory').value||3)];
-      document.getElementById('previewTable').innerHTML='<div class="preview-row headrow"><span>Date</span><span>Description</span><span>Amount</span><span>Category</span></div>'+state.rows.slice(0,4).map(row=>'<div class="preview-row">'+cols.map(i=>'<span>'+escapeHTML(row[i]||'—')+'</span>').join('')+'</div>').join('')
+      const mappings=selectedMappings();
+      if(!mappings.length){document.getElementById('previewTable').innerHTML='';return}
+      const header='<tr>'+mappings.map(m=>'<th>'+escapeHTML(m.label)+'</th>').join('')+'</tr>';
+      const body=state.rows.slice(0,4).map(row=>'<tr>'+mappings.map(m=>'<td>'+escapeHTML(row[m.index]||'—')+'</td>').join('')+'</tr>').join('');
+      document.getElementById('previewTable').innerHTML='<table><thead>'+header+'</thead><tbody>'+body+'</tbody></table>';
     }
-    ['mapDate','mapDescription','mapAmount','mapCategory'].forEach(id=>document.getElementById(id).addEventListener('change',renderPreview));
+    document.getElementById('sourceType').addEventListener('change',()=>{if(state.rows.length)renderMappingFields()});
     document.getElementById('importSource').addEventListener('click',()=>{
-      const amountIndex=Number(document.getElementById('mapAmount').value);const values=state.rows.map(row=>Number(String(row[amountIndex]||'').replace(/[$,()]/g,''))||0);const total=values.reduce((s,v)=>s+Math.abs(v),0);
-      state.sources.push({type:document.getElementById('sourceType').value,profile:document.getElementById('profileName').value||'Unnamed import',records:state.rows.length,total});
-      document.getElementById('mappingCard').hidden=true;document.getElementById('checkSources').textContent='✓';renderSources();updateContext()
+      const schema=currentSchema(),mappings=selectedMappings();
+      const missing=schema.filter(field=>field.required&&!mappings.some(mapping=>mapping.key===field.key));
+      if(missing.length){alert('Map the required fields: '+missing.map(field=>field.label).join(', '));return}
+      const primary=mappings.find(mapping=>mapping.numeric&&['amount','netRevenue','spend','grossPay','inventoryValue','value','cost'].includes(mapping.key))||mappings.find(mapping=>mapping.numeric);
+      const values=primary?state.rows.map(row=>Number(String(row[primary.index]||'').replace(/[$,()]/g,''))||0):[];
+      const total=values.reduce((sum,value)=>sum+Math.abs(value),0);
+      state.sources.push({type:document.getElementById('sourceType').value,profile:document.getElementById('profileName').value||'Unnamed import',records:state.rows.length,total,mappings});
+      document.getElementById('mappingCard').hidden=true;document.getElementById('checkSources').textContent='✓';state.rows=[];renderSources();updateContext()
     });
     function renderSources(){
-      document.getElementById('sourceList').innerHTML=state.sources.map((s,i)=>'<div class="card source-item"><div class="source-icon">'+(i+1)+'</div><div><strong>'+escapeHTML(s.profile)+'</strong><p>'+escapeHTML(s.type)+' · '+s.records+' records · '+currency(s.total)+' listed value</p></div><span class="source-badge">Mapped</span></div>').join('')
+      document.getElementById('sourceList').innerHTML=state.sources.map((s,i)=>'<div class="card source-item"><div class="source-icon">'+(i+1)+'</div><div><strong>'+escapeHTML(s.profile)+'</strong><p>'+escapeHTML(s.type)+' · '+s.records+' records · '+s.mappings.length+' fields mapped · '+currency(s.total)+' primary value</p></div><span class="source-badge">Mapped</span></div>').join('')
     }
     function updateContext(){
       const records=state.sources.reduce((s,x)=>s+x.records,0),total=state.sources.reduce((s,x)=>s+x.total,0);
       document.getElementById('contextSources').textContent=state.sources.length;document.getElementById('contextRecords').textContent=records.toLocaleString();document.getElementById('contextTotal').textContent=currency(total);document.getElementById('contextReserve').textContent=currency(state.workspace.reserve);
-      document.getElementById('availableFacts').innerHTML=state.sources.length?state.sources.map(s=>'<div class="fact-line"><span>'+escapeHTML(s.type)+'</span><strong class="fact-kind">'+s.records+' observed facts</strong></div>').join(''):'<div class="fact-line"><span>No sources imported</span><strong>Upload data</strong></div>';
+      document.getElementById('availableFacts').innerHTML=state.sources.length?state.sources.map(s=>'<div class="fact-line"><span>'+escapeHTML(s.type)+'</span><strong class="fact-kind">'+s.mappings.map(m=>escapeHTML(m.label)).slice(0,3).join(', ')+(s.mappings.length>3?' +'+(s.mappings.length-3):'')+'</strong></div>').join(''):'<div class="fact-line"><span>No sources imported</span><strong>Upload data</strong></div>';
       if(state.sources.length){document.getElementById('checkContext').textContent='✓'}
     }
 
