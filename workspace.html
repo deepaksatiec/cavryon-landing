@@ -363,17 +363,18 @@
     function parsePDFTransactions(lines,type){
       const text=lines.join(' '),years=text.match(/\b20\d{2}\b/g)||[],year=years.length?years.sort((a,b)=>years.filter(y=>y===a).length-years.filter(y=>y===b).length).at(-1):String(new Date().getFullYear());
       const datePattern=/^(\d{1,2}[\/-]\d{1,2}(?:[\/-]\d{2,4})?|20\d{2}-\d{1,2}-\d{1,2}|(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec)[a-z]*\s+\d{1,2}(?:,?\s+20\d{2})?)\b/i;
-      const moneyPattern=/(?:\(?-?\$?\d[\d,]*\.\d{2}\)?-?)/g,rows=[];
+      const moneyPattern=/(?:\(?[−-]?\$?\d[\d,]*\.\d{2}\)?[−-]?)/g,rows=[];
+      let currentDate='';
       lines.forEach(line=>{
-        const dateMatch=line.match(datePattern);if(!dateMatch)return;
+        const dateMatch=line.match(datePattern);
+        if(dateMatch){const hasYear=/\b20\d{2}\b/.test(dateMatch[1])||/^\d{1,2}[\/-]\d{1,2}[\/-]\d{2,4}$/.test(dateMatch[1]);currentDate=hasYear?dateMatch[1]:(/^\d/.test(dateMatch[1])?dateMatch[1]+'/'+year:dateMatch[1]+' '+year)}
+        if(!currentDate||/beginning balance|ending balance|total deposits|total withdrawals|statement period|page\s+\d+/i.test(line))return;
         const moneyMatches=[...line.matchAll(moneyPattern)];if(!moneyMatches.length)return;
-        const hasYear=/\b20\d{2}\b/.test(dateMatch[1])||/^\d{1,2}[\/-]\d{1,2}[\/-]\d{2,4}$/.test(dateMatch[1]);
-        const rawDate=hasYear?dateMatch[1]:(/^\d/.test(dateMatch[1])?dateMatch[1]+'/'+year:dateMatch[1]+' '+year);
-        const firstMoney=moneyMatches[0][0],lastMoney=moneyMatches.at(-1)[0];
-        const description=line.slice(dateMatch[0].length,moneyMatches[0].index).replace(/\s+/g,' ').trim()||'PDF transaction';
-        if(type==='Marketing')rows.push([rawDate,description,firstMoney,moneyMatches.length>1?lastMoney:'']);
-        else if(type==='Revenue or sales')rows.push([rawDate,description,lastMoney]);
-        else rows.push([rawDate,description,firstMoney,'']);
+        const firstMoney=moneyMatches[0][0],lastMoney=moneyMatches.at(-1)[0],descriptionStart=dateMatch?dateMatch[0].length:0;
+        const description=line.slice(descriptionStart,moneyMatches[0].index).replace(/[←→↔]/g,' ').replace(/\s+/g,' ').trim()||'PDF transaction';
+        if(type==='Marketing')rows.push([currentDate,description,firstMoney,moneyMatches.length>1?lastMoney:'']);
+        else if(type==='Revenue or sales')rows.push([currentDate,description,lastMoney]);
+        else rows.push([currentDate,description,firstMoney,'']);
       });
       if(type==='Marketing')return {headers:['Date','Campaign','Amount Spent','Purchase Conversion Value'],rows};
       if(type==='Revenue or sales')return {headers:['Date','Order ID','Net Sales'],rows};
@@ -430,7 +431,7 @@
       state.sources.push({type,profile:document.getElementById('profileName').value||state.fileName||'Unnamed import',fileName:state.fileName,fileNames:state.fileNames.slice(),fileCount:state.fileCount,format:state.fileFormat,duplicateRowsRemoved:state.duplicateRowsRemoved,records:facts.length,total,mappings,facts,dateStart:dates[0]||'',dateEnd:dates[dates.length-1]||''});
       document.getElementById('mappingCard').hidden=true;document.getElementById('checkSources').textContent='✓';state.rows=[];state.fileName='';state.fileFormat='CSV';state.fileCount=1;state.fileNames=[];state.duplicateRowsRemoved=0;document.getElementById('pdfNotice').hidden=true;renderSources();updateContext();updatePerformance()
     });
-    function parseAmount(value){const raw=String(value??'').trim();if(!raw)return 0;const negative=/^\(.*\)$/.test(raw)||/^-/.test(raw)||/-$/.test(raw);const number=Number(raw.replace(/[^0-9.]/g,''))||0;return negative?-number:number}
+    function parseAmount(value){const raw=String(value??'').trim();if(!raw)return 0;const negative=/^\(.*\)$/.test(raw)||/^[−-]/.test(raw)||/[−-]$/.test(raw);const number=Number(raw.replace(/[^0-9.]/g,''))||0;return negative?-number:number}
     function normalizeDate(value){if(!value)return '';const date=new Date(String(value).trim());if(Number.isNaN(date.getTime()))return '';return date.toISOString().slice(0,10)}
     function normalizeFact(row,mappings){const fact={};mappings.forEach(mapping=>{const raw=row[mapping.index]??'';fact[mapping.key]=mapping.key==='date'?normalizeDate(raw):(mapping.numeric?parseAmount(raw):String(raw).trim())});return fact}
     function renderSources(){
