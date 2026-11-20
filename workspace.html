@@ -220,7 +220,7 @@
         {key:'date',label:'Transaction date',terms:['date','posted','transaction date'],required:true},
         {key:'description',label:'Description or merchant',terms:['description','merchant','details','memo','payee'],required:true},
         {key:'amount',label:'Transaction amount',terms:['amount','transaction amount'],required:true,numeric:true},
-        {key:'direction',label:'Money in or out',terms:['type','debit credit','direction']},
+        {key:'direction',label:'Transaction type or direction',terms:['type','debit credit','direction']},
         {key:'balance',label:'Running balance',terms:['balance','running balance'],numeric:true},
         {key:'category',label:'Category',terms:['category','classification']}
       ],
@@ -352,17 +352,43 @@
     async function extractPDFFile(file){
       if(!window.pdfjsLib)throw new Error('The PDF reader could not load. Check your connection and try again.');
       window.pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-      const bytes=await file.arrayBuffer(),pdf=await window.pdfjsLib.getDocument({data:bytes}).promise,lines=[];
+      const bytes=await file.arrayBuffer(),pdf=await window.pdfjsLib.getDocument({data:bytes}).promise,lines=[],structuredLines=[];
       for(let pageNumber=1;pageNumber<=pdf.numPages;pageNumber++){
         const page=await pdf.getPage(pageNumber),content=await page.getTextContent(),items=content.items.filter(item=>String(item.str||'').trim()).map(item=>({text:String(item.str).trim(),x:item.transform[4],y:item.transform[5]})).sort((a,b)=>Math.abs(b.y-a.y)>2?b.y-a.y:a.x-b.x);
         const grouped=[];
         items.forEach(item=>{let line=grouped.find(candidate=>Math.abs(candidate.y-item.y)<=2);if(!line){line={y:item.y,items:[]};grouped.push(line)}line.items.push(item)});
-        grouped.sort((a,b)=>b.y-a.y).forEach(line=>lines.push(line.items.sort((a,b)=>a.x-b.x).map(item=>item.text).join(' ')));
+        grouped.sort((a,b)=>b.y-a.y).forEach(line=>{const sortedItems=line.items.sort((a,b)=>a.x-b.x),text=sortedItems.map(item=>item.text).join(' ');lines.push(text);structuredLines.push({page:pageNumber,text,items:sortedItems})});
       }
       if(!lines.join(' ').trim())throw new Error('No selectable text was found. This appears to be a scanned PDF and requires OCR.');
-      const extracted=parsePDFTransactions(lines,document.getElementById('sourceType').value);
+      const sourceType=document.getElementById('sourceType').value,mercury=sourceType==='Bank account'?parseMercuryTransactions(structuredLines):null;
+      const extracted=mercury&&mercury.rows.length?mercury:parsePDFTransactions(lines,sourceType);
       if(!extracted.rows.length)throw new Error('Text was extracted, but no dated transaction rows were recognized. Try a CSV export or choose the correct data-source category.');
       return extracted;
+    }
+    function parseMercuryTransactions(lines){
+      const header=lines.find(line=>/date\s*\(utc\)/i.test(line.text)&&/description/i.test(line.text)&&/type/i.test(line.text)&&/amount/i.test(line.text)&&/end\s+of\s+day\s+balance/i.test(line.text));
+      if(!header)return null;
+      const findX=pattern=>{const item=header.items.find(value=>pattern.test(value.text));return item?item.x:null};
+      const dateX=findX(/date/i),descriptionX=findX(/description/i),typeX=findX(/^type$/i),amountX=findX(/^amount$/i);
+      const balanceItem=header.items.find(item=>item.x>amountX&&/(end|balance)/i.test(item.text)),balanceX=balanceItem?balanceItem.x:null;
+      if([dateX,descriptionX,typeX,amountX,balanceX].some(value=>value===null))return null;
+      const boundaries=[(dateX+descriptionX)/2,(descriptionX+typeX)/2,(typeX+amountX)/2,(amountX+balanceX)/2];
+      const allText=lines.map(line=>line.text).join(' '),years=allText.match(/\b20\d{2}\b/g)||[],year=years.length?years.sort((a,b)=>years.filter(value=>value===a).length-years.filter(value=>value===b).length).at(-1):String(new Date().getFullYear());
+      const datePattern=/(\d{1,2}[\/-]\d{1,2}(?:[\/-]\d{2,4})?|20\d{2}-\d{1,2}-\d{1,2}|(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec)[a-z]*\s+\d{1,2}(?:,?\s+20\d{2})?)/i;
+      const moneyPattern=/\(?[−-]?\$?\d[\d,]*\.\d{2}\)?[−-]?/;
+      let currentDate='';const rows=[];
+      lines.forEach(line=>{
+        if(line===header||/date\s*\(utc\).*description.*type.*amount/i.test(line.text)||/all transactions/i.test(line.text))return;
+        const cells=[[],[],[],[],[]];
+        line.items.forEach(item=>{const index=item.x<boundaries[0]?0:item.x<boundaries[1]?1:item.x<boundaries[2]?2:item.x<boundaries[3]?3:4;cells[index].push(item.text)});
+        const dateCell=cells[0].join(' ').trim(),dateMatch=dateCell.match(datePattern);
+        if(dateMatch){const hasYear=/\b20\d{2}\b/.test(dateMatch[1])||/^\d{1,2}[\/-]\d{1,2}[\/-]\d{2,4}$/.test(dateMatch[1]);currentDate=hasYear?dateMatch[1]:(/^\d/.test(dateMatch[1])?dateMatch[1]+'/'+year:dateMatch[1]+' '+year)}
+        const description=cells[1].join(' ').replace(/\s+/g,' ').trim(),type=cells[2].join(' ').replace(/[←→↔]/g,' ').replace(/\s+/g,' ').trim();
+        const amountMatch=cells[3].join(' ').match(moneyPattern),balanceMatch=cells[4].join(' ').match(moneyPattern);
+        if(!currentDate||!description||!amountMatch)return;
+        rows.push([currentDate,description,type,amountMatch[0],balanceMatch?balanceMatch[0]:'']);
+      });
+      return {headers:['Date (UTC)','Description','Type','Amount','End of Day Balance'],rows}
     }
     function parsePDFTransactions(lines,type){
       const text=lines.join(' '),years=text.match(/\b20\d{2}\b/g)||[],year=years.length?years.sort((a,b)=>years.filter(y=>y===a).length-years.filter(y=>y===b).length).at(-1):String(new Date().getFullYear());
