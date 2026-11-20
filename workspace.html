@@ -96,7 +96,7 @@
           <button class="btn btn-secondary" id="sampleSource">Load sample CSV</button>
         </div>
         <div class="upload-box" id="uploadBox">
-          <div><h3>Add a CSV or PDF data source</h3><p>Cavryon reads text-based exports and statements inside this browser, then asks you to confirm the extracted business facts.</p><button class="btn btn-primary" id="chooseSource">Choose CSV or PDF</button><input id="sourceFile" type="file" accept=".csv,text/csv,.pdf,application/pdf" hidden></div>
+          <div><h3>Add monthly statements</h3><p>Choose one file or select several monthly CSV or PDF statements together. Cavryon combines compatible files inside this browser before you confirm the extracted facts.</p><button class="btn btn-primary" id="chooseSource">Choose monthly statements</button><input id="sourceFile" type="file" accept=".csv,text/csv,.pdf,application/pdf" multiple hidden></div>
         </div>
         <div class="card mapping" id="mappingCard" hidden>
           <div class="mapping-head"><div><h3>Map this file to common business facts</h3><p>Save the meaning of each field instead of hard-coding the source platform.</p></div><span class="file-chip" id="mappingFile">file.csv</span></div>
@@ -193,7 +193,7 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script>
-    const state={workspace:{name:'',type:'',currency:'USD',reserve:0,owner:''},sources:[],selectedDecision:'marketing',approved:false,rows:[],headers:[],fileName:'',fileFormat:'CSV',analysis:null};
+    const state={workspace:{name:'',type:'',currency:'USD',reserve:0,owner:''},sources:[],selectedDecision:'marketing',approved:false,rows:[],headers:[],fileName:'',fileFormat:'CSV',fileCount:1,fileNames:[],duplicateRowsRemoved:0,analysis:null};
     const panelText={
       setup:['Create your business workspace','Set up the business context once, then use it across financial decisions, approvals, and future reviews.'],
       sources:['Map business data','Turn different source files into a consistent set of business facts without hard-coding a platform.'],
@@ -320,22 +320,32 @@
     const fileInput=document.getElementById('sourceFile');
     document.getElementById('chooseSource').addEventListener('click',()=>fileInput.click());
     fileInput.addEventListener('change',async e=>{
-      const file=e.target.files[0];if(!file)return;
+      const files=Array.from(e.target.files||[]);if(!files.length)return;
       const chooseButton=document.getElementById('chooseSource'),originalText=chooseButton.textContent;chooseButton.disabled=true;
       try{
-        if(file.type==='application/pdf'||/\.pdf$/i.test(file.name)){chooseButton.textContent='Reading PDF…';await loadPDFFile(file)}
-        else{chooseButton.textContent='Reading CSV…';const text=await file.text();const rows=parseCSV(text);if(rows.length<2)throw new Error('The CSV needs a header and at least one data row.');loadRows(rows.slice(1),file.name,rows[0],{format:'CSV'})}
-      }catch(error){alert(error.message||'This file could not be read.');}
+        const batches=[];
+        for(let index=0;index<files.length;index++){
+          const file=files[index];chooseButton.textContent='Reading '+(index+1)+' of '+files.length+'…';
+          if(file.type==='application/pdf'||/\.pdf$/i.test(file.name))batches.push({...await extractPDFFile(file),format:'PDF',fileName:file.name});
+          else{const text=await file.text(),parsed=parseCSV(text);if(parsed.length<2)throw new Error(file.name+' needs a header and at least one data row.');batches.push({headers:parsed[0],rows:parsed.slice(1),format:'CSV',fileName:file.name})}
+        }
+        const signature=headers=>headers.map(header=>String(header).trim().toLowerCase()).join('|'),expected=signature(batches[0].headers);
+        if(batches.some(batch=>signature(batch.headers)!==expected))throw new Error('These statements do not have the same layout. Upload matching monthly statements together, then import the other format as a separate source.');
+        const combined=batches.flatMap(batch=>batch.rows),seen=new Set(),uniqueRows=[],duplicates=[];
+        combined.forEach(row=>{const key=row.map(value=>String(value).trim().toLowerCase()).join('¦');if(seen.has(key))duplicates.push(row);else{seen.add(key);uniqueRows.push(row)}});
+        const formats=[...new Set(batches.map(batch=>batch.format))],displayName=files.length===1?files[0].name:files.length+' monthly statements';
+        loadRows(uniqueRows,displayName,batches[0].headers,{format:formats.length===1?formats[0]:'Mixed',fileCount:files.length,fileNames:files.map(file=>file.name),duplicateRowsRemoved:duplicates.length});
+      }catch(error){alert(error.message||'These files could not be read.');}
       finally{chooseButton.disabled=false;chooseButton.textContent=originalText;fileInput.value=''}
     });
-    document.getElementById('sampleSource').addEventListener('click',()=>loadRows(sampleRows.mayrake,'generic_sample.csv',['Date','Description','Amount','Category'],{format:'CSV'}));
+    document.getElementById('sampleSource').addEventListener('click',()=>loadRows(sampleRows.mayrake,'generic_sample.csv',['Date','Description','Amount','Category'],{format:'CSV',fileCount:1,fileNames:['generic_sample.csv']}));
 
     function parseCSV(text){
       const rows=[];let row=[],cell='',quoted=false;
       for(let i=0;i<text.length;i++){const ch=text[i],next=text[i+1];if(ch==='"'&&quoted&&next==='"'){cell+='"';i++}else if(ch==='"')quoted=!quoted;else if(ch===','&&!quoted){row.push(cell.trim());cell=''}else if((ch==='\n'||ch==='\r')&&!quoted){if(ch==='\r'&&next==='\n')i++;row.push(cell.trim());cell='';if(row.some(v=>v!==''))rows.push(row);row=[]}else cell+=ch}
       if(cell||row.length){row.push(cell.trim());if(row.some(v=>v!==''))rows.push(row)}return rows
     }
-    async function loadPDFFile(file){
+    async function extractPDFFile(file){
       if(!window.pdfjsLib)throw new Error('The PDF reader could not load. Check your connection and try again.');
       window.pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
       const bytes=await file.arrayBuffer(),pdf=await window.pdfjsLib.getDocument({data:bytes}).promise,lines=[];
@@ -348,7 +358,7 @@
       if(!lines.join(' ').trim())throw new Error('No selectable text was found. This appears to be a scanned PDF and requires OCR.');
       const extracted=parsePDFTransactions(lines,document.getElementById('sourceType').value);
       if(!extracted.rows.length)throw new Error('Text was extracted, but no dated transaction rows were recognized. Try a CSV export or choose the correct data-source category.');
-      loadRows(extracted.rows,file.name,extracted.headers,{format:'PDF'});
+      return extracted;
     }
     function parsePDFTransactions(lines,type){
       const text=lines.join(' '),years=text.match(/\b20\d{2}\b/g)||[],year=years.length?years.sort((a,b)=>years.filter(y=>y===a).length-years.filter(y=>y===b).length).at(-1):String(new Date().getFullYear());
@@ -370,8 +380,12 @@
       return {headers:['Date','Description','Amount','Category'],rows}
     }
     function loadRows(rows,fileName,headers,meta={}){
-      state.rows=rows;state.headers=headers||['Date','Description','Amount','Category'];state.fileName=fileName||'uploaded.csv';state.fileFormat=meta.format||'CSV';document.getElementById('mappingFile').textContent=state.fileName;document.getElementById('pdfNotice').hidden=state.fileFormat!=='PDF';document.getElementById('mappingCard').hidden=false;
-      renderMappingFields();document.getElementById('mappingCard').scrollIntoView({behavior:'smooth',block:'center'})
+      state.rows=rows;state.headers=headers||['Date','Description','Amount','Category'];state.fileName=fileName||'uploaded.csv';state.fileFormat=meta.format||'CSV';state.fileCount=meta.fileCount||1;state.fileNames=meta.fileNames||[state.fileName];state.duplicateRowsRemoved=meta.duplicateRowsRemoved||0;
+      document.getElementById('mappingFile').textContent=state.fileName;
+      const notice=document.getElementById('pdfNotice'),needsReview=state.fileFormat==='PDF'||state.fileFormat==='Mixed'||state.fileCount>1;
+      notice.hidden=!needsReview;
+      if(needsReview){notice.querySelector('strong').textContent=state.fileCount>1?state.fileCount+' monthly statements combined':'PDF extraction requires confirmation';notice.querySelector('span').textContent=(state.fileFormat==='PDF'||state.fileFormat==='Mixed'?'Verify the extracted dates, descriptions, and amounts. ':'')+(state.duplicateRowsRemoved?state.duplicateRowsRemoved+' exact duplicate row'+(state.duplicateRowsRemoved===1?' was':'s were')+' removed. ':'')+'All files must represent the same source and layout.'}
+      document.getElementById('mappingCard').hidden=false;renderMappingFields();document.getElementById('mappingCard').scrollIntoView({behavior:'smooth',block:'center'})
     }
     function currentSchema(){
       return mappingSchemas[document.getElementById('sourceType').value]||mappingSchemas.Other;
@@ -413,14 +427,14 @@
       const values=primary?facts.map(fact=>Number(fact[primary.key])||0):[];
       const total=values.reduce((sum,value)=>sum+Math.abs(value),0);
       const dates=facts.map(fact=>fact.date).filter(Boolean).sort();
-      state.sources.push({type,profile:document.getElementById('profileName').value||state.fileName||'Unnamed import',fileName:state.fileName,format:state.fileFormat,records:facts.length,total,mappings,facts,dateStart:dates[0]||'',dateEnd:dates[dates.length-1]||''});
-      document.getElementById('mappingCard').hidden=true;document.getElementById('checkSources').textContent='✓';state.rows=[];state.fileName='';state.fileFormat='CSV';document.getElementById('pdfNotice').hidden=true;renderSources();updateContext();updatePerformance()
+      state.sources.push({type,profile:document.getElementById('profileName').value||state.fileName||'Unnamed import',fileName:state.fileName,fileNames:state.fileNames.slice(),fileCount:state.fileCount,format:state.fileFormat,duplicateRowsRemoved:state.duplicateRowsRemoved,records:facts.length,total,mappings,facts,dateStart:dates[0]||'',dateEnd:dates[dates.length-1]||''});
+      document.getElementById('mappingCard').hidden=true;document.getElementById('checkSources').textContent='✓';state.rows=[];state.fileName='';state.fileFormat='CSV';state.fileCount=1;state.fileNames=[];state.duplicateRowsRemoved=0;document.getElementById('pdfNotice').hidden=true;renderSources();updateContext();updatePerformance()
     });
     function parseAmount(value){const raw=String(value??'').trim();if(!raw)return 0;const negative=/^\(.*\)$/.test(raw)||/^-/.test(raw)||/-$/.test(raw);const number=Number(raw.replace(/[^0-9.]/g,''))||0;return negative?-number:number}
     function normalizeDate(value){if(!value)return '';const date=new Date(String(value).trim());if(Number.isNaN(date.getTime()))return '';return date.toISOString().slice(0,10)}
     function normalizeFact(row,mappings){const fact={};mappings.forEach(mapping=>{const raw=row[mapping.index]??'';fact[mapping.key]=mapping.key==='date'?normalizeDate(raw):(mapping.numeric?parseAmount(raw):String(raw).trim())});return fact}
     function renderSources(){
-      document.getElementById('sourceList').innerHTML=state.sources.map((s,i)=>'<div class="card source-item"><div class="source-icon">'+(i+1)+'</div><div><strong>'+escapeHTML(s.profile)+'</strong><p>'+escapeHTML(s.type)+' · '+escapeHTML(s.format||'CSV')+' · '+s.records+' records · '+s.mappings.length+' fields mapped · </p></div><span class="source-badge">Mapped</span></div>').join('')
+      document.getElementById('sourceList').innerHTML=state.sources.map((s,i)=>'<div class="card source-item"><div class="source-icon">'+(i+1)+'</div><div><strong>'+escapeHTML(s.profile)+'</strong><p>'+escapeHTML(s.type)+' · '+escapeHTML(s.format||'CSV')+' · '+(s.fileCount>1?s.fileCount+' files · ':'')+s.records+' records · '+s.mappings.length+' fields mapped · </p></div><span class="source-badge">Mapped</span></div>').join('')
     }
     function updateContext(){
       const records=state.sources.reduce((s,x)=>s+x.records,0),total=state.sources.reduce((s,x)=>s+x.total,0);
