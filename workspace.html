@@ -386,7 +386,7 @@
     }
 
 
-    function sourceFacts(type){return state.sources.filter(source=>source.type===type).flatMap(source=>source.facts||[])}
+    function sourceFacts(type){return state.sources.filter(source=>source.type===type).flatMap(source=>(source.facts||[]).map(fact=>({...fact,_sourceProfile:source.profile||''})))}
     function monthKey(date){return date?String(date).slice(0,7):''}
     function monthLabel(key){if(!key)return '';return new Date(key+'-01T00:00:00Z').toLocaleDateString('en-US',{month:'short',year:'numeric',timeZone:'UTC'})}
     function dateWithin(date,start,end){return Boolean(date)&&(!start||date>=start)&&(!end||date<=end)}
@@ -394,7 +394,9 @@
     function setDefaultPeriod(){const dates=state.sources.flatMap(source=>(source.facts||[]).map(fact=>fact.date)).filter(Boolean).sort();if(!dates.length)return;const end=dates.at(-1),months=Number(document.getElementById('performancePeriod').value)||6;document.getElementById('periodEnd').value=end;document.getElementById('periodStart').value=addMonths(end,-months+1).slice(0,8)+'01'}
     function calculatePerformance(){
       const start=document.getElementById('periodStart').value,end=document.getElementById('periodEnd').value;
-      const marketing=sourceFacts('Marketing').filter(fact=>dateWithin(fact.date,start,end));
+      const allMarketing=sourceFacts('Marketing').filter(fact=>dateWithin(fact.date,start,end));
+      const identifiedMeta=allMarketing.filter(fact=>/meta|facebook|instagram/i.test(String(fact.channel||'')+' '+String(fact._sourceProfile||'')));
+      const marketing=identifiedMeta.length?identifiedMeta:allMarketing;
       let revenue=sourceFacts('Revenue or sales').filter(fact=>dateWithin(fact.date,start,end));
       const seen=new Set(),duplicateIds=new Set();
       revenue=revenue.filter(fact=>{const id=String(fact.transactionId||'').trim();if(!id)return true;if(seen.has(id)){duplicateIds.add(id);return false}seen.add(id);return true});
@@ -409,6 +411,7 @@
       const monthly=Object.values(months).sort((a,b)=>a.key.localeCompare(b.key)).map(row=>({...row,roas:row.spend?row.attributed/row.spend:null,mer:row.spend?row.revenue/row.spend:null}));
       const marketingDates=marketing.map(f=>f.date).filter(Boolean).sort(),revenueDates=revenue.map(f=>f.date).filter(Boolean).sort(),warnings=[];
       if(!marketing.length)warnings.push('Marketing evidence is missing for the selected period.');
+      if(allMarketing.length&&!identifiedMeta.length)warnings.push('No Meta identifier was found, so all imported marketing rows are included in the spend calculation.');
       if(!revenue.length)warnings.push('Revenue evidence is missing for the selected period.');
       if(marketingDates.length&&revenueDates.length&&(marketingDates[0].slice(0,7)!==revenueDates[0].slice(0,7)||marketingDates.at(-1).slice(0,7)!==revenueDates.at(-1).slice(0,7)))warnings.push('Marketing and revenue exports do not cover the same complete months.');
       if(duplicateIds.size)warnings.push(duplicateIds.size+' repeated order ID'+(duplicateIds.size===1?' was':'s were')+' excluded to prevent double counting.');
