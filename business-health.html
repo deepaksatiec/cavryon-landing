@@ -34,7 +34,7 @@
     .limitations{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}.limit{padding:17px;border:1px solid var(--line);border-radius:14px;background:#fff}.limit strong{display:block;margin-bottom:5px;font-size:11px}.limit p{margin:0;color:var(--muted);font-size:9px;line-height:1.6}
     .dashboard{margin-top:36px;animation:rise .35s ease}@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
     .dash-head{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;margin-bottom:18px}.dash-head h2{margin:0;font-size:28px;letter-spacing:-.04em}.dash-head p{margin:7px 0 0;color:var(--muted);font-size:11px}.file-chip{padding:8px 10px;border-radius:999px;color:#53657c;background:#e9eef5;font-size:9px;font-weight:800}
-    .health-banner{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:16px;padding:20px;border:1px solid #c5e5da;border-radius:17px;background:linear-gradient(135deg,#eefaf6,#f9fdfb)}
+    .statement-control{margin-bottom:13px;padding:14px 16px;border:1px solid #b9dfd4;border-radius:13px;color:#126b57;background:var(--green-soft);font-size:10px;line-height:1.55}.statement-control strong{display:block;margin-bottom:3px}.statement-control.warning{border-color:#efc7ce;color:#9f2f42;background:var(--red-soft)}.health-banner{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:16px;padding:20px;border:1px solid #c5e5da;border-radius:17px;background:linear-gradient(135deg,#eefaf6,#f9fdfb)}
     .health-icon{width:46px;height:46px;display:grid;place-items:center;border-radius:14px;color:#fff;background:var(--green);font-size:20px;font-weight:800}.health-banner.watch{border-color:#f0d7ad;background:linear-gradient(135deg,#fff8eb,#fff)}.health-banner.watch .health-icon{background:var(--amber)}.health-banner.risk{border-color:#efc7ce;background:linear-gradient(135deg,#fff2f4,#fff)}.health-banner.risk .health-icon{background:var(--red)}
     .health-banner h3{margin:0 0 4px;font-size:15px}.health-banner p{margin:0;color:#667b73;font-size:10px;line-height:1.55}.health-label{padding:7px 10px;border-radius:999px;color:var(--green);background:#dff4ec;font-size:9px;font-weight:800}.watch .health-label{color:var(--amber);background:var(--amber-soft)}.risk .health-label{color:var(--red);background:var(--red-soft)}
     .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:13px}.card{border:1px solid var(--line);border-radius:var(--radius);background:#fff;box-shadow:0 7px 24px rgba(30,52,80,.045)}.kpi{padding:20px}.kpi span{display:block;margin-bottom:10px;color:#8794a5;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.06em}.kpi strong{display:block;font-size:24px;letter-spacing:-.045em}.kpi small{display:block;margin-top:7px;color:var(--muted);font-size:9px}.positive{color:var(--green)!important}.negative{color:var(--red)!important}
@@ -59,20 +59,20 @@
     <section id="uploadSection">
       <p class="eyebrow">Business health snapshot</p>
       <h1>Turn cash activity into decisions you can act on.</h1>
-      <p class="intro">Upload a bank-exported CSV to understand cash inflows, outflows, expense patterns, recurring costs, and the business decisions that may need attention.</p>
+      <p class="intro">Upload a bank statement CSV or Mercury PDF to understand cash inflows, outflows, expense patterns, recurring costs, and the business decisions that may need attention.</p>
       <div class="privacy"><span class="privacy-icon">⌁</span>Your file is analyzed inside this browser and is not transmitted or stored.</div>
 
       <div class="upload-card">
         <div class="dropzone" id="dropzone">
           <div class="upload-icon">↑</div>
-          <h2>Upload a bank statement CSV</h2>
-          <p>Works with common exports containing date, description, and amount—or separate debit and credit columns. A balance column improves the cash-cushion estimate.</p>
+          <h2>Upload a bank statement</h2>
+          <p>Works with bank-exported CSV files and text-based Mercury PDF statements. Cavryon checks transaction detail against the statement’s official account-activity totals.</p>
           <div class="upload-actions">
-            <button class="btn btn-primary" id="chooseFile">Choose CSV file</button>
+            <button class="btn btn-primary" id="chooseFile">Choose statement file</button>
             <button class="btn btn-secondary" id="useSample">Explore with sample data</button>
           </div>
-          <input id="fileInput" type="file" accept=".csv,text/csv" hidden>
-          <div class="format-note">CSV only for this prototype · PDF and Excel support can be added later</div>
+          <input id="fileInput" type="file" accept=".csv,.pdf,text/csv,application/pdf" hidden>
+          <div class="format-note">CSV and text-based Mercury PDF supported · Scanned PDFs require OCR</div>
           <div class="error" id="errorBox" hidden></div>
         </div>
       </div>
@@ -105,6 +105,8 @@
         <div><p class="eyebrow">Cash activity assessment</p><h2>Your business snapshot</h2><p id="periodLabel">Statement period</p></div>
         <span class="file-chip" id="fileChip">sample_statement.csv</span>
       </div>
+
+      <div class="statement-control" id="statementControl" hidden><strong id="statementControlTitle"></strong><span id="statementControlCopy"></span></div>
 
       <div class="health-banner" id="healthBanner">
         <div class="health-icon" id="healthIcon">✓</div>
@@ -151,6 +153,7 @@
     </section>
   </main>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script>
     const sampleCSV = [
       'Date,Description,Amount,Balance',
@@ -211,13 +214,56 @@
       if (file) readFile(file);
     });
 
-    function readFile(file) {
-      if (!file.name.toLowerCase().endsWith('.csv')) return showError('Please choose a CSV file. PDF and Excel files are not supported in this prototype.');
-      if (file.size > 5 * 1024 * 1024) return showError('Please choose a CSV smaller than 5 MB for this prototype.');
+    async function readFile(file) {
+      errorBox.hidden = true;
+      const isPDF=file.type==='application/pdf'||/\.pdf$/i.test(file.name),isCSV=/\.csv$/i.test(file.name)||file.type==='text/csv';
+      if (!isPDF&&!isCSV) return showError('Please choose a bank-exported CSV or Mercury PDF statement.');
+      if (file.size > 15 * 1024 * 1024) return showError('Please choose a statement smaller than 15 MB.');
+      if(isPDF){
+        try{const result=await extractMercuryPDF(file);renderDashboard(result.transactions,file.name,result.statementSummary);}
+        catch(error){showError(error.message||'The PDF could not be analyzed.');}
+        return;
+      }
       const reader = new FileReader();
       reader.onload = () => analyzeCSV(reader.result, file.name);
       reader.onerror = () => showError('The file could not be read. Please export it again as CSV.');
       reader.readAsText(file);
+    }
+
+    async function extractMercuryPDF(file){
+      if(!window.pdfjsLib)throw new Error('The PDF reader could not load. Check your connection and try again.');
+      window.pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+      const bytes=await file.arrayBuffer(),pdf=await window.pdfjsLib.getDocument({data:bytes}).promise,lines=[];
+      for(let pageNumber=1;pageNumber<=pdf.numPages;pageNumber++){
+        const page=await pdf.getPage(pageNumber),content=await page.getTextContent(),items=content.items.filter(item=>String(item.str||'').trim()).map(item=>({text:String(item.str).trim(),x:item.transform[4],y:item.transform[5]})).sort((a,b)=>Math.abs(b.y-a.y)>2?b.y-a.y:a.x-b.x);
+        const grouped=[];
+        items.forEach(item=>{let line=grouped.find(candidate=>Math.abs(candidate.y-item.y)<=2);if(!line){line={page:pageNumber,y:item.y,items:[]};grouped.push(line)}line.items.push(item)});
+        grouped.sort((a,b)=>b.y-a.y).forEach(line=>{line.items.sort((a,b)=>a.x-b.x);line.text=line.items.map(item=>item.text).join(' ');lines.push(line)});
+      }
+      if(!lines.length)throw new Error('No selectable text was found. This appears to be a scanned PDF and requires OCR.');
+      const statementSummary=parseMercuryStatementSummary(lines),transactions=parseMercuryTransactions(lines);
+      if(!transactions.length)throw new Error('The Mercury transaction table could not be recognized. Export the statement as CSV or use a text-based Mercury PDF.');
+      if(!statementSummary)throw new Error('The transaction table was found, but the Account activity summary was not. Cavryon will not calculate business health without statement control totals.');
+      return {transactions,statementSummary};
+    }
+
+    function parseMercuryStatementSummary(lines){
+      const valueFor=pattern=>{const line=lines.find(candidate=>pattern.test(candidate.text));if(!line)return null;const matches=line.text.match(/\(?[−-]?\s*\$?\s*\d[\d,]*\.\d{2}\)?[−-]?/g);return matches&&matches.length?moneyNumber(matches.at(-1)):null};
+      const beginningBalance=valueFor(/beginning balance/i),withdrawalValue=valueFor(/total withdrawals/i),deposits=valueFor(/total deposits/i),endingBalance=valueFor(/statement balance/i);
+      if(beginningBalance===null&&withdrawalValue===null&&deposits===null&&endingBalance===null)return null;
+      return {beginningBalance,withdrawals:withdrawalValue===null?null:Math.abs(withdrawalValue),deposits,endingBalance};
+    }
+
+    function parseMercuryTransactions(lines){
+      const header=lines.find(line=>/date\s*\(utc\)/i.test(line.text)&&/description/i.test(line.text)&&/type/i.test(line.text)&&/amount/i.test(line.text)&&/end\s+of\s+day\s+balance/i.test(line.text));
+      if(!header)return [];
+      const findX=pattern=>{const item=header.items.find(value=>pattern.test(value.text));return item?item.x:null};
+      const dateX=findX(/date/i),descriptionX=findX(/description/i),typeX=findX(/^type$/i),amountX=findX(/^amount$/i),balanceItem=header.items.find(item=>item.x>amountX&&/(end|balance)/i.test(item.text)),balanceX=balanceItem?balanceItem.x:null;
+      if([dateX,descriptionX,typeX,amountX,balanceX].some(value=>value===null))return [];
+      const boundaries=[(dateX+descriptionX)/2,(descriptionX+typeX)/2,(typeX+amountX)/2,(amountX+balanceX)/2],allText=lines.map(line=>line.text).join(' '),years=allText.match(/\b20\d{2}\b/g)||[],year=years.length?years.sort((a,b)=>years.filter(value=>value===a).length-years.filter(value=>value===b).length).at(-1):String(new Date().getFullYear()),datePattern=/(\d{1,2}[\/-]\d{1,2}(?:[\/-]\d{2,4})?|20\d{2}-\d{1,2}-\d{1,2}|(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec)[a-z]*\s+\d{1,2}(?:,?\s+20\d{2})?)/i,moneyPattern=/\(?[−-]?\s*\$?\s*\d[\d,]*\.\d{2}\)?[−-]?/;
+      let currentDate=null;const transactions=[];
+      lines.forEach(line=>{if(line===header||/date\s*\(utc\).*description.*type.*amount/i.test(line.text)||/all transactions/i.test(line.text))return;const cells=[[],[],[],[],[]];line.items.forEach(item=>{const index=item.x<boundaries[0]?0:item.x<boundaries[1]?1:item.x<boundaries[2]?2:item.x<boundaries[3]?3:4;cells[index].push(item.text)});const dateCell=cells[0].join(' ').trim(),dateMatch=dateCell.match(datePattern);if(dateMatch){const hasYear=/\b20\d{2}\b/.test(dateMatch[1])||/^\d{1,2}[\/-]\d{1,2}[\/-]\d{2,4}$/.test(dateMatch[1]),dateText=hasYear?dateMatch[1]:(/^\d/.test(dateMatch[1])?dateMatch[1]+'/'+year:dateMatch[1]+' '+year);currentDate=parseDateValue(dateText)}const description=cells[1].join(' ').replace(/\s+/g,' ').trim(),amountMatch=cells[3].join(' ').match(moneyPattern),balanceMatch=cells[4].join(' ').match(moneyPattern);if(!currentDate||!description||!amountMatch)return;transactions.push({date:new Date(currentDate),description,amount:moneyNumber(amountMatch[0]),balance:balanceMatch?moneyNumber(balanceMatch[0]):null})});
+      transactions.sort((a,b)=>a.date-b.date);return transactions;
     }
 
     function detectDelimiter(text) {
@@ -288,8 +334,8 @@
     function moneyNumber(value) {
       if (value === undefined || value === null || value === '') return 0;
       let clean = String(value).trim().toUpperCase();
-      const negative = (clean.startsWith('(') && clean.endsWith(')')) || clean.endsWith('-') || /\bDR\b/.test(clean);
-      clean = clean.replace(/\b(CR|DR|USD)\b/g,'').replace(/[$,£€\s()+-]/g,'');
+      const negative = (clean.startsWith('(') && clean.endsWith(')')) || clean.startsWith('-') || clean.startsWith('−') || clean.endsWith('-') || clean.endsWith('−') || /\bDR\b/.test(clean);
+      clean = clean.replace(/\b(CR|DR|USD)\b/g,'').replace(/[$,£€\s()+−-]/g,'');
       const number = Number(clean);
       return Number.isFinite(number) ? (negative ? -Math.abs(number) : number) : 0;
     }
@@ -442,7 +488,7 @@
 
     function formatMoney(value) {
       const abs = Math.abs(value);
-      const formatted = new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(abs);
+      const formatted = new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',minimumFractionDigits:2,maximumFractionDigits:2}).format(abs);
       return value < 0 ? '-' + formatted : formatted;
     }
 
@@ -457,14 +503,17 @@
       el.className = 'signal-status ' + type;
     }
 
-    function renderDashboard(transactions, fileName) {
+    function renderDashboard(transactions, fileName, statementSummary=null) {
       const inflows = transactions.filter(item => item.amount > 0);
       const outflows = transactions.filter(item => item.amount < 0);
-      const totalIn = inflows.reduce((sum,item) => sum + item.amount,0);
-      const totalOut = outflows.reduce((sum,item) => sum + Math.abs(item.amount),0);
+      const detailIn = inflows.reduce((sum,item) => sum + item.amount,0);
+      const detailOut = outflows.reduce((sum,item) => sum + Math.abs(item.amount),0);
+      const hasStatementTotals=statementSummary&&statementSummary.deposits!==null&&statementSummary.withdrawals!==null;
+      const totalIn = hasStatementTotals ? Number(statementSummary.deposits) : detailIn;
+      const totalOut = hasStatementTotals ? Number(statementSummary.withdrawals) : detailOut;
       const net = totalIn - totalOut;
       const withBalance = transactions.filter(item => item.balance !== null);
-      const latestBalance = withBalance.length ? withBalance[withBalance.length - 1].balance : null;
+      const latestBalance = statementSummary&&statementSummary.endingBalance!==null ? Number(statementSummary.endingBalance) : (withBalance.length ? withBalance[withBalance.length - 1].balance : null);
       const firstDate = transactions[0].date;
       const lastDate = transactions[transactions.length - 1].date;
       const daySpan = Math.max(1,(lastDate-firstDate)/86400000);
@@ -497,6 +546,15 @@
       const recurringTotal = recurring.reduce((sum,item) => sum + item.total,0);
       const recurringShare = totalOut ? recurringTotal/totalOut : 0;
 
+      const controlBox=document.getElementById('statementControl'),controlTitle=document.getElementById('statementControlTitle'),controlCopy=document.getElementById('statementControlCopy');
+      controlBox.hidden=!hasStatementTotals;
+      if(hasStatementTotals){
+        const depositGap=totalIn-detailIn,withdrawalGap=totalOut-detailOut,opening=statementSummary.beginningBalance,ending=statementSummary.endingBalance,controlGap=opening!==null&&ending!==null?Number(opening)+totalIn-totalOut-Number(ending):null,mismatch=Math.abs(depositGap)>.01||Math.abs(withdrawalGap)>.01||(controlGap!==null&&Math.abs(controlGap)>.01);
+        controlBox.classList.toggle('warning',mismatch);
+        if(controlGap!==null&&Math.abs(controlGap)>.01){controlTitle.textContent='Statement totals do not reconcile';controlCopy.textContent='Beginning balance plus deposits less withdrawals differs from the statement balance by '+formatMoney(Math.abs(controlGap))+'.';}
+        else if(mismatch){const depositIssue=depositGap>=0?'short by '+formatMoney(depositGap):'over by '+formatMoney(Math.abs(depositGap)),withdrawalIssue=withdrawalGap>=0?'short by '+formatMoney(withdrawalGap):'over by '+formatMoney(Math.abs(withdrawalGap));controlTitle.textContent='Official statement totals used';controlCopy.textContent='Transaction detail is '+depositIssue+' for deposits and '+withdrawalIssue+' for withdrawals. Headline health metrics use the verified Account activity summary; category and recurring-cost details may be incomplete.';}
+        else{controlTitle.textContent='Statement and transactions reconciled';controlCopy.textContent='Extracted transaction detail matches the Mercury Account activity control totals.';}
+      }
       document.getElementById('totalIn').textContent = formatMoney(totalIn);
       document.getElementById('totalOut').textContent = formatMoney(totalOut);
       const netEl = document.getElementById('netFlow');
