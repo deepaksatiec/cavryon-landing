@@ -357,7 +357,8 @@
       lines.forEach(line=>{
         const dateMatch=line.match(datePattern);if(!dateMatch)return;
         const moneyMatches=[...line.matchAll(moneyPattern)];if(!moneyMatches.length)return;
-        const rawDate=/^\d{1,2}[\/-]\d{1,2}$/.test(dateMatch[1])?dateMatch[1]+'/'+year:dateMatch[1];
+        const hasYear=/\b20\d{2}\b/.test(dateMatch[1])||/^\d{1,2}[\/-]\d{1,2}[\/-]\d{2,4}$/.test(dateMatch[1]);
+        const rawDate=hasYear?dateMatch[1]:(/^\d/.test(dateMatch[1])?dateMatch[1]+'/'+year:dateMatch[1]+' '+year);
         const firstMoney=moneyMatches[0][0],lastMoney=moneyMatches.at(-1)[0];
         const description=line.slice(dateMatch[0].length,moneyMatches[0].index).replace(/\s+/g,' ').trim()||'PDF transaction';
         if(type==='Marketing')rows.push([rawDate,description,firstMoney,moneyMatches.length>1?lastMoney:'']);
